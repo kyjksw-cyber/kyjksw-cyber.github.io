@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sunwoo Kim — Portfolio</title>
+  <meta name="description" content="AI로 실무 문제를 해결하는 사람. 비개발자가 Claude Code로 만든 프로젝트들." />
+
+  <!-- Pretendard 폰트 -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <style>
+    /* ── 리셋 & 기본 ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0d1117;
+      --bg-card:     #161b22;
+      --bg-card-hover: #1c2128;
+      --border:      #30363d;
+      --border-light: #21262d;
+      --text:        #e6edf3;
+      --text-muted:  #7d8590;
+      --text-dim:    #484f58;
+      --accent:      #58a6ff;
+      --accent-muted:#1f6feb;
+      --green:       #3fb950;
+      --purple:      #bc8cff;
+      --orange:      #f0883e;
+      --teal:        #39d353;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── 레이아웃 컨테이너 ── */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── 네비게이션 ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 17, 23, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    nav .nav-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+
+    .nav-logo {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── HERO ── */
+    #hero {
+      padding: 96px 0 80px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .hero-label {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      background: rgba(88, 166, 255, 0.08);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      border-radius: 20px;
+      padding: 3px 10px;
+      margin-bottom: 20px;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-name {
+      font-size: clamp(32px, 6vw, 52px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .hero-name .en {
+      color: var(--text-muted);
+      font-weight: 400;
+      font-size: 0.55em;
+      display: block;
+      letter-spacing: 0.01em;
+      margin-top: 6px;
+    }
+
+    .hero-title {
+      font-size: clamp(18px, 3vw, 24px);
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+      max-width: 500px;
+    }
+
+    /* 7초 룰 — 히어로 스탯 3개 즉시 노출 */
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    .stat-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
+    .stat-badge .stat-num {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .stat-badge .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    .stat-badge .stat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot-blue  { background: var(--accent); }
+    .dot-green { background: var(--green); }
+    .dot-purple{ background: var(--purple); }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--accent-muted);
+      color: #fff;
+      border: 1px solid rgba(88, 166, 255, 0.3);
+    }
+    .btn-primary:hover { background: #388bfd; text-decoration: none; }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { background: var(--bg-card); text-decoration: none; border-color: var(--text-muted); }
+
+    /* ── SECTION 공통 ── */
+    section {
+      padding: 72px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .section-heading {
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 40px;
+      color: var(--text);
+    }
+
+    /* ── ABOUT ── */
+    #about .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .about-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 22px;
+    }
+
+    .about-card-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .about-card-text {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .about-card-text strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* 인용구 카드 — 전체 너비 */
+    .quote-card {
+      grid-column: 1 / -1;
+      border-left: 3px solid var(--accent-muted);
+      background: rgba(31, 111, 235, 0.06);
+    }
+
+    .quote-card .quote-text {
+      font-size: 15px;
+      color: var(--text);
+      font-weight: 400;
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    /* ── PROJECTS ── */
+    #projects .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .project-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--text-dim);
+      background: var(--bg-card-hover);
+    }
+
+    .project-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .project-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .project-links {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .project-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-light);
+      border-radius: 5px;
+      padding: 3px 8px;
+      transition: color 0.15s, border-color 0.15s;
+      text-decoration: none;
+    }
+    .project-link-btn:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+    .project-link-btn.muted { opacity: 0.45; pointer-events: none; cursor: default; }
+
+    .project-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .project-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      flex-grow: 1;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    /* 태그 색상 그룹 */
+    .tag-blue   { background: rgba(88,166,255,0.1);  color: #79c0ff; }
+    .tag-green  { background: rgba(63,185,80,0.1);   color: #56d364; }
+    .tag-purple { background: rgba(188,140,255,0.1); color: #d2a8ff; }
+    .tag-orange { background: rgba(240,136,62,0.1);  color: #ffa657; }
+    .tag-teal   { background: rgba(57,211,83,0.08);  color: #39d353; }
+    .tag-gray   { background: rgba(110,118,129,0.1); color: #8b949e; }
+
+    /* ── TECH STACK ── */
+    #stack .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .stack-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stack-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .stack-info .stack-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .stack-info .stack-type {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 40px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-left {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .footer-left a {
+      color: var(--text-muted);
+      transition: color 0.15s;
+    }
+    .footer-left a:hover { color: var(--text); text-decoration: none; }
+
+    .footer-right {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    /* ── SVG 아이콘 인라인 ── */
+    .icon-svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* ── 반응형 ── */
+    @media (max-width: 640px) {
+      #hero { padding: 64px 0 56px; }
+      #about .about-grid { grid-template-columns: 1fr; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .stack-grid { grid-template-columns: 1fr 1fr; }
+      .nav-links { display: none; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── 네비게이션 ── -->
+  <nav>
+    <div class="nav-inner">
+      <span class="nav-logo">kyjksw<span>-cyber</span></span>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#stack">Stack</a></li>
+        <li><a href="https://github.com/kyjksw-cyber" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-label">Open to Opportunities</div>
+
+      <h1 class="hero-name">
+        김선우
+        <span class="en">Sunwoo Kim</span>
+      </h1>
+
+      <p class="hero-title">AI로 실무 문제를 해결하는 사람</p>
+      <p class="hero-sub">비개발자가 Claude Code로 만든 프로젝트들 — 기획에서 배포까지 직접</p>
+
+      <!-- 7초 룰: 핵심 수치 3개 즉시 노출 -->
+      <div class="hero-stats">
+        <div class="stat-badge">
+          <div class="stat-dot dot-blue"></div>
+          <div>
+            <div class="stat-num">6+</div>
+            <div class="stat-label">실제 배포된<br>프로젝트</div>
+          </div>
+        </div>
+        <div class="stat-badge">
+          <div class="stat-dot dot-green"></div>
+          <div>
+            <div class="stat-num">100%</div>
+            <div class="stat-label">Claude Code로<br>단독 구현</div>
+          </div>
+        </div>
+        <div class="stat-badge">
+          <div class="stat-dot dot-purple"></div>
+          <div>
+            <div class="stat-num">0</div>
+            <div class="stat-label">전통적 코딩<br>교육 이수</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#projects">Projects 보기</a>
+        <a class="btn btn-outline" href="https://github.com/kyjksw-cyber" target="_blank" rel="noopener">
+          <!-- GitHub 아이콘 -->
+          <svg class="icon-svg" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT ── -->
+  <section id="about">
+    <div class="container">
+      <p class="section-title">About</p>
+      <h2 class="section-heading">직접 만드는 비개발자</h2>
+
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="about-card-label">소속</div>
+          <div class="about-card-text">
+            <strong>일룸(iloom)</strong> 영업효율개선팀<br>
+            퍼시스그룹 가구 브랜드에서<br>AI 업무 자동화 담당
+          </div>
+        </div>
+
+        <div class="about-card">
+          <div class="about-card-label">하는 일</div>
+          <div class="about-card-text">
+            AI를 활용해 <strong>업무 자동화 시스템</strong>과<br>
+            <strong>데이터 파이프라인</strong>을<br>
+            직접 설계하고 구현
+          </div>
+        </div>
+
+        <div class="about-card quote-card">
+          <div class="about-card-label">철학</div>
+          <div class="quote-text">
+            "기록이 목표가 되면 일이 돼버린다. 일의 부산물로 알아서 나오게 하는 게 핵심."
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROJECTS ── -->
+  <section id="projects">
+    <div class="container">
+      <p class="section-title">Projects</p>
+      <h2 class="section-heading">직접 만든 것들</h2>
+
+      <div class="projects-grid">
+
+        <!-- 1. Daily Planner -->
+        <div class="project-card">
+          <div class="project-card-top">
+            <div class="project-icon" style="background: rgba(88,166,255,0.1);">
+              <!-- 달력 아이콘 -->
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="#58a6ff" aria-hidden="true">
+                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1zm3 2h2v2H4V6zm0 3h2v2H4V9zm3-3h2v2H7V6zm0 3h2v2H7V9zm3-3h2v2h-2V6zm0 3h2v2h-2V9z"/>
+              </svg>
+            </div>
+            <div class="project-links">
+              <a class="project-link-btn" href="https://github.com/kyjksw-cyber/ai-daily-planner" target="_blank" rel="noopener">
+                <svg class="icon-svg" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                Code
+              </a>
+              <a class="project-link-btn" href="https://daily-planner-product.netlify.app/product.html" target="_blank" rel="noopener">
+                <svg class="icon-svg" viewBox="0 0 16 16" aria-hidden="true"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+                Demo
+              </a>
+            </div>
+          </div>
+          <div class="project-name">Daily Planner</div>
+          <div class="project-desc">4-View 업무 효율 최적화 웹앱. 데일리/위클리/프로젝트/회고를 하나의 앱에서.</div>
+          <div class="tag-list">
+            <span class="tag tag-blue">React</span>
+            <span class="tag tag-blue">TypeScript</span>
+            <span class="tag tag-green">Supabase</span>
+            <span class="tag tag-purple">PWA</span>
+          </div>
+        </div>
+
+        <!-- 2. CRM 대시보드 -->
+        <div class="project-card">
+          <div class="project-card-top">
+            <div class="project-icon" style="background: rgba(63,185,80,0.1);">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="#3fb950" aria-hidden="true">
+                <path d="M0 0h1v15h15v1H0V0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5z"/>
+              </svg>
+            </div>
+            <div class="project-links">
+              <span class="project-link-btn muted">준비중</span>
+            </div>
+          </div>
+          <div class="project-name">CRM 성과 대시보드</div>
+          <div class="project-desc">매장별 성과 분석 대시보드. 실시간 KPI 추적, 목표 달성률 시각화.</div>
+          <div class="tag-list">
+            <span class="tag tag-blue">React</span>
+            <span class="tag tag-orange">Recharts</span>
+            <span class="tag tag-green">Supabase</span>
+          </div>
+        </div>
+
+        <!-- 3. 소셜 VOC 모니터링 -->
+        <div class="project-card">
+          <div class="project-card-top">
+            <div class="project-icon" style="background: rgba(188,140,255,0.1);">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="#bc8cff" aria-hidden="true">
+                <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
+              </svg>
+            </div>
+            <div class="project-links">
+              <span class="project-link-btn muted">준비중</span>
+            </div>
+          </div>
+          <div class="project-name">소셜 VOC 모니터링</div>
+          <div class="project-desc">네이버 블로그 크롤링 + AI 감정분석. 브랜드 언급 자동 수집 및 분류.</div>
+          <div class="tag-list">
+            <span class="tag tag-teal">Python</span>
+            <span class="tag tag-purple">Claude API</span>
+            <span class="tag tag-gray">Notion API</span>
+          </div>
+        </div>
+
+        <!-- 4. 캡처 아카이빙 봇 -->
+        <div class="project-card">
+          <div class="project-card-top">
+            <div class="project-icon" style="background: rgba(88,166,255,0.08);">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="#58a6ff" aria-hidden="true">
+                <path d="M16 8c0 3.866-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7zM5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+              </svg>
+            </div>
+            <div class="project-links">
+              <span class="project-link-btn muted">준비중</span>
+            </div>
+          </div>
+          <div class="project-name">캡처 아카이빙 봇</div>
+          <div class="project-desc">텔레그램으로 전송한 내용을 AI가 프로젝트별로 자동 분류·저장.</div>
+          <div class="tag-list">
+            <span class="tag tag-teal">Python</span>
+            <span class="tag tag-blue">Telegram Bot</span>
+            <span class="tag tag-purple">Claude API</span>
+          </div>
+        </div>
+
+        <!-- 5. 프로모션 자동화 엔진 -->
+        <div class="project-card">
+          <div class="project-card-top">
+            <div class="project-icon" style="background: rgba(240,136,62,0.1);">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="#f0883e" aria-hidden="true">
+                <path d="M1 2a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2zm0 5a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V7zm0 5a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-2z"/>
+              </svg>
+            </div>
+            <div class="project-links">
+              <span class="project-link-btn muted">준비중</span>
+            </div>
+          </div>
+          <div class="project-name">프로모션 자동화 엔진</div>
+          <div class="project-desc">반복적인 프로모션 정산 업무를 자동화. 수동 작업 대비 시간 90% 절감.</div>
+          <div class="tag-list">
+            <span class="tag tag-blue">TypeScript</span>
+            <span class="tag tag-green">Supabase</span>
+            <span class="tag tag-gray">Node.js</span>
+          </div>
+        </div>
+
+        <!-- 6. 선우AI 자가학습 시스템 -->
+        <div class="project-card">
+          <div class="project-card-top">
+            <div class="project-icon" style="background: rgba(57,211,83,0.08);">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="#39d353" aria-hidden="true">
+                <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/>
+              </svg>
+            </div>
+            <div class="project-links">
+              <span class="project-link-btn muted">준비중</span>
+            </div>
+          </div>
+          <div class="project-name">선우AI 자가학습 시스템</div>
+          <div class="project-desc">AI 에이전트 메모리 + 성장 추적. 대화 맥락을 파일로 영속 저장.</div>
+          <div class="tag-list">
+            <span class="tag tag-purple">Claude Code</span>
+            <span class="tag tag-gray">Markdown</span>
+            <span class="tag tag-gray">Git</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TECH STACK ── -->
+  <section id="stack">
+    <div class="container">
+      <p class="section-title">Tech Stack</p>
+      <h2 class="section-heading">사용하는 기술</h2>
+
+      <div class="stack-grid">
+        <div class="stack-item">
+          <div class="stack-icon" style="background: rgba(88,166,255,0.12);">
+            <!-- React -->
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#58a6ff" aria-hidden="true">
+              <path d="M12 9.861A2.139 2.139 0 1 0 12 14.139 2.139 2.139 0 1 0 12 9.861zM6.008 16.255l-.472-.12C2.018 15.246 0 13.737 0 11.996s2.018-3.25 5.536-4.139l.472-.119.133.468a23.53 23.53 0 0 0 1.363 3.578l.101.213-.101.213a23.307 23.307 0 0 0-1.363 3.578l-.133.467zM5.317 8.95c-2.674.751-4.315 1.9-4.315 3.046 0 1.145 1.641 2.294 4.315 3.046a24.95 24.95 0 0 1 1.182-3.046A24.752 24.752 0 0 1 5.317 8.95zM17.992 16.255l-.133-.469a23.357 23.357 0 0 0-1.364-3.577l-.101-.213.101-.213a23.42 23.42 0 0 0 1.364-3.578l.133-.468.473.119c3.517.889 5.535 2.398 5.535 4.14s-2.018 3.25-5.535 4.139l-.473.12zm-.491-4.259c.48 1.039.877 2.06 1.182 3.046 2.675-.752 4.315-1.901 4.315-3.046 0-1.146-1.641-2.294-4.315-3.046a24.788 24.788 0 0 1-1.182 3.046zM5.31 8.945l-.133-.467C4.188 5.012 4.488 2.543 6 1.747c1.512-.796 3.596.462 5.53 3.399l.27.408-.408.27a23.sampl..."/>
+            </svg>
+          </div>
+          <div class="stack-info">
+            <div class="stack-name">React</div>
+            <div class="stack-type">Frontend</div>
+          </div>
+        </div>
+
+        <div class="stack-item">
+          <div class="stack-icon" style="background: rgba(88,166,255,0.12);">
+            <span style="font-size:11px; font-weight:700; color:#58a6ff;">TS</span>
+          </div>
+          <div class="stack-info">
+            <div class="stack-name">TypeScript</div>
+            <div class="stack-type">Language</div>
+          </div>
+        </div>
+
+        <div class="stack-item">
+          <div class="stack-icon" style="background: rgba(57,211,83,0.1);">
+            <span style="font-size:11px; font-weight:700; color:#39d353;">Py</span>
+          </div>
+          <div class="stack-info">
+            <div class="stack-name">Python</div>
+            <div class="stack-type">Automation</div>
+          </div>
+        </div>
+
+        <div class="stack-item">
+          <div class="stack-icon" style="background: rgba(63,185,80,0.1);">
+            <span style="font-size:9px; font-weight:700; color:#3fb950;">SB</span>
+          </div>
+          <div class="stack-info">
+            <div class="stack-name">Supabase</div>
+            <div class="stack-type">Database / BaaS</div>
+          </div>
+        </div>
+
+        <div class="stack-item">
+          <div class="stack-icon" style="background: rgba(56,189,248,0.1);">
+            <span style="font-size:9px; font-weight:700; color:#38bdf8;">TW</span>
+          </div>
+          <div class="stack-info">
+            <div class="stack-name">Tailwind CSS</div>
+            <div class="stack-type">Styling</div>
+          </div>
+        </div>
+
+        <div class="stack-item">
+          <div class="stack-icon" style="background: rgba(188,140,255,0.1);">
+            <span style="font-size:10px; font-weight:700; color:#bc8cff;">Vt</span>
+          </div>
+          <div class="stack-info">
+            <div class="stack-name">Vite</div>
+            <div class="stack-type">Build Tool</div>
+          </div>
+        </div>
+
+        <div class="stack-item">
+          <div class="stack-icon" style="background: rgba(57,211,83,0.1);">
+            <span style="font-size:9px; font-weight:700; color:#39d353;">Nd</span>
+          </div>
+          <div class="stack-info">
+            <div class="stack-name">Node.js</div>
+            <div class="stack-type">Runtime</div>
+          </div>
+        </div>
+
+        <div class="stack-item">
+          <div class="stack-icon" style="background: rgba(240,136,62,0.1);">
+            <span style="font-size:9px; font-weight:700; color:#f0883e;">AI</span>
+          </div>
+          <div class="stack-info">
+            <div class="stack-name">Claude API</div>
+            <div class="stack-type">AI / LLM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <a href="https://github.com/kyjksw-cyber" target="_blank" rel="noopener">github.com/kyjksw-cyber</a>
+          <span style="margin: 0 8px; color: var(--text-dim);">/</span>
+          <span>Sunwoo Kim</span>
+        </div>
+        <div class="footer-right">Built with Claude Code</div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
