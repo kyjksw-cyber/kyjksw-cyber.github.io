@@ -378,36 +378,42 @@
       background: rgba(22, 27, 34, 0.5);
     }
 
-    /* 이미지 placeholder */
-    .img-placeholder {
+    /* 이미지 */
+    .post-img {
       margin: 32px 0;
-      background: var(--bg-card);
-      border: 1px dashed var(--border);
       border-radius: 10px;
-      padding: 40px 24px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .post-img img {
+      width: 100%;
+      display: block;
+    }
+
+    .post-img-caption {
+      font-size: 12px;
+      color: var(--text-dim);
       text-align: center;
+      padding: 10px 16px;
+      background: var(--bg-card);
     }
 
-    .img-placeholder-icon {
-      width: 40px;
-      height: 40px;
-      margin: 0 auto 12px;
-      opacity: 0.3;
+    .post-img-grid {
+      margin: 32px 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
     }
 
-    .img-placeholder-text {
-      font-size: 13px;
-      color: var(--text-dim);
-      line-height: 1.5;
+    .post-img-grid .post-img {
+      margin: 0;
     }
 
-    .img-placeholder-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-dim);
-      margin-bottom: 6px;
+    @media (max-width: 480px) {
+      .post-img-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* ── 사이드바 TOC ── */
@@ -830,10 +836,9 @@
           </tbody>
         </table>
 
-        <div class="img-placeholder">
-          <div class="img-placeholder-label">Screenshot</div>
-          <svg class="img-placeholder-icon" viewBox="0 0 16 16" fill="#484f58" aria-hidden="true"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/></svg>
-          <div class="img-placeholder-text">데일리 플래너 전체 화면</div>
+        <div class="post-img">
+          <img src="images/0316-404-error-1/v1.png" alt="데일리 플래너 전체 화면 — 오늘 대시보드, 타임라인, 워킹가든" loading="lazy" />
+          <div class="post-img-caption">데일리 플래너 전체 화면</div>
         </div>
 
         <p>이제부터가 본론입니다. 기능을 소개하는 게 아니라, 왜 이렇게 만들었는지를 얘기하려 합니다.</p>
@@ -847,10 +852,15 @@
 
         <p>사주팔자 기반 전체운/업무운/대인운, 럭키컬러와 럭키넘버. 서울 실시간 날씨와 주간 날씨 팝업. 업무 도구에 이게 왜 있냐고요?</p>
 
-        <div class="img-placeholder">
-          <div class="img-placeholder-label">Screenshot</div>
-          <svg class="img-placeholder-icon" viewBox="0 0 16 16" fill="#484f58" aria-hidden="true"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/></svg>
-          <div class="img-placeholder-text">사주 + 날씨 위젯</div>
+        <div class="post-img-grid">
+          <div class="post-img">
+            <img src="images/0316-404-error-1/v2.png" alt="오늘의 운세 — 사주팔자 기반 전체운, 업무운, 대인운" loading="lazy" />
+            <div class="post-img-caption">오늘의 운세 위젯</div>
+          </div>
+          <div class="post-img">
+            <img src="images/0316-404-error-1/v3.png" alt="주간 날씨 팝업 — 서울 실시간 날씨" loading="lazy" />
+            <div class="post-img-caption">주간 날씨 팝업</div>
+          </div>
         </div>
 
         <p>처음엔 저도 "좀 유치한 거 아닌가" 싶었습니다. 그런데 생각해보면, 좋은 업무 도구의 첫 번째 조건은 <strong>"쓰고 싶게 만드는 것"</strong>입니다. 아침에 플래너를 열게 만들어야 플래너가 의미 있습니다.</p>
@@ -864,10 +874,23 @@
         <strong>주간 뷰</strong>: 월~금 5컬럼 + 시간 할당 차트<br>
         <strong>누적 뷰(히스토리)</strong>: 월별 네비게이션 + 성과 조회</p>
 
-        <div class="img-placeholder">
-          <div class="img-placeholder-label">Screenshot</div>
-          <svg class="img-placeholder-icon" viewBox="0 0 16 16" fill="#484f58" aria-hidden="true"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/></svg>
-          <div class="img-placeholder-text">4가지 뷰 전환</div>
+        <div class="post-img-grid">
+          <div class="post-img">
+            <img src="images/0316-404-error-1/v4.png" alt="오늘 뷰 — 오늘 집중할 할 일 리스트" loading="lazy" />
+            <div class="post-img-caption">오늘 뷰</div>
+          </div>
+          <div class="post-img">
+            <img src="images/0316-404-error-1/v5.png" alt="전체 뷰 — 8개 프로젝트 매이슨리 그리드" loading="lazy" />
+            <div class="post-img-caption">전체 뷰 (프로젝트)</div>
+          </div>
+          <div class="post-img">
+            <img src="images/0316-404-error-1/v6.png" alt="주간 뷰 — 월~금 5컬럼 시간 할당" loading="lazy" />
+            <div class="post-img-caption">주간 뷰</div>
+          </div>
+          <div class="post-img">
+            <img src="images/0316-404-error-1/v7.png" alt="누적 뷰 — 프로젝트별 성과 조회" loading="lazy" />
+            <div class="post-img-caption">누적 뷰 (히스토리)</div>
+          </div>
         </div>
 
         <p>단순히 화면을 4개로 나눈 게 아닙니다. 일을 <strong>4개의 시간 축</strong>으로 본다는 설계입니다.</p>
@@ -878,10 +901,9 @@
 
         <h3 id="garden">워킹가든 — "감정으로 업무를 읽는 장치"</h3>
 
-        <div class="img-placeholder">
-          <div class="img-placeholder-label">Screenshot</div>
-          <svg class="img-placeholder-icon" viewBox="0 0 16 16" fill="#484f58" aria-hidden="true"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/></svg>
-          <div class="img-placeholder-text">워킹가든 전체</div>
+        <div class="post-img">
+          <img src="images/0316-404-error-1/v8.png" alt="워킹가든 — 프로젝트별 밭, 농사꾼 캐릭터, 늑대" loading="lazy" />
+          <div class="post-img-caption">워킹가든 — 8개 프로젝트가 각각 밭이 됩니다</div>
         </div>
 
         <p>이게 제가 가장 애착을 갖는 기능입니다. 그리고 처음 보는 사람들이 가장 의아해하는 기능이기도 합니다.</p>
@@ -896,10 +918,9 @@
 
         <h3 id="timeline">타임라인 + GCal 동기화 — "보이지 않던 시간을 보이게"</h3>
 
-        <div class="img-placeholder">
-          <div class="img-placeholder-label">Screenshot</div>
-          <svg class="img-placeholder-icon" viewBox="0 0 16 16" fill="#484f58" aria-hidden="true"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/></svg>
-          <div class="img-placeholder-text">타임라인 + 구글 캘린더 오버레이</div>
+        <div class="post-img">
+          <img src="images/0316-404-error-1/v1.png" alt="타임라인 — 시간대별 할 일 배치 + 구글 캘린더 동기화" loading="lazy" />
+          <div class="post-img-caption">오른쪽 타임라인 — 현재 시간 빨간선 + 구글 캘린더 이벤트 오버레이</div>
         </div>
 
         <p>08:30부터 21:00까지의 타임라인에 할 일을 드래그앤드롭으로 배치할 수 있습니다. 현재 시간을 나타내는 빨간 선이 실시간으로 움직이고, 구글 캘린더 이벤트가 자동으로 오버레이됩니다.</p>
