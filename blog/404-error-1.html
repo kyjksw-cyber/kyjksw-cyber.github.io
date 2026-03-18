@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO: Primary -->
+  <title>404 Error #1 — 코딩 한 줄 모르는 직장인이 업무 플래너를 만들었다 | Sunwoo Kim</title>
+  <meta name="description" content="비개발자 직장인이 Claude AI 바이브코딩으로 업무 플래너를 만든 과정. 자동화보다 먼저, AI가 나를 알게 해야 한다." />
+  <meta name="keywords" content="바이브코딩, AI, 비개발자, Claude, 업무자동화, 직장인, 플래너, 업무효율" />
+  <meta name="author" content="Sunwoo Kim" />
+  <link rel="canonical" href="https://kyjksw-cyber.github.io/blog/404-error-1.html" />
+
+  <!-- SEO: Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="404 Error #1 — 코딩 한 줄 모르는 직장인이 업무 플래너를 만들었다" />
+  <meta property="og:description" content="비개발자 직장인이 Claude AI 바이브코딩으로 업무 플래너를 만든 과정. 자동화보다 먼저, AI가 나를 알게 해야 한다." />
+  <meta property="og:url" content="https://kyjksw-cyber.github.io/blog/404-error-1.html" />
+  <meta property="og:site_name" content="Sunwoo Kim" />
+  <meta property="article:published_time" content="2026-03-16" />
+  <meta property="article:author" content="Sunwoo Kim" />
+  <meta property="article:tag" content="바이브코딩" />
+  <meta property="article:tag" content="AI" />
+  <meta property="article:tag" content="비개발자" />
+  <meta property="article:tag" content="Claude" />
+  <meta property="article:tag" content="업무자동화" />
+
+  <!-- SEO: Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="404 Error #1 — 코딩 한 줄 모르는 직장인이 업무 플래너를 만들었다" />
+  <meta name="twitter:description" content="비개발자 직장인이 Claude AI 바이브코딩으로 업무 플래너를 만든 과정. 자동화보다 먼저, AI가 나를 알게 해야 한다." />
+
+  <!-- Schema.org Article 마크업 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "404 Error #1 — 코딩 한 줄 모르는 직장인이 업무 플래너를 만들었다",
+    "description": "비개발자 직장인이 Claude AI 바이브코딩으로 업무 플래너를 만든 과정. 자동화보다 먼저, AI가 나를 알게 해야 한다.",
+    "author": {
+      "@type": "Person",
+      "name": "Sunwoo Kim",
+      "url": "https://kyjksw-cyber.github.io"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Sunwoo Kim",
+      "url": "https://kyjksw-cyber.github.io"
+    },
+    "datePublished": "2026-03-16",
+    "url": "https://kyjksw-cyber.github.io/blog/404-error-1.html",
+    "keywords": ["바이브코딩", "AI", "비개발자", "Claude", "업무자동화", "직장인", "플래너"],
+    "articleSection": "404 Error 시리즈",
+    "inLanguage": "ko"
+  }
+  </script>
+
+  <!-- Pretendard 폰트 -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <style>
+    /* ── 리셋 & 기본 ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:              #0d1117;
+      --bg-card:         #161b22;
+      --bg-card-hover:   #1c2128;
+      --border:          #30363d;
+      --border-light:    #21262d;
+      --text:            #e6edf3;
+      --text-muted:      #7d8590;
+      --text-dim:        #484f58;
+      --accent:          #58a6ff;
+      --accent-muted:    #1f6feb;
+      --green:           #3fb950;
+      --purple:          #bc8cff;
+      --orange:          #f0883e;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── 네비게이션 ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 17, 23, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    nav .nav-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+
+    .nav-logo {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      text-decoration: none;
+    }
+    .nav-logo:hover { text-decoration: none; color: var(--accent); }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: color 0.15s;
+    }
+    .nav-back:hover { color: var(--text); text-decoration: none; }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      align-items: center;
+    }
+    .nav-links a {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── 레이아웃: 본문 + 사이드바 ── */
+    .page-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 48px;
+      align-items: start;
+    }
+
+    /* ── 아티클 컨테이너 ── */
+    .article-wrap {
+      min-width: 0; /* grid overflow 방지 */
+    }
+
+    /* ── 글 헤더 ── */
+    .post-header {
+      padding: 64px 0 48px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .post-series-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      background: rgba(88, 166, 255, 0.08);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      border-radius: 20px;
+      padding: 3px 10px;
+      margin-bottom: 20px;
+    }
+
+    .post-title {
+      font-size: clamp(26px, 5vw, 40px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .post-subtitle {
+      font-size: clamp(15px, 2.5vw, 19px);
+      font-weight: 400;
+      color: var(--text-muted);
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .post-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .post-meta-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--text-dim);
+    }
+
+    /* ── 시리즈 안내 박스 ── */
+    .series-box {
+      margin: 40px 0;
+      background: rgba(88, 166, 255, 0.05);
+      border: 1px solid rgba(88, 166, 255, 0.18);
+      border-left: 3px solid var(--accent-muted);
+      border-radius: 8px;
+      padding: 16px 20px;
+    }
+
+    .series-box-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .series-box p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .series-list {
+      list-style: none;
+      margin-top: 8px;
+    }
+
+    .series-list li {
+      font-size: 13px;
+      color: var(--text-muted);
+      padding: 2px 0;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .series-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-dim);
+    }
+
+    .series-list li.current {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .series-list li.current::before {
+      background: var(--accent);
+    }
+
+    /* ── 본문 타이포그래피 ── */
+    .post-body {
+      padding: 48px 0;
+    }
+
+    .post-body h2 {
+      font-size: clamp(18px, 3vw, 22px);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin: 52px 0 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-light);
+      scroll-margin-top: 80px;
+    }
+
+    .post-body h2:first-child {
+      margin-top: 0;
+    }
+
+    .post-body h3 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      color: var(--text);
+      margin: 36px 0 12px;
+      scroll-margin-top: 80px;
+    }
+
+    .post-body p {
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: #cdd9e5;
+      margin-bottom: 20px;
+    }
+
+    .post-body strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .post-body em {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* 인용구 */
+    .post-body blockquote {
+      margin: 28px 0;
+      padding: 16px 20px;
+      border-left: 3px solid var(--accent-muted);
+      background: rgba(31, 111, 235, 0.06);
+      border-radius: 0 6px 6px 0;
+    }
+
+    .post-body blockquote p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.75;
+      margin: 0;
+      font-style: italic;
+    }
+
+    /* 테이블 */
+    .post-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0;
+      font-size: 14px;
+    }
+
+    .post-body table th {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 10px 14px;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+
+    .post-body table td {
+      padding: 10px 14px;
+      border: 1px solid var(--border-light);
+      color: #cdd9e5;
+      vertical-align: top;
+      line-height: 1.6;
+    }
+
+    .post-body table tr:nth-child(even) td {
+      background: rgba(22, 27, 34, 0.5);
+    }
+
+    /* 이미지 placeholder */
+    .img-placeholder {
+      margin: 32px 0;
+      background: var(--bg-card);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    .img-placeholder-icon {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 12px;
+      opacity: 0.3;
+    }
+
+    .img-placeholder-text {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .img-placeholder-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+
+    /* ── 사이드바 TOC ── */
+    .sidebar {
+      position: sticky;
+      top: 80px;
+      padding-top: 64px;
+    }
+
+    .toc-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .toc-list {
+      list-style: none;
+    }
+
+    .toc-list li {
+      margin-bottom: 2px;
+    }
+
+    .toc-list a {
+      display: block;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      padding: 5px 10px 5px 12px;
+      border-left: 2px solid var(--border-light);
+      border-radius: 0 4px 4px 0;
+      transition: all 0.15s;
+      line-height: 1.4;
+    }
+
+    .toc-list a:hover {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      text-decoration: none;
+      background: rgba(88, 166, 255, 0.04);
+    }
+
+    .toc-list a.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: rgba(88, 166, 255, 0.06);
+    }
+
+    .toc-list .toc-h3 a {
+      padding-left: 22px;
+      font-size: 12px;
+    }
+
+    /* ── 다음 편 카드 ── */
+    .next-post-section {
+      margin-top: 64px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .next-post-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+
+    .next-post-card {
+      display: block;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 22px;
+      transition: all 0.18s;
+      text-decoration: none;
+    }
+
+    .next-post-card:hover {
+      border-color: var(--text-dim);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+
+    .next-post-card-series {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .next-post-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+
+    .next-post-card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .next-post-arrow {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ── 데모 링크 카드 ── */
+    .demo-section {
+      margin-top: 32px;
+    }
+
+    .demo-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+
+    .demo-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .demo-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+
+    .demo-card:hover {
+      border-color: var(--text-dim);
+      background: var(--bg-card-hover);
+      text-decoration: none;
+    }
+
+    .demo-card-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .demo-card-info {
+      min-width: 0;
+    }
+
+    .demo-card-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .demo-card-url {
+      font-size: 11px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── 태그 영역 ── */
+    .post-tags {
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .post-tags-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .tag-blue   { background: rgba(88,166,255,0.1);  color: #79c0ff; }
+    .tag-green  { background: rgba(63,185,80,0.1);   color: #56d364; }
+    .tag-purple { background: rgba(188,140,255,0.1); color: #d2a8ff; }
+    .tag-orange { background: rgba(240,136,62,0.1);  color: #ffa657; }
+    .tag-gray   { background: rgba(110,118,129,0.1); color: #8b949e; }
+
+    /* ── 푸터 ── */
+    footer {
+      border-top: 1px solid var(--border-light);
+      padding: 36px 0;
+      margin-top: 80px;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-left {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .footer-left a {
+      color: var(--text-muted);
+      transition: color 0.15s;
+    }
+    .footer-left a:hover { color: var(--text); text-decoration: none; }
+
+    .footer-right {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    /* ── 아이콘 ── */
+    .icon-svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* ── 반응형 ── */
+    @media (max-width: 768px) {
+      .page-wrapper {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        display: none;
+      }
+      .demo-cards {
+        grid-template-columns: 1fr;
+      }
+      .post-title {
+        font-size: 24px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-wrapper { padding: 0 16px; }
+      .post-header { padding: 40px 0 32px; }
+      .post-body h2 { font-size: 18px; }
+      .post-body p { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── 네비게이션 ── -->
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">kyjksw<span>-cyber</span></a>
+      <ul class="nav-links">
+        <li>
+          <a class="nav-back" href="/">
+            <svg class="icon-svg" viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/></svg>
+            포트폴리오 홈
+          </a>
+        </li>
+        <li><a href="https://github.com/kyjksw-cyber" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── 페이지 레이아웃 ── -->
+  <div class="page-wrapper">
+
+    <!-- ── 본문 ── -->
+    <article class="article-wrap">
+
+      <!-- 글 헤더 -->
+      <header class="post-header">
+        <div class="post-series-badge">
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/></svg>
+          404 Error 시리즈
+        </div>
+
+        <h1 class="post-title">404 Error (1)</h1>
+        <p class="post-subtitle">코딩 한 줄 모르는 직장인이 업무 플래너를 만들었다</p>
+
+        <div class="post-meta">
+          <div class="post-meta-item">
+            <svg class="icon-svg" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+            김선우
+          </div>
+          <div class="post-meta-dot"></div>
+          <div class="post-meta-item">
+            <svg class="icon-svg" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/></svg>
+            2026.03.16
+          </div>
+          <div class="post-meta-dot"></div>
+          <div class="post-meta-item">
+            <svg class="icon-svg" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/></svg>
+            약 8분
+          </div>
+        </div>
+      </header>
+
+      <!-- 본문 -->
+      <div class="post-body">
+
+        <!-- 시리즈 안내 박스 -->
+        <div class="series-box">
+          <div class="series-box-label">이 시리즈에 대하여</div>
+          <p>AI를 "도구"가 아닌 "분신"으로 만들어가는 과정의 기록입니다.</p>
+          <ul class="series-list">
+            <li class="current">1편: 나(개인)에서의 발견 — 지금 읽는 글</li>
+            <li>2편: 내 업무에서의 발견 — CRM 대시보드 편 (작성 예정)</li>
+            <li>3편: 내 팀에서의 발견 (작성 예정)</li>
+          </ul>
+        </div>
+
+        <!-- 1. 솔직한 고백 -->
+        <h2 id="confession">먼저 솔직한 고백 하나</h2>
+
+        <p>처음 "AI 업무 자동화 해보세요"라는 미션을 받았을 때, 저는 한 30분 정도 멍하니 있었습니다.</p>
+
+        <p>자동화. 좋죠. 당연히 해야죠. 그런데 <em>뭘</em> 자동화하지?</p>
+
+        <p>엑셀 매크로? 이메일 발송? 회의록 요약? 뭔가 번듯한 걸 해야 할 것 같은데, 막상 시작점이 보이지 않았습니다. "자동화할 업무를 찾는 것도 업무네"라는 생각이 드는 순간, 이건 뭔가 접근이 잘못됐다 싶었습니다.</p>
+
+        <p>그래서 방향을 바꿨습니다.</p>
+
+        <p><strong>자동화보다 먼저 해야 할 일이 있다. AI가 나를 알게 해야 한다.</strong></p>
+
+        <p>어떤 도구든, 나를 모르는 도구는 범용 도구에 불과합니다. AI가 내 업무 패턴을 알고, 내 판단 기준을 알고, 내가 뭘 중요하게 여기는지를 아는 상태가 되어야 — 그때 자동화가 의미 있어집니다. 순서가 다른 겁니다.</p>
+
+        <p>그 과정을 세 편으로 기록합니다. 첫 번째는 가장 작은 단위, "나"에서 시작한 이야기입니다.</p>
+
+        <!-- 2. 문제 -->
+        <h2 id="problem">문제: 8개 프로젝트, 8개의 세계</h2>
+
+        <p>현재 담당 프로젝트가 8개입니다.</p>
+
+        <p>각각 다른 일정, 다른 이해관계자, 다른 우선순위. 할 일은 노션에도 있고, 이메일에도 있고, 카톡에도 있고, 가끔은 제 뇌 어딘가에만 있습니다. 아침에 "오늘 뭐부터 하지?"를 결정하는 데만 20분이 걸리던 날도 있었습니다. 그리고 퇴근할 때는 "오늘 뭘 한 거지?"를 10분 동안 복기하곤 했습니다.</p>
+
+        <p>가장 큰 문제는 <strong>미완료 항목 수동 이월</strong>이었습니다. 어제 못 한 일을 오늘 리스트에 다시 옮겨 쓰는 행위. 단순해 보이지만, 이게 매일 쌓이면 "나는 항상 밀려있다"는 감각이 됩니다.</p>
+
+        <p>무언가 바꿔야 했습니다.</p>
+
+        <!-- 3. 해결 -->
+        <h2 id="solution">해결: 말로 만든 플래너</h2>
+
+        <p>저는 코딩을 못 합니다. 정확히는, 배운 적이 없습니다.</p>
+
+        <p>그래서 Claude에게 말로 설명했습니다. "내가 원하는 플래너는 이렇게 생겼어. 8개 프로젝트를 한눈에 볼 수 있고, 오늘 할 일에 집중할 수 있고, 시간이 어디로 가는지 보이고, 내일이 되면 자동으로 정리되는." 이걸 <strong>바이브코딩</strong>이라고 부릅니다. 코드가 아니라 의도를 전달하는 방식.</p>
+
+        <p>물론 첫 결과물은 처참했습니다. 버튼을 누르면 다른 버튼이 사라지고, 시간을 드래그하면 날짜가 바뀌는, 대단히 창의적인 버그들이 가득했습니다.</p>
+
+        <p>그렇게 반복하다 보니, 지금 이런 물건이 나왔습니다.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>항목</th>
+              <th>내용</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>목적</td>
+              <td>다중 프로젝트 업무 관리 + 시간 추적 + AI 비서</td>
+            </tr>
+            <tr>
+              <td>접근 방식</td>
+              <td>바이브코딩 (Claude AI + 자연어 지시)</td>
+            </tr>
+            <tr>
+              <td>기술 스택</td>
+              <td>React, TypeScript, Supabase, Tailwind CSS</td>
+            </tr>
+            <tr>
+              <td>AI 모델</td>
+              <td>Claude (코드 생성 + 앱 내 챗봇)</td>
+            </tr>
+            <tr>
+              <td>현재 규모</td>
+              <td>컴포넌트 36개, 코드 11,000줄+, DB 테이블 10개</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="img-placeholder">
+          <div class="img-placeholder-label">Screenshot</div>
+          <svg class="img-placeholder-icon" viewBox="0 0 16 16" fill="#484f58" aria-hidden="true"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/></svg>
+          <div class="img-placeholder-text">데일리 플래너 전체 화면</div>
+        </div>
+
+        <p>이제부터가 본론입니다. 기능을 소개하는 게 아니라, 왜 이렇게 만들었는지를 얘기하려 합니다.</p>
+
+        <!-- 4. 기능이 아닌 의도 -->
+        <h2 id="intent">기능이 아니라 의도를 설계한다</h2>
+
+        <h3 id="widget">사주풀이 + 날씨 위젯 — "하루를 여는 리추얼"</h3>
+
+        <p>플래너를 열면 가장 먼저 보이는 게 오늘의 운세와 날씨입니다.</p>
+
+        <p>사주팔자 기반 전체운/업무운/대인운, 럭키컬러와 럭키넘버. 서울 실시간 날씨와 주간 날씨 팝업. 업무 도구에 이게 왜 있냐고요?</p>
+
+        <div class="img-placeholder">
+          <div class="img-placeholder-label">Screenshot</div>
+          <svg class="img-placeholder-icon" viewBox="0 0 16 16" fill="#484f58" aria-hidden="true"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/></svg>
+          <div class="img-placeholder-text">사주 + 날씨 위젯</div>
+        </div>
+
+        <p>처음엔 저도 "좀 유치한 거 아닌가" 싶었습니다. 그런데 생각해보면, 좋은 업무 도구의 첫 번째 조건은 <strong>"쓰고 싶게 만드는 것"</strong>입니다. 아침에 플래너를 열게 만들어야 플래너가 의미 있습니다.</p>
+
+        <p>날씨와 운세는 정보가 아니라 <strong>하루의 톤을 세팅하는 장치</strong>입니다. "오늘 대인운이 좋네, 어려운 미팅을 오늘 잡아볼까"라거나, "비 오는 날이니까 외부 일정보다 내부 정리에 집중하자"처럼. 업무 도구이기 전에, <strong>내 하루를 여는 공간</strong>이 되게 만들고 싶었습니다.</p>
+
+        <h3 id="views">4가지 뷰 — "시야의 줌인/줌아웃"</h3>
+
+        <p><strong>오늘 뷰</strong>: 대시보드 + 오늘 할 일만 집중<br>
+        <strong>전체 뷰(프로젝트)</strong>: 8개 프로젝트 매이슨리 그리드<br>
+        <strong>주간 뷰</strong>: 월~금 5컬럼 + 시간 할당 차트<br>
+        <strong>누적 뷰(히스토리)</strong>: 월별 네비게이션 + 성과 조회</p>
+
+        <div class="img-placeholder">
+          <div class="img-placeholder-label">Screenshot</div>
+          <svg class="img-placeholder-icon" viewBox="0 0 16 16" fill="#484f58" aria-hidden="true"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/></svg>
+          <div class="img-placeholder-text">4가지 뷰 전환</div>
+        </div>
+
+        <p>단순히 화면을 4개로 나눈 게 아닙니다. 일을 <strong>4개의 시간 축</strong>으로 본다는 설계입니다.</p>
+
+        <p>오늘 뷰는 "지금 뭐 해야 하지"의 렌즈입니다. 전체 뷰는 "나 지금 뭘 하고 있지"의 렌즈. 주간 뷰는 "이번 주 밸런스가 맞나"를 보는 렌즈. 누적 뷰는 "나 잘하고 있나"를 확인하는 렌즈.</p>
+
+        <p>같은 할 일 데이터인데, 어떤 렌즈로 보느냐에 따라 완전히 다른 질문이 나옵니다. 이게 노션이나 일반 투두앱에는 없는 것입니다. 그 앱들은 데이터를 보여주지만, 어떤 시야로 볼지는 본인이 알아서 해야 합니다. 저는 시야 자체를 설계하고 싶었습니다.</p>
+
+        <h3 id="garden">워킹가든 — "감정으로 업무를 읽는 장치"</h3>
+
+        <div class="img-placeholder">
+          <div class="img-placeholder-label">Screenshot</div>
+          <svg class="img-placeholder-icon" viewBox="0 0 16 16" fill="#484f58" aria-hidden="true"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/></svg>
+          <div class="img-placeholder-text">워킹가든 전체</div>
+        </div>
+
+        <p>이게 제가 가장 애착을 갖는 기능입니다. 그리고 처음 보는 사람들이 가장 의아해하는 기능이기도 합니다.</p>
+
+        <p>8개 프로젝트가 각각 밭입니다. 할 일을 완료할수록 그 밭의 식물이 자랍니다. 씨앗에서 새싹, 묘목, 꽃, 나무까지. 농사꾼 캐릭터가 밭 사이를 걸어다니고, 낮에는 햇살 파티클이 내려앉고, 밤에는 분위기가 달라집니다. 민들레 홀씨가 날리기도 합니다. 그리고 플래너를 3시간 열지 않으면 늑대가 나타나 농사꾼의 턴을 빼앗습니다.</p>
+
+        <p>업무 도구에 늑대가 등장하는 건 저도 처음 만들어봤습니다.</p>
+
+        <p>그런데 이 기능의 진짜 의도는 <strong>"업무 도구를 열고 싶게 만드는 것"</strong>입니다. 할 일을 강제하는 게 아니라, 내 식물이 잘 자라고 있는지, 늑대가 오지는 않았는지 궁금해서 자연스럽게 열게 되는 것.</p>
+
+        <p>그리고 더 중요한 건, <strong>식물이 프로젝트별로 따로 자란다는 점</strong>입니다. 어떤 밭이 씨앗 상태에 멈춰있다면, 그 프로젝트를 방치하고 있다는 신호입니다. 숫자나 퍼센트가 아니라, 시들어가는 식물이라는 직관적인 이미지로. 감정이 데이터보다 빠르게 상태를 전달합니다. 저는 그 점을 노린 것입니다.</p>
+
+        <h3 id="timeline">타임라인 + GCal 동기화 — "보이지 않던 시간을 보이게"</h3>
+
+        <div class="img-placeholder">
+          <div class="img-placeholder-label">Screenshot</div>
+          <svg class="img-placeholder-icon" viewBox="0 0 16 16" fill="#484f58" aria-hidden="true"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/></svg>
+          <div class="img-placeholder-text">타임라인 + 구글 캘린더 오버레이</div>
+        </div>
+
+        <p>08:30부터 21:00까지의 타임라인에 할 일을 드래그앤드롭으로 배치할 수 있습니다. 현재 시간을 나타내는 빨간 선이 실시간으로 움직이고, 구글 캘린더 이벤트가 자동으로 오버레이됩니다.</p>
+
+        <p>이 기능의 핵심은 GCal 동기화입니다.</p>
+
+        <p>회의가 타임라인에 이미 올라와 있으면, 오늘 실제로 쓸 수 있는 시간이 한눈에 보입니다. "오늘 할 일 7개인데" 하다가 회의를 열어보니 3시간이 이미 차있는 경우, 대부분은 그걸 감으로 어림잡습니다. 저는 그 감을 없애고 싶었습니다.</p>
+
+        <p><strong>"감으로 쓰는 시간"을 "보이는 시간"으로 바꾸는 것.</strong> 그게 이 기능의 전부입니다. 이게 되면, 오전에 할 일의 우선순위를 정하는 방식이 바뀝니다. 남은 시간이 보이니까.</p>
+
+        <h3 id="carry-over">자동 이월 — "체크 초기화의 철학"</h3>
+
+        <p>전날 미완료 항목은 다음날 자동으로 이월됩니다. 완료된 항목은 사라집니다.</p>
+
+        <p>기능 자체는 단순합니다. 그런데 설계할 때 가장 오래 고민한 부분이 하나 있습니다. <strong>이월 시 체크를 초기화하는 것.</strong></p>
+
+        <p>어제 진행중이었던 일, 딜레이됐던 일을 그대로 가져오면 어떻게 될까요. "이거 어제도 못 했는데..."라는 감각이 따라옵니다. 그 감각이 아침의 무게가 됩니다.</p>
+
+        <p>매일 새로 시작하는 느낌을 주려고, 전날의 상태값을 의도적으로 지웁니다. 이월되는 항목은 모두 공란 상태로 초기화됩니다. 같은 일이지만, 오늘 다시 내가 선택한 일이 되는 것입니다. 그 차이가 생각보다 큽니다.</p>
+
+        <!-- 5. 결론 -->
+        <h2 id="reflection">사실 플래너 얘기가 아닙니다</h2>
+
+        <p>지금까지 플래너 기능 설명을 했지만, 제가 말하고 싶은 건 따로 있습니다.</p>
+
+        <p>이걸 만드는 과정에서, AI에게 "내가 어떤 사람인지"를 가르치고 있었습니다. 나는 8개 프로젝트를 돌리고, 아침에 하루를 어떻게 설계하는지, 무엇을 보면 일을 시작하고 싶어지는지, 시간을 어떻게 감각하는지.</p>
+
+        <p>Claude는 그걸 메모리로 쌓습니다. 그리고 이제 "오늘 할 일 정리해줘"라고 하면, 8개 프로젝트의 progress 파일을 읽고, 전날 완료 여부를 확인하고, 캘린더 일정을 보고, 오늘 할 일 테이블을 직접 써줍니다. 제가 설명하지 않아도.</p>
+
+        <p>이게 자동화입니다. 기능을 자동화한 게 아니라, <strong>나를 아는 AI</strong>를 만든 것입니다.</p>
+
+        <p>저는 이걸 "선우AI"라고 부릅니다. 아직 1편입니다.</p>
+
+        <blockquote>
+          <p>읽어주셔서 감사합니다. 궁금한 점이나 비슷한 고민이 있으신 분들은 편하게 말씀 걸어주세요. 같이 만들어가는 과정이 훨씬 재밌습니다.</p>
+          <p style="margin-top: 10px; font-style: normal; font-size: 12px; color: var(--text-dim);">2026.03.16 &nbsp;·&nbsp; 일룸 영업효율개선팀 김선우</p>
+        </blockquote>
+
+      </div><!-- /post-body -->
+
+      <!-- 다음 편 예고 -->
+      <section class="next-post-section">
+        <div class="next-post-label">다음 편</div>
+        <a class="next-post-card" href="#">
+          <div class="next-post-card-series">404 Error 시리즈 · 2편</div>
+          <div class="next-post-card-title">CRM 대시보드 편 — 내 업무를 AI에게 이해시키는 법</div>
+          <div class="next-post-card-desc">650개 거래선 데이터, 프로모션 이력, 혜택 최적화 로직. 영업 판단의 패턴을 어떻게 AI와 함께 구조화했는지.</div>
+          <div class="next-post-arrow">
+            작성 예정
+            <svg class="icon-svg" viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/></svg>
+          </div>
+        </a>
+      </section>
+
+      <!-- 데모 링크 카드 -->
+      <section class="demo-section" style="margin-top: 28px;">
+        <div class="demo-section-label">관련 링크</div>
+        <div class="demo-cards">
+          <a class="demo-card" href="https://daily-planner-product.netlify.app/product.html" target="_blank" rel="noopener">
+            <div class="demo-card-icon" style="background: rgba(88,166,255,0.1);">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="#58a6ff" aria-hidden="true"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+            </div>
+            <div class="demo-card-info">
+              <div class="demo-card-name">플래너 소개서 보기</div>
+              <div class="demo-card-url">daily-planner-product.netlify.app</div>
+            </div>
+          </a>
+          <a class="demo-card" href="https://github.com/kyjksw-cyber/ai-daily-planner" target="_blank" rel="noopener">
+            <div class="demo-card-icon" style="background: rgba(110,118,129,0.1);">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="#8b949e" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            </div>
+            <div class="demo-card-info">
+              <div class="demo-card-name">GitHub 레포</div>
+              <div class="demo-card-url">kyjksw-cyber/ai-daily-planner</div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- 태그 -->
+      <div class="post-tags">
+        <div class="post-tags-label">Tags</div>
+        <div class="tag-list">
+          <span class="tag tag-purple">바이브코딩</span>
+          <span class="tag tag-blue">Claude AI</span>
+          <span class="tag tag-gray">비개발자</span>
+          <span class="tag tag-orange">업무자동화</span>
+          <span class="tag tag-gray">직장인</span>
+          <span class="tag tag-green">플래너</span>
+          <span class="tag tag-blue">React</span>
+          <span class="tag tag-green">Supabase</span>
+        </div>
+      </div>
+
+    </article>
+
+    <!-- ── 사이드바 TOC ── -->
+    <aside class="sidebar">
+      <div class="toc-label">목차</div>
+      <ul class="toc-list" id="toc">
+        <li><a href="#confession">솔직한 고백 하나</a></li>
+        <li><a href="#problem">문제: 8개 프로젝트</a></li>
+        <li><a href="#solution">해결: 말로 만든 플래너</a></li>
+        <li><a href="#intent">의도를 설계한다</a></li>
+        <li class="toc-h3"><a href="#widget">사주풀이 + 날씨 위젯</a></li>
+        <li class="toc-h3"><a href="#views">4가지 뷰</a></li>
+        <li class="toc-h3"><a href="#garden">워킹가든</a></li>
+        <li class="toc-h3"><a href="#timeline">타임라인 + GCal</a></li>
+        <li class="toc-h3"><a href="#carry-over">자동 이월</a></li>
+        <li><a href="#reflection">사실 플래너 얘기가 아닙니다</a></li>
+      </ul>
+    </aside>
+
+  </div><!-- /page-wrapper -->
+
+  <!-- ── 푸터 ── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-left">
+        <a href="/">kyjksw-cyber.github.io</a>
+        <span style="margin: 0 8px; color: var(--text-dim);">/</span>
+        <span>Sunwoo Kim</span>
+      </div>
+      <div class="footer-right">Built with Claude Code</div>
+    </div>
+  </footer>
+
+  <!-- TOC 활성화 스크립트 -->
+  <script>
+    // 스크롤 위치에 따라 TOC 항목 활성화
+    const headings = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+    const tocLinks = document.querySelectorAll('#toc a');
+
+    function updateTOC() {
+      let current = '';
+      const scrollY = window.scrollY + 100; // 네비 높이 오프셋
+
+      headings.forEach(heading => {
+        if (heading.offsetTop <= scrollY) {
+          current = heading.getAttribute('id');
+        }
+      });
+
+      tocLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', updateTOC, { passive: true });
+    updateTOC(); // 초기 실행
+  </script>
+
+</body>
+</html>
