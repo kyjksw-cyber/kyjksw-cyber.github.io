@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM AI 솔루션 — 보내고 끝이었던 CRM, 이제 끝까지 추적합니다</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg-cream: #FAFAF8;
+  --bg-dark: #0f0f13;
+  --bg-mid: #16161d;
+  --bg-gray: #f5f5f7;
+  --amber: #F59E0B;
+  --amber-light: #FCD34D;
+  --indigo: #6366F1;
+  --violet: #8B5CF6;
+  --emerald: #10B981;
+  --rose: #F43F5E;
+  --cyan: #06B6D4;
+  --slate: #94A3B8;
+  --purple: #a78bfa;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --smooth: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+html { scroll-snap-type: y mandatory; scroll-behavior: smooth; overflow-y: scroll; }
+body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-dark); }
+
+/* ===== PROGRESS BAR ===== */
+#progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  background: linear-gradient(90deg, var(--amber), var(--amber-light), var(--emerald));
+  z-index: 9999; transition: width 0.1s;
+}
+
+/* ===== DOT NAV ===== */
+#dot-nav {
+  position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+  z-index: 9998; display: flex; flex-direction: column; gap: 8px;
+}
+.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #374151; cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+.dot.active { background: var(--amber); transform: scale(1.4); }
+.dot:hover { background: var(--amber); transform: scale(1.3); }
+
+/* ===== SECTIONS ===== */
+section {
+  scroll-snap-align: start;
+  min-height: 100vh; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+
+/* ===== ANIMATION BASE ===== */
+.anim { opacity: 0; transform: translateY(30px); transition: opacity 0.7s var(--smooth), transform 0.7s var(--smooth); }
+.anim.visible { opacity: 1; transform: translateY(0); }
+.anim-d1 { transition-delay: 0.1s; }
+.anim-d2 { transition-delay: 0.2s; }
+.anim-d3 { transition-delay: 0.3s; }
+.anim-d4 { transition-delay: 0.4s; }
+.anim-d5 { transition-delay: 0.5s; }
+
+/* ===== S00 CONCEPT ===== */
+#s00 { background: var(--bg-dark); }
+.concept-glow-1 {
+  position:absolute; width:500px; height:500px; border-radius:50%;
+  background:radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%);
+  top:-120px; left:-80px; animation: conceptFloat1 16s ease-in-out infinite;
+}
+.concept-glow-2 {
+  position:absolute; width:400px; height:400px; border-radius:50%;
+  background:radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%);
+  bottom:-100px; right:-60px; animation: conceptFloat2 20s ease-in-out infinite;
+}
+@keyframes conceptFloat1 {
+  0%,100% { transform:translate(0,0) scale(1); }
+  50% { transform:translate(80px,60px) scale(1.15); }
+}
+@keyframes conceptFloat2 {
+  0%,100% { transform:translate(0,0) scale(1); }
+  50% { transform:translate(-60px,-50px) scale(1.1); }
+}
+.concept-eyebrow {
+  font-size:12px; letter-spacing:4px; font-weight:600;
+  color:var(--amber); margin-bottom:40px;
+  padding:8px 20px; border:1px solid rgba(245,158,11,0.3);
+  border-radius:50px;
+}
+.concept-title {
+  font-size:56px; font-weight:800; line-height:1.2;
+  color:#f1f1f3; margin-bottom:28px;
+}
+.concept-accent {
+  background: linear-gradient(135deg, var(--amber) 0%, var(--amber-light) 50%, var(--emerald) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.concept-sub {
+  font-size:18px; color:#9ca3af; line-height:1.7; max-width:600px;
+}
+.concept-divider {
+  margin-top:48px; display:flex; gap:8px; align-items:center;
+}
+.concept-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:rgba(245,158,11,0.4);
+  animation: conceptDotPulse 2s ease-in-out infinite;
+}
+.concept-dot:nth-child(2) { animation-delay:0.3s; background:rgba(16,185,129,0.5); }
+.concept-dot:nth-child(3) { animation-delay:0.6s; background:rgba(99,102,241,0.4); }
+@keyframes conceptDotPulse {
+  0%,100% { opacity:0.4; transform:scale(1); }
+  50% { opacity:1; transform:scale(1.5); }
+}
+
+/* ===== S01 HERO ===== */
+#s01 { background: var(--bg-cream); }
+.hero-glow {
+  position: absolute; top: -100px; right: -100px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%);
+  animation: glowMove 20s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes glowMove {
+  0%   { transform: translate(0,0) scale(1); }
+  33%  { transform: translate(-60px, 40px) scale(1.1); }
+  66%  { transform: translate(40px, -30px) scale(0.95); }
+  100% { transform: translate(0,0) scale(1); }
+}
+.hero-inner { text-align: center; position: relative; z-index: 1; max-width: 800px; padding: 0 24px; }
+.hero-badge {
+  display: inline-block; border: 1.5px solid var(--amber);
+  color: var(--amber); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.15em; padding: 6px 16px; border-radius: 999px;
+  margin-bottom: 32px;
+}
+.hero-title-sub {
+  font-size: 52px; font-weight: 800; color: var(--amber);
+  line-height: 1.15; margin-bottom: 8px;
+}
+.hero-title-main {
+  font-size: 52px; font-weight: 800; color: #1A1A1A;
+  line-height: 1.15; margin-bottom: 24px;
+}
+.hero-desc {
+  font-size: 18px; color: #6b7280; margin-bottom: 40px; line-height: 1.7;
+}
+.hero-stats {
+  display: flex; justify-content: center; gap: 48px; margin-bottom: 40px;
+}
+.hero-stat-num {
+  font-size: 48px; font-weight: 800; color: #1A1A1A;
+}
+.hero-stat-label {
+  font-size: 14px; color: #9ca3af; margin-top: 4px;
+}
+.hero-cta {
+  display: inline-block; border: 2px solid var(--amber);
+  color: var(--amber); font-size: 15px; font-weight: 700;
+  padding: 14px 36px; border-radius: 999px; cursor: pointer;
+  text-decoration: none; transition: all 0.3s var(--smooth);
+}
+.hero-cta:hover { background: var(--amber); color: white; transform: translateY(-2px); }
+
+/* ===== SECTION LAYOUT ===== */
+.sec-wrap { width: 100%; max-width: 1200px; padding: 80px 48px; display: flex; align-items: center; gap: 60px; }
+.sec-wrap.reverse { flex-direction: row-reverse; }
+.sec-left { flex: 0 0 42%; }
+.sec-right { flex: 1; }
+.sec-label { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; margin-bottom: 16px; text-transform: uppercase; }
+.sec-label.amber { color: var(--amber); }
+.sec-label.emerald { color: var(--emerald); }
+.sec-label.indigo { color: var(--indigo); }
+.sec-label.rose { color: var(--rose); }
+.sec-label.cyan { color: var(--cyan); }
+.sec-title { font-size: 40px; font-weight: 800; line-height: 1.25; margin-bottom: 16px; }
+.sec-title.white { color: white; }
+.sec-title.dark { color: #1A1A1A; }
+.sec-desc { font-size: 16px; line-height: 1.7; }
+.sec-desc.light { color: #9ca3af; }
+.sec-desc.dark-text { color: #6b7280; }
+
+/* ===== S02 PAIN POINTS ===== */
+#s02 { background: var(--bg-mid); }
+.pain-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;
+  max-width: 600px; width: 100%;
+}
+.pain-card {
+  background: rgba(255,255,255,0.04); border-radius: 16px;
+  padding: 28px 24px; border: 1px solid rgba(255,255,255,0.06);
+  transition: border-color 0.3s;
+}
+.pain-card:hover { border-color: rgba(243,63,94,0.3); }
+.pain-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 16px;
+  background: rgba(243,63,94,0.1);
+}
+.pain-card-title { font-size: 15px; font-weight: 700; color: #e2e8f0; margin-bottom: 8px; }
+.pain-card-desc { font-size: 13px; color: #9ca3af; line-height: 1.6; }
+
+/* ===== S03 SOLUTION ===== */
+#s03 { background: var(--bg-cream); }
+.arch-flow {
+  display: flex; align-items: center; gap: 0;
+  max-width: 100%; width: 100%;
+}
+.arch-node {
+  background: white; border-radius: 16px; padding: 24px 16px;
+  border: 2px solid #e5e7eb; text-align: center;
+  flex: 1; min-width: 0;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.arch-node:hover { border-color: var(--amber); transform: translateY(-2px); }
+.arch-node-icon { font-size: 32px; margin-bottom: 10px; }
+.arch-node-label { font-size: 14px; font-weight: 700; color: #1A1A1A; }
+.arch-node-sub { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+.arch-arrow {
+  font-size: 22px; color: var(--amber); font-weight: 700; flex-shrink: 0;
+  padding: 0 10px; opacity: 0; transition: opacity 0.5s;
+}
+.arch-arrow.visible { opacity: 1; }
+.arch-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 999px;
+  background: rgba(245,158,11,0.1); color: var(--amber);
+  font-size: 12px; font-weight: 600; margin-top: 24px;
+}
+
+/* ===== S04 DASHBOARD ===== */
+#s04 { background: var(--bg-dark); }
+.dash-mockup {
+  background: #1a1a24; border-radius: 16px; padding: 24px;
+  max-width: 540px; width: 100%;
+  box-shadow: 0 0 60px rgba(245,158,11,0.15);
+}
+.dash-kpi-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  margin-bottom: 20px;
+}
+.dash-kpi {
+  background: rgba(255,255,255,0.05); border-radius: 10px;
+  padding: 14px 12px; text-align: center;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.dash-kpi-label { font-size: 10px; color: #6b7280; font-weight: 500; margin-bottom: 6px; }
+.dash-kpi-value { font-size: 22px; font-weight: 800; color: white; }
+.dash-kpi-unit { font-size: 11px; color: #6b7280; }
+.dash-kpi-sub { font-size: 10px; color: #4b5563; margin-top: 2px; }
+.dash-chart {
+  background: rgba(255,255,255,0.03); border-radius: 12px;
+  padding: 16px; margin-bottom: 16px; position: relative;
+  height: 140px; overflow: hidden;
+}
+.dash-chart-bars {
+  display: flex; align-items: flex-end; gap: 6px;
+  height: 100px; padding-top: 8px;
+}
+.dash-bar {
+  flex: 1; border-radius: 4px 4px 0 0;
+  transition: height 1s var(--smooth);
+  height: 0;
+}
+.dash-bar.amber { background: linear-gradient(180deg, var(--amber), rgba(245,158,11,0.4)); }
+.dash-bar.emerald { background: linear-gradient(180deg, var(--emerald), rgba(16,185,129,0.4)); }
+.dash-chart-line {
+  position: absolute; bottom: 24px; left: 16px; right: 16px;
+  height: 2px; background: var(--rose);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 1.5s var(--smooth) 0.8s;
+}
+.dash-table {
+  background: rgba(255,255,255,0.03); border-radius: 10px;
+  overflow: hidden;
+}
+.dash-table-header {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 10px 14px; background: rgba(255,255,255,0.04);
+  font-size: 10px; color: #6b7280; font-weight: 600;
+}
+.dash-table-row {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 10px 14px; font-size: 12px; color: #e2e8f0;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  opacity: 0; transform: translateX(-10px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.dash-table-row.visible { opacity: 1; transform: translateX(0); }
+.dash-table-row .ctr-good { color: var(--emerald); font-weight: 600; }
+.dash-table-row .ctr-warn { color: var(--amber); font-weight: 600; }
+
+/* ===== S07 ORDER TRACKING ===== */
+#s07 { background: var(--bg-cream); }
+.pipeline-flow {
+  display: flex; flex-direction: column; gap: 0;
+  max-width: 480px; width: 100%;
+}
+.pipeline-step {
+  display: flex; align-items: center; gap: 16px;
+  padding: 20px; background: white; border-radius: 16px;
+  border: 2px solid #e5e7eb;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.5s var(--smooth), transform 0.5s var(--smooth);
+}
+.pipeline-step.visible { opacity: 1; transform: translateY(0); }
+.pipeline-step-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.pipeline-step-icon.amber { background: rgba(245,158,11,0.1); }
+.pipeline-step-icon.indigo { background: rgba(99,102,241,0.1); }
+.pipeline-step-icon.emerald { background: rgba(16,185,129,0.1); }
+.pipeline-step-title { font-size: 15px; font-weight: 700; color: #1A1A1A; }
+.pipeline-step-desc { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+.pipeline-arrow {
+  text-align: center; font-size: 18px; color: var(--amber);
+  padding: 6px 0; opacity: 0; transition: opacity 0.4s;
+}
+.pipeline-arrow.visible { opacity: 1; }
+.pipeline-result {
+  background: linear-gradient(135deg, rgba(245,158,11,0.05), rgba(16,185,129,0.05));
+  border: 2px solid var(--amber); border-radius: 16px;
+  padding: 20px; text-align: center;
+  opacity: 0; transform: scale(0.95);
+  transition: opacity 0.5s, transform 0.5s var(--spring);
+}
+.pipeline-result.visible { opacity: 1; transform: scale(1); }
+.pipeline-result-title { font-size: 15px; font-weight: 700; color: var(--amber); }
+.pipeline-result-sub { font-size: 13px; color: #6b7280; margin-top: 4px; }
+
+/* ===== S08 AI ANALYSIS ===== */
+#s08 { background: var(--bg-mid); }
+.ai-cards {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  max-width: 520px; width: 100%;
+}
+.ai-card {
+  background: rgba(255,255,255,0.04); border-radius: 16px;
+  padding: 24px; border: 1px solid rgba(255,255,255,0.06);
+  transition: border-color 0.3s, transform 0.3s;
+}
+.ai-card:hover { border-color: rgba(99,102,241,0.4); transform: translateY(-2px); }
+.ai-card-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 14px;
+}
+.ai-card-icon.indigo { background: rgba(99,102,241,0.15); }
+.ai-card-icon.emerald { background: rgba(16,185,129,0.15); }
+.ai-card-icon.amber { background: rgba(245,158,11,0.15); }
+.ai-card-icon.rose { background: rgba(243,63,94,0.15); }
+.ai-card-icon.violet { background: rgba(139,92,246,0.15); }
+.ai-card-title { font-size: 14px; font-weight: 700; color: #e2e8f0; margin-bottom: 6px; }
+.ai-card-desc { font-size: 12px; color: #9ca3af; line-height: 1.5; }
+.ai-diag-mockup {
+  margin-top: 14px; padding: 10px 12px;
+  background: rgba(0,0,0,0.3); border-radius: 8px;
+}
+.diag-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 0; font-size: 11px; color: #9ca3af;
+}
+.diag-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.diag-dot.green { background: var(--emerald); }
+.diag-dot.yellow { background: var(--amber); }
+.diag-dot.red { background: var(--rose); }
+.diag-bar {
+  flex: 1; height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.1); overflow: hidden;
+}
+.diag-bar-fill {
+  height: 100%; border-radius: 2px;
+  width: 0; transition: width 1s var(--smooth);
+}
+.diag-bar-fill.green { background: var(--emerald); }
+.diag-bar-fill.yellow { background: var(--amber); }
+.diag-bar-fill.red { background: var(--rose); }
+
+/* ===== S09 PURCHASE PATTERNS ===== */
+#s09 { background: var(--bg-cream); }
+.purchase-mockup {
+  max-width: 520px; width: 100%;
+}
+.purchase-metric-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
+  margin-bottom: 20px;
+}
+.purchase-metric {
+  background: white; border-radius: 14px; padding: 18px 14px;
+  text-align: center; border: 1px solid #e5e7eb;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.purchase-metric:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.purchase-metric-icon { font-size: 24px; margin-bottom: 8px; }
+.purchase-metric-value { font-size: 24px; font-weight: 800; color: #1A1A1A; }
+.purchase-metric-label { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+.purchase-chart-mock {
+  background: white; border-radius: 16px; padding: 20px;
+  border: 1px solid #e5e7eb;
+}
+.purchase-chart-title { font-size: 13px; font-weight: 700; color: #1A1A1A; margin-bottom: 16px; }
+.funnel-bars { display: flex; flex-direction: column; gap: 8px; }
+.funnel-row { display: flex; align-items: center; gap: 12px; }
+.funnel-label { font-size: 12px; color: #6b7280; width: 80px; text-align: right; flex-shrink: 0; }
+.funnel-bar {
+  height: 28px; border-radius: 6px;
+  display: flex; align-items: center; padding-left: 10px;
+  font-size: 11px; font-weight: 600; color: white;
+  transition: width 1.2s var(--smooth);
+  width: 0;
+}
+.funnel-bar.amber { background: linear-gradient(90deg, var(--amber), var(--amber-light)); }
+.funnel-bar.emerald { background: linear-gradient(90deg, var(--emerald), #34D399); }
+.funnel-bar.indigo { background: linear-gradient(90deg, var(--indigo), var(--violet)); }
+
+/* ===== S10 REPORT ===== */
+#s10 { background: var(--bg-dark); }
+.report-mockup {
+  max-width: 480px; width: 100%;
+  background: #1a1a24; border-radius: 16px;
+  padding: 24px; box-shadow: 0 0 40px rgba(6,182,212,0.1);
+}
+.report-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 20px; padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.report-header-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: rgba(6,182,212,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.report-header-text { font-size: 14px; font-weight: 700; color: white; }
+.report-header-sub { font-size: 11px; color: #6b7280; }
+.report-line {
+  padding: 6px 0; font-size: 13px; color: #d1d5db; line-height: 1.7;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.report-line.visible { opacity: 1; transform: translateY(0); }
+.report-line .highlight { color: var(--amber); font-weight: 600; }
+.report-line .green { color: var(--emerald); font-weight: 600; }
+
+/* ===== S12 IMPACT ===== */
+#s12 {
+  background: linear-gradient(135deg, #1a1207 0%, #0f0f13 50%, #071210 100%);
+}
+.impact-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+  max-width: 900px; width: 100%; padding: 0 48px;
+}
+.impact-col-title {
+  font-size: 14px; font-weight: 700; letter-spacing: 0.1em;
+  margin-bottom: 28px; padding-bottom: 12px;
+  border-bottom: 2px solid;
+}
+.impact-col-title.before { color: var(--rose); border-color: var(--rose); }
+.impact-col-title.after { color: var(--emerald); border-color: var(--emerald); }
+.impact-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.impact-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+.impact-text { font-size: 15px; color: #d1d5db; line-height: 1.6; }
+.impact-text strong { color: white; }
+.impact-center-stat {
+  grid-column: 1 / -1; text-align: center;
+  padding-top: 32px;
+}
+.impact-big-num {
+  font-size: 72px; font-weight: 800;
+  background: linear-gradient(135deg, var(--amber), var(--emerald));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.impact-big-label { font-size: 18px; color: #9ca3af; margin-top: 8px; }
+
+/* ===== S13 TECH + CTA ===== */
+#s13 { background: var(--bg-dark); }
+.tech-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;
+  max-width: 700px; width: 100%; margin-bottom: 48px;
+}
+.tech-card {
+  background: rgba(255,255,255,0.04); border-radius: 14px;
+  padding: 20px 14px; text-align: center;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: border-color 0.3s;
+}
+.tech-card:hover { border-color: rgba(245,158,11,0.3); }
+.tech-card-icon { font-size: 28px; margin-bottom: 8px; }
+.tech-card-name { font-size: 12px; font-weight: 700; color: #e2e8f0; }
+.tech-card-ver { font-size: 10px; color: #6b7280; margin-top: 2px; }
+.cta-section {
+  text-align: center; max-width: 600px; padding: 0 24px;
+}
+.cta-title {
+  font-size: 36px; font-weight: 800; color: white; margin-bottom: 16px;
+}
+.cta-sub { font-size: 16px; color: #9ca3af; margin-bottom: 32px; line-height: 1.7; }
+.cta-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 32px; border-radius: 999px;
+  background: var(--amber); color: #1A1A1A;
+  font-size: 15px; font-weight: 700;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: default;
+}
+.cta-badge:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(245,158,11,0.3); }
+.cta-author {
+  margin-top: 40px; font-size: 14px; color: #6b7280;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .sec-wrap { flex-direction: column; padding: 60px 32px; gap: 40px; }
+  .sec-wrap.reverse { flex-direction: column; }
+  .sec-left { flex: none; width: 100%; }
+  .sec-right { flex: none; width: 100%; }
+  .impact-grid { grid-template-columns: 1fr; gap: 24px; }
+  .impact-center-stat { grid-column: 1; }
+  .hero-stats { gap: 32px; }
+  .create-steps { flex-wrap: wrap; gap: 12px; }
+  .create-arrow { display: none; }
+  .create-step { flex: 0 0 calc(50% - 6px); }
+  .create-center { padding: 60px 32px; }
+  .fmap-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .concept-title { font-size: 34px; }
+  .concept-sub { font-size: 15px; }
+  .hero-title-sub, .hero-title-main { font-size: 36px; }
+  .hero-stats { flex-direction: column; gap: 20px; }
+  .hero-stat-num { font-size: 36px; }
+  .sec-title { font-size: 30px; }
+  .pain-grid { grid-template-columns: 1fr; }
+  .ai-cards { grid-template-columns: 1fr; }
+  .dash-kpi-grid { grid-template-columns: 1fr 1fr; }
+  .purchase-metric-grid { grid-template-columns: 1fr; }
+  .tech-grid { grid-template-columns: repeat(2, 1fr); }
+  .impact-big-num { font-size: 48px; }
+  #dot-nav { display: none; }
+  .sec-wrap { padding: 60px 24px; }
+  .create-step { flex: 0 0 100%; }
+  .create-sub-cards { grid-template-columns: 1fr; }
+  .create-center { padding: 60px 24px; }
+  .fmap-grid { grid-template-columns: 1fr; }
+  .ga4-kpi-row { grid-template-columns: 1fr; }
+}
+
+/* ===== S05-NEW: GA4 TRAFFIC ===== */
+#s05 { background: var(--bg-dark); }
+.ga4-mockup {
+  background: #1a1a24; border-radius: 16px; padding: 24px;
+  max-width: 520px; width: 100%;
+  box-shadow: 0 0 60px rgba(6,182,212,0.12);
+}
+.ga4-kpi-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  margin-bottom: 20px;
+}
+.ga4-kpi {
+  background: rgba(6,182,212,0.06); border-radius: 10px;
+  padding: 14px 12px; text-align: center;
+  border: 1px solid rgba(6,182,212,0.12);
+}
+.ga4-kpi-label { font-size: 10px; color: #6b7280; font-weight: 500; margin-bottom: 6px; }
+.ga4-kpi-value { font-size: 22px; font-weight: 800; color: var(--cyan); }
+.ga4-kpi-unit { font-size: 11px; color: #6b7280; }
+.ga4-bar-section {
+  background: rgba(255,255,255,0.03); border-radius: 12px;
+  padding: 16px; margin-bottom: 16px;
+}
+.ga4-bar-title { font-size: 11px; color: #6b7280; margin-bottom: 12px; font-weight: 600; }
+.ga4-bar-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+}
+.ga4-bar-label { font-size: 11px; color: #9ca3af; width: 70px; text-align: right; flex-shrink: 0; }
+.ga4-bar-track {
+  flex: 1; height: 18px; background: rgba(255,255,255,0.04);
+  border-radius: 4px; overflow: hidden;
+}
+.ga4-bar-fill {
+  height: 100%; border-radius: 4px;
+  width: 0; transition: width 1s var(--smooth);
+}
+.ga4-bar-fill.cyan { background: linear-gradient(90deg, var(--cyan), #22D3EE); }
+.ga4-bar-fill.indigo { background: linear-gradient(90deg, var(--indigo), var(--violet)); }
+.ga4-bar-fill.emerald { background: linear-gradient(90deg, var(--emerald), #34D399); }
+.ga4-bar-fill.amber { background: linear-gradient(90deg, var(--amber), var(--amber-light)); }
+.ga4-bar-val { font-size: 10px; color: #9ca3af; width: 40px; }
+.ga4-trend-section {
+  background: rgba(255,255,255,0.03); border-radius: 12px;
+  padding: 16px; position: relative; height: 120px;
+}
+.ga4-trend-title { font-size: 11px; color: #6b7280; margin-bottom: 8px; font-weight: 600; }
+.ga4-trend-svg { width: 100%; height: 70px; }
+.ga4-trend-line {
+  fill: none; stroke: var(--cyan); stroke-width: 2.5;
+  stroke-dasharray: 500; stroke-dashoffset: 500;
+  transition: stroke-dashoffset 2s var(--smooth);
+}
+.ga4-trend-area {
+  fill: url(#cyanGrad); opacity: 0;
+  transition: opacity 1.5s var(--smooth) 0.5s;
+}
+
+/* ===== S06-NEW: CAMPAIGN CREATE ===== */
+#s06 { background: var(--bg-cream); }
+.create-center {
+  max-width: 1000px; width: 100%; padding: 60px 48px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.create-steps {
+  display: flex; align-items: flex-start; gap: 0;
+  width: 100%; margin-bottom: 32px;
+}
+.create-step {
+  flex: 1; text-align: center;
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s var(--smooth), transform 0.6s var(--smooth);
+}
+.create-step.visible { opacity: 1; transform: translateY(0); }
+.create-step-num {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--indigo); color: white;
+  font-size: 16px; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: 12px;
+}
+.create-step-title { font-size: 14px; font-weight: 700; color: #1A1A1A; margin-bottom: 4px; }
+.create-step-desc { font-size: 12px; color: #9ca3af; line-height: 1.5; }
+.create-step-badge {
+  display: inline-block; margin-top: 8px; padding: 3px 10px;
+  border-radius: 999px; font-size: 10px; font-weight: 600;
+  background: rgba(99,102,241,0.1); color: var(--indigo);
+}
+.create-arrow {
+  font-size: 20px; color: var(--indigo); font-weight: 700;
+  flex-shrink: 0; padding: 8px 4px; margin-top: 8px;
+  opacity: 0; transition: opacity 0.5s var(--smooth);
+}
+.create-arrow.visible { opacity: 1; }
+.create-utm-typing {
+  font-family: monospace; font-size: 11px; color: var(--indigo);
+  background: rgba(99,102,241,0.06); padding: 6px 10px;
+  border-radius: 6px; margin-top: 8px; min-height: 18px;
+  border: 1px solid rgba(99,102,241,0.15);
+}
+.create-sub-cards {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  width: 100%; max-width: 700px;
+}
+.create-sub-card {
+  background: white; border-radius: 16px; padding: 24px;
+  border: 1px solid #e5e7eb; text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.create-sub-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.create-sub-icon { font-size: 28px; margin-bottom: 10px; }
+.create-sub-title { font-size: 15px; font-weight: 700; color: #1A1A1A; margin-bottom: 4px; }
+.create-sub-desc { font-size: 12px; color: #9ca3af; }
+.create-sub-num { font-size: 24px; font-weight: 800; color: var(--indigo); margin-top: 8px; }
+
+/* ===== S11-NEW: FEATURE MAP ===== */
+#s11 { background: var(--bg-mid); }
+.fmap-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  max-width: 820px; width: 100%;
+}
+.fmap-card {
+  background: rgba(255,255,255,0.04); border-radius: 16px;
+  padding: 24px 20px; border: 1px solid rgba(255,255,255,0.06);
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.5s var(--smooth), transform 0.5s var(--smooth), border-color 0.3s;
+}
+.fmap-card.visible { opacity: 1; transform: translateY(0); }
+.fmap-card:hover { border-color: rgba(245,158,11,0.3); }
+.fmap-icon { font-size: 28px; margin-bottom: 12px; }
+.fmap-name { font-size: 15px; font-weight: 700; color: #e2e8f0; margin-bottom: 6px; }
+.fmap-desc { font-size: 12px; color: #9ca3af; line-height: 1.5; margin-bottom: 10px; }
+.fmap-tag {
+  display: inline-block; padding: 3px 10px; border-radius: 999px;
+  font-size: 10px; font-weight: 600;
+}
+.fmap-tag.ai { background: rgba(99,102,241,0.15); color: var(--indigo); }
+.fmap-tag.data { background: rgba(6,182,212,0.15); color: var(--cyan); }
+.fmap-tag.prod { background: rgba(16,185,129,0.15); color: var(--emerald); }
+.fmap-tag.ux { background: rgba(245,158,11,0.15); color: var(--amber); }
+
+/* ===== REFERENCE FOOTNOTES ===== */
+.ref-bar {
+  margin-top: 20px; padding: 14px 18px;
+  background: rgba(255,255,255,0.03); border-radius: 10px;
+  border-left: 3px solid rgba(245,158,11,0.3);
+}
+.ref-bar.light {
+  background: rgba(0,0,0,0.03); border-left-color: rgba(0,0,0,0.15);
+}
+.ref-title {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  color: #6b7280; margin-bottom: 6px; text-transform: uppercase;
+}
+.ref-item {
+  font-size: 10px; color: #9ca3af; line-height: 1.6;
+}
+.ref-item a { color: #9ca3af; text-decoration: underline; text-underline-offset: 2px; }
+.ref-item a:hover { color: var(--amber); }
+
+/* stat callout in pain cards */
+.pain-stat {
+  margin-top: 10px; padding: 8px 10px;
+  background: rgba(243,63,94,0.08); border-radius: 8px;
+  font-size: 20px; font-weight: 800; color: var(--rose);
+  text-align: center;
+}
+.pain-stat-src {
+  font-size: 9px; font-weight: 400; color: #9ca3af;
+  display: block; margin-top: 2px;
+}
+
+/* ===== COUNT-UP ===== */
+@keyframes fadeInUp {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+@keyframes ctaPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(245,158,11,0); }
+}
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div id="progress-bar"></div>
+
+<!-- DOT NAV -->
+<nav id="dot-nav" aria-label="Section Navigation"></nav>
+
+<!-- ═══════════════════════════════════════════
+     S00 — CONCEPT COPY
+═══════════════════════════════════════════ -->
+<section id="s00">
+  <div class="concept-glow-1"></div>
+  <div class="concept-glow-2"></div>
+  <div style="text-align:center; position:relative; z-index:1; padding:0 24px;">
+    <div class="concept-eyebrow anim">CRM AI SOLUTION</div>
+    <h1 class="concept-title anim anim-d1">
+      보내고 끝이었던 CRM,<br>
+      이제 <span class="concept-accent">끝까지 추적</span>합니다
+    </h1>
+    <p class="concept-sub anim anim-d2">
+      고객 추출부터 발송, 유입 분석, 수주 추적, AI 분석까지<br>
+      분절되었던 CRM 데이터를 하나로 연결하는 종합 솔루션
+    </p>
+    <div class="concept-divider anim anim-d3">
+      <span class="concept-dot"></span>
+      <span class="concept-dot"></span>
+      <span class="concept-dot"></span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     S01 — HERO + KEY METRICS
+═══════════════════════════════════════════ -->
+<section id="s01">
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-badge anim">일룸 영업효율개선팀</div>
+    <div class="hero-title-sub anim anim-d1">CRM 성과 분석</div>
+    <div class="hero-title-main anim anim-d1">AI 대시보드</div>
+    <p class="hero-desc anim anim-d2">
+      CRM 캠페인의 발송부터 실제 수주까지,<br>
+      전 과정을 데이터로 추적하고 AI가 분석하는 솔루션
+    </p>
+    <div class="hero-stats anim anim-d3">
+      <div>
+        <div class="hero-stat-num" id="stat-features">0</div>
+        <div class="hero-stat-label">분석 기능</div>
+      </div>
+      <div>
+        <div class="hero-stat-num" id="stat-components">0</div>
+        <div class="hero-stat-label">UI 컴포넌트</div>
+      </div>
+      <div>
+        <div class="hero-stat-num" id="stat-kpi">0</div>
+        <div class="hero-stat-label">KPI 지표</div>
+      </div>
+    </div>
+    <button class="hero-cta anim anim-d4" onclick="document.getElementById('s02').scrollIntoView({behavior:'smooth'})">
+      ↓ 스크롤해서 살펴보기
+    </button>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     S02 — PAIN POINTS
+═══════════════════════════════════════════ -->
+<section id="s02">
+  <div class="sec-wrap">
+    <div class="sec-left">
+      <div class="sec-label rose anim">CURRENT STATUS — 도입 현황</div>
+      <h2 class="sec-title white anim anim-d1">
+        CRM을 보내고 나면,<br>
+        그 다음은 <span style="color:var(--rose)">블랙박스</span>
+      </h2>
+      <p class="sec-desc light anim anim-d2">
+        고객에게 메시지를 발송하고 나면 CTR만 확인할 수 있었습니다.
+        실제로 구매로 이어졌는지, 어떤 캠페인이 효과적이었는지
+        알 수 있는 방법이 없었습니다.
+      </p>
+    </div>
+    <div class="sec-right">
+      <div class="pain-grid">
+        <div class="pain-card anim anim-d1">
+          <div class="pain-icon">❌</div>
+          <div class="pain-card-title">CTR만 확인 가능</div>
+          <div class="pain-card-desc">CRM 발송 후 클릭률만 확인. 실제 구매 전환은 추적 불가.</div>
+        </div>
+        <div class="pain-card anim anim-d2">
+          <div class="pain-icon">❌</div>
+          <div class="pain-card-title">발송 → 수주 연결 불가</div>
+          <div class="pain-card-desc">발송 시스템과 ERP 수주 데이터가 별개. 데이터 분절.</div>
+        </div>
+        <div class="pain-card anim anim-d3">
+          <div class="pain-icon">❌</div>
+          <div class="pain-card-title">리포트 수동 작성</div>
+          <div class="pain-card-desc">성과 보고서를 수동으로 작성. 매주 반나절 소요.</div>
+        </div>
+        <div class="pain-card anim anim-d4">
+          <div class="pain-icon">❌</div>
+          <div class="pain-card-title">개선 방향 감에 의존</div>
+          <div class="pain-card-desc">캠페인 가설을 세워도 데이터 기반 검증이 안 됨.</div>
+        </div>
+        <div class="pain-card anim anim-d5">
+          <div class="pain-icon">❌</div>
+          <div class="pain-card-title">웹 유입 효과 측정 불가</div>
+          <div class="pain-card-desc">CRM 발송 후 웹사이트 유입 효과를 추적할 수 없음.</div>
+        </div>
+        <div class="pain-card anim anim-d5">
+          <div class="pain-icon">❌</div>
+          <div class="pain-card-title">제작·발송·추적 분리</div>
+          <div class="pain-card-desc">캠페인 제작, 발송, 결과 추적이 각각 별도 도구.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     S03 — SOLUTION OVERVIEW
+═══════════════════════════════════════════ -->
+<section id="s03">
+  <div style="width:100%; max-width:1100px; padding:60px 48px; display:flex; flex-direction:column; align-items:center;">
+    <div style="text-align:center; margin-bottom:40px;">
+      <div class="sec-label amber anim" style="text-align:center; margin-bottom:16px;">AFTER — AI + SQL 전환</div>
+      <h2 class="sec-title dark anim anim-d1" style="text-align:center;">
+        발송 결과를 <span style="color:var(--amber)">역추적</span>해서<br>
+        CRM의 빈칸을 채웠습니다
+      </h2>
+      <p class="sec-desc dark-text anim anim-d2" style="text-align:center; max-width:600px; margin:0 auto;">
+        AI와 SQL 서버를 활용해 CRM 발송 고객을 ERP 수주 데이터와 연결.
+        CTR에서 멈추던 성과 측정이 실제 매출까지 이어지는 Full-Funnel 추적으로 확장되었습니다.
+      </p>
+      <div class="arch-badge anim anim-d3" style="margin-top:20px;">⚡ AI + SQL 기반 역추적 엔진</div>
+    </div>
+    <div class="arch-flow anim anim-d2" style="max-width:900px; width:100%;">
+      <div class="arch-node" id="arch-1">
+        <div class="arch-node-icon">📋</div>
+        <div class="arch-node-label">고객 추출</div>
+        <div class="arch-node-sub">ERP 필터 / 업로드</div>
+      </div>
+      <div class="arch-arrow" id="arch-a1">→</div>
+      <div class="arch-node" id="arch-2">
+        <div class="arch-node-icon">📨</div>
+        <div class="arch-node-label">캠페인 제작</div>
+        <div class="arch-node-sub">AI 문구 + UTM</div>
+      </div>
+      <div class="arch-arrow" id="arch-a2">→</div>
+      <div class="arch-node" id="arch-3">
+        <div class="arch-node-icon">🌐</div>
+        <div class="arch-node-label">GA4 유입</div>
+        <div class="arch-node-sub">웹 세션 추적</div>
+      </div>
+      <div class="arch-arrow" id="arch-a3">→</div>
+      <div class="arch-node" id="arch-4">
+        <div class="arch-node-icon">🗄️</div>
+        <div class="arch-node-label">SQL 역추적</div>
+        <div class="arch-node-sub">고객코드 → ERP</div>
+      </div>
+      <div class="arch-arrow" id="arch-a4">→</div>
+      <div class="arch-node" id="arch-5">
+        <div class="arch-node-icon">📈</div>
+        <div class="arch-node-label">성과 분석</div>
+        <div class="arch-node-sub">매출 + AI 인사이트</div>
+      </div>
+    </div>
+    <div class="ref-bar light anim anim-d4" style="margin-top:32px; max-width:700px; width:100%;">
+      <div class="ref-title">AI CRM 도입 효과</div>
+      <div class="ref-item" style="color:#374151;">AI CRM 도입 기업의 영업 목표 초과 달성 확률 <strong style="color:var(--amber);">83% 더 높음</strong> — Salesforce/Kixie 2025</div>
+      <div class="ref-item" style="color:#374151;">CRM 투자 $1당 평균 <strong style="color:var(--amber);">$3~8 회수</strong> — Nucleus Research</div>
+      <div class="ref-item" style="color:#374151;">AI 기반 영업 예측 정확도 <strong style="color:var(--amber);">40%+ 개선</strong> — Kixie 2025</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     S04 — FEATURE 1: DASHBOARD
+═══════════════════════════════════════════ -->
+<section id="s04">
+  <div class="sec-wrap">
+    <div class="sec-left">
+      <div class="sec-label amber anim">FEATURE 01</div>
+      <h2 class="sec-title white anim anim-d1">
+        실시간 성과<br>
+        <span style="color:var(--amber)">대시보드</span>
+      </h2>
+      <p class="sec-desc light anim anim-d2">
+        5개 핵심 KPI를 한눈에. 발송 횟수, CTR, CVR, 수주금액, ROI를
+        실시간으로 모니터링합니다. 날짜/태그/채널 필터로 원하는
+        데이터만 즉시 조회.
+      </p>
+      <ul style="margin-top:16px; list-style:none; display:flex; flex-direction:column; gap:8px;" class="anim anim-d3">
+        <li style="font-size:13px; color:#9ca3af;">✦ <span style="color:#e2e8f0;">5개 KPI 카드</span> — 발송/CTR/CVR/수주/ROI</li>
+        <li style="font-size:13px; color:#9ca3af;">✦ <span style="color:#e2e8f0;">추이 차트</span> — 발송량 + CTR/CVR 오버레이</li>
+        <li style="font-size:13px; color:#9ca3af;">✦ <span style="color:#e2e8f0;">캠페인 테이블</span> — 13개 컬럼, 정렬 가능</li>
+        <li style="font-size:13px; color:#9ca3af;">✦ <span style="color:#e2e8f0;">메시지 미리보기</span> — 휴대폰 목업 UI</li>
+      </ul>
+    </div>
+    <div class="sec-right">
+      <div class="dash-mockup" id="dash-mockup">
+        <!-- KPI Cards -->
+        <div class="dash-kpi-grid">
+          <div class="dash-kpi">
+            <div class="dash-kpi-label">캠페인 발송</div>
+            <div class="dash-kpi-value" id="d-send">0</div>
+            <div class="dash-kpi-sub">건</div>
+          </div>
+          <div class="dash-kpi">
+            <div class="dash-kpi-label">평균 CTR</div>
+            <div class="dash-kpi-value" id="d-ctr">0%</div>
+          </div>
+          <div class="dash-kpi">
+            <div class="dash-kpi-label">전환율 CVR</div>
+            <div class="dash-kpi-value" id="d-cvr">0%</div>
+          </div>
+        </div>
+        <div class="dash-kpi-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="dash-kpi">
+            <div class="dash-kpi-label">수주금액 (M+1)</div>
+            <div class="dash-kpi-value" id="d-rev">0</div>
+          </div>
+          <div class="dash-kpi">
+            <div class="dash-kpi-label">ROI</div>
+            <div class="dash-kpi-value" id="d-roi">0%</div>
+          </div>
+        </div>
+        <!-- Chart -->
+        <div class="dash-chart">
+          <div class="dash-chart-bars" id="dash-bars">
+            <div class="dash-bar amber" id="db1"></div>
+            <div class="dash-bar emerald" id="db2"></div>
+            <div class="dash-bar amber" id="db3"></div>
+            <div class="dash-bar emerald" id="db4"></div>
+            <div class="dash-bar amber" id="db5"></div>
+            <div class="dash-bar emerald" id="db6"></div>
+            <div class="dash-bar amber" id="db7"></div>
+            <div class="dash-bar emerald" id="db8"></div>
+          </div>
+          <div class="dash-chart-line" id="dash-line"></div>
+        </div>
+        <!-- Table -->
+        <div class="dash-table">
+          <div class="dash-table-header">
+            <span>캠페인명</span><span>발송</span><span>CTR</span><span>수주</span>
+          </div>
+          <div class="dash-table-row" id="dt1">
+            <span>신학기 매트리스</span><span>12,340</span><span class="ctr-good">18.2%</span><span>42.5M</span>
+          </div>
+          <div class="dash-table-row" id="dt2">
+            <span>봄맞이 리빙</span><span>8,720</span><span class="ctr-good">15.7%</span><span>28.3M</span>
+          </div>
+          <div class="dash-table-row" id="dt3">
+            <span>VIP 재구매</span><span>3,150</span><span class="ctr-warn">9.4%</span><span>18.1M</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     S05 — FEATURE 2: GA4 TRAFFIC ANALYSIS (NEW)
+═══════════════════════════════════════════ -->
+<section id="s05">
+  <div class="sec-wrap reverse">
+    <div class="sec-left">
+      <div class="sec-label cyan anim">FEATURE 02 · GA4 INTEGRATION</div>
+      <h2 class="sec-title white anim anim-d1">
+        CRM이 보낸 고객,<br>
+        <span style="color:var(--cyan)">웹에서 뭘 했는지</span> 추적
+      </h2>
+      <p class="sec-desc light anim anim-d2">
+        Google Analytics 4 Data API 연동으로 CRM 캠페인별
+        세션·사용자·페이지뷰를 실시간 추적합니다.
+        발송 → 클릭 → 웹 유입까지, 빈칸 없는 Full-Funnel.
+      </p>
+      <ul style="margin-top:16px; list-style:none; display:flex; flex-direction:column; gap:8px;" class="anim anim-d3">
+        <li style="font-size:13px; color:#9ca3af;">✦ <span style="color:#e2e8f0;">채널별 유입 요약</span> — LMS / 카카오 / Direct 비교</li>
+        <li style="font-size:13px; color:#9ca3af;">✦ <span style="color:#e2e8f0;">일별 CRM 유입 추이</span> — 7일 트렌드 라인</li>
+        <li style="font-size:13px; color:#9ca3af;">✦ <span style="color:#e2e8f0;">서비스 계정 인증</span> — 별도 로그인 없이 자동 연동</li>
+      </ul>
+    </div>
+    <div class="sec-right">
+      <div class="ga4-mockup" id="ga4-mockup">
+        <div class="ga4-kpi-row">
+          <div class="ga4-kpi">
+            <div class="ga4-kpi-label">세션</div>
+            <div class="ga4-kpi-value" id="ga4-sessions">0</div>
+          </div>
+          <div class="ga4-kpi">
+            <div class="ga4-kpi-label">사용자</div>
+            <div class="ga4-kpi-value" id="ga4-users">0</div>
+          </div>
+          <div class="ga4-kpi">
+            <div class="ga4-kpi-label">페이지뷰</div>
+            <div class="ga4-kpi-value" id="ga4-pv">0</div>
+          </div>
+        </div>
+        <div class="ga4-bar-section">
+          <div class="ga4-bar-title">채널별 CRM 유입</div>
+          <div class="ga4-bar-row">
+            <div class="ga4-bar-label">CRM-LMS</div>
+            <div class="ga4-bar-track"><div class="ga4-bar-fill cyan" id="ga4-b1"></div></div>
+            <div class="ga4-bar-val" id="ga4-v1">0</div>
+          </div>
+          <div class="ga4-bar-row">
+            <div class="ga4-bar-label">CRM-카카오</div>
+            <div class="ga4-bar-track"><div class="ga4-bar-fill indigo" id="ga4-b2"></div></div>
+            <div class="ga4-bar-val" id="ga4-v2">0</div>
+          </div>
+          <div class="ga4-bar-row">
+            <div class="ga4-bar-label">Direct</div>
+            <div class="ga4-bar-track"><div class="ga4-bar-fill emerald" id="ga4-b3"></div></div>
+            <div class="ga4-bar-val" id="ga4-v3">0</div>
+          </div>
+          <div class="ga4-bar-row">
+            <div class="ga4-bar-label">Organic</div>
+            <div class="ga4-bar-track"><div class="ga4-bar-fill amber" id="ga4-b4"></div></div>
+            <div class="ga4-bar-val" id="ga4-v4">0</div>
+          </div>
+        </div>
+        <div class="ga4-trend-section">
+          <div class="ga4-trend-title">7일 CRM 유입 추이</div>
+          <svg class="ga4-trend-svg" viewBox="0 0 440 70" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="cyanGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--cyan)" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="var(--cyan)" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path class="ga4-trend-area" id="ga4-area" d="M0,55 L63,40 L126,48 L189,25 L252,30 L315,15 L378,20 L440,10 L440,70 L0,70 Z"/>
+            <path class="ga4-trend-line" id="ga4-line" d="M0,55 L63,40 L126,48 L189,25 L252,30 L315,15 L378,20 L440,10"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     S06 — FEATURE 3: CAMPAIGN CREATE (NEW)
+═══════════════════════════════════════════ -->
+<section id="s06">
+  <div class="create-center">
+    <div class="sec-label indigo anim" style="text-align:center; margin-bottom:16px;">FEATURE 03 · ALL-IN-ONE WORKFLOW</div>
+    <h2 style="font-size:40px; font-weight:800; color:#1A1A1A; text-align:center; margin-bottom:12px; line-height:1.25;" class="anim anim-d1">
+      캠페인을 만들고, 보내고, 추적까지<br>
+      <span style="color:var(--indigo)">올인원 워크플로우</span>
+    </h2>
+    <p style="font-size:16px; color:#6b7280; text-align:center; margin-bottom:40px; line-height:1.7;" class="anim anim-d2">
+      4단계 스텝으로 캠페인 초안 작성부터 발송 준비까지. AI 문구 추천, UTM 자동 생성, 비용 계산까지 한 화면에서.
+    </p>
+    <div class="create-steps">
+      <div class="create-step" id="cs-1">
+        <div class="create-step-num">1</div>
+        <div class="create-step-title">기본 정보</div>
+        <div class="create-step-desc">캠페인명, 채널 선택<br>(LMS / 알림톡)</div>
+      </div>
+      <div class="create-arrow" id="cs-a1">→</div>
+      <div class="create-step" id="cs-2">
+        <div class="create-step-num">2</div>
+        <div class="create-step-title">메시지 작성</div>
+        <div class="create-step-desc">AI 문구 추천 +<br>핸드폰 실시간 프리뷰</div>
+        <div class="create-step-badge">🤖 AI 추천</div>
+      </div>
+      <div class="create-arrow" id="cs-a2">→</div>
+      <div class="create-step" id="cs-3">
+        <div class="create-step-num">3</div>
+        <div class="create-step-title">UTM 생성</div>
+        <div class="create-step-desc">랜딩 URL + UTM 파라미터<br>자동 생성</div>
+        <div class="create-utm-typing" id="utm-typing"></div>
+      </div>
+      <div class="create-arrow" id="cs-a3">→</div>
+      <div class="create-step" id="cs-4">
+        <div class="create-step-num">4</div>
+        <div class="create-step-title">발송 계획</div>
+        <div class="create-step-desc">대상 선택, 예정일,<br>예상 비용 자동 계산</div>
+        <div class="create-step-badge">💰 비용 산출</div>
+      </div>
+    </div>
+    <div class="create-sub-cards anim anim-d3">
+      <div class="create-sub-card">
+        <div class="create-sub-icon">🔗</div>
+        <div class="create-sub-title">URL 자동 매핑</div>
+        <div class="create-sub-desc">일룸 카테고리·이벤트·시리즈 URL을 AI가 자동 매칭</div>
+        <div class="create-sub-num">30+</div>
+      </div>
+      <div class="create-sub-card">
+        <div class="create-sub-icon">📅</div>
+        <div class="create-sub-title">캠페인 캘린더</div>
+        <div class="create-sub-desc">월별 캘린더 뷰로 캠페인 배치 시각화, 태그 색상 구분</div>
+        <div class="create-sub-num" style="color:var(--amber);">📆</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     S07 — FEATURE 4: ORDER TRACKING + CUSTOMER FILTER
+═══════════════════════════════════════════ -->
+<section id="s07">
+  <div class="sec-wrap reverse">
+    <div class="sec-left">
+      <div class="sec-label emerald anim">FEATURE 04</div>
+      <h2 class="sec-title dark anim anim-d1">
+        엑셀에서 ERP까지<br>
+        <span style="color:var(--emerald)">수주 자동 추적</span>
+      </h2>
+      <p class="sec-desc dark-text anim anim-d2">
+        CRM 발송 고객의 엑셀 파일을 업로드하면, SQL로 ERP 수주 데이터를
+        자동 조회합니다. M+1, M+3 기간별 수주금액과 구매건수가
+        대시보드 KPI에 자동 반영됩니다.
+      </p>
+      <ul style="margin-top:16px; list-style:none; display:flex; flex-direction:column; gap:8px;" class="anim anim-d3">
+        <li style="font-size:13px; color:#6b7280;">✦ <span style="color:#1A1A1A; font-weight:600;">고객 필터 추출</span> — ERP 필터 또는 수동 업로드 2가지 경로</li>
+        <li style="font-size:13px; color:#6b7280;">✦ <span style="color:#1A1A1A; font-weight:600;">배치 쿼리</span> — 1,000건 단위 병렬 처리</li>
+        <li style="font-size:13px; color:#6b7280;">✦ <span style="color:#1A1A1A; font-weight:600;">CVR 자동 계산</span> — 구매고객수 / 발송인원</li>
+        <li style="font-size:13px; color:#6b7280;">✦ <span style="color:#1A1A1A; font-weight:600;">캐시 시스템</span> — SQLite로 결과 저장, 재조회 가능</li>
+      </ul>
+    </div>
+    <div class="sec-right">
+      <div class="pipeline-flow" id="pipeline">
+        <div class="pipeline-step" id="pip-0">
+          <div class="pipeline-step-icon" style="background:rgba(139,92,246,0.1);">🎯</div>
+          <div>
+            <div class="pipeline-step-title">고객 필터 추출</div>
+            <div class="pipeline-step-desc">사업소·시도·시리즈·마케팅동의 필터 또는 수동 업로드</div>
+          </div>
+        </div>
+        <div class="pipeline-arrow" id="pip-a0">↓</div>
+        <div class="pipeline-step" id="pip-1">
+          <div class="pipeline-step-icon amber">📊</div>
+          <div>
+            <div class="pipeline-step-title">Excel 업로드</div>
+            <div class="pipeline-step-desc">고객코드 자동 추출</div>
+          </div>
+        </div>
+        <div class="pipeline-arrow" id="pip-a1">↓</div>
+        <div class="pipeline-step" id="pip-2">
+          <div class="pipeline-step-icon indigo">🗄️</div>
+          <div>
+            <div class="pipeline-step-title">SQLite 저장</div>
+            <div class="pipeline-step-desc">캠페인별 고객코드 매핑</div>
+          </div>
+        </div>
+        <div class="pipeline-arrow" id="pip-a2">↓</div>
+        <div class="pipeline-step" id="pip-3">
+          <div class="pipeline-step-icon emerald">🔍</div>
+          <div>
+            <div class="pipeline-step-title">MSSQL ERP 조회</div>
+            <div class="pipeline-step-desc">수주번호 → 수주금액 배치 쿼리</div>
+          </div>
+        </div>
+        <div class="pipeline-arrow" id="pip-a3">↓</div>
+        <div class="pipeline-result" id="pip-result">
+          <div class="pipeline-result-title">✨ 대시보드 자동 반영</div>
+          <div class="pipeline-result-sub">수주금액 · CVR · 구매건수 즉시 업데이트</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     S08 — FEATURE 5: AI ANALYSIS
+═══════════════════════════════════════════ -->
+<section id="s08">
+  <div class="sec-wrap">
+    <div class="sec-left">
+      <div class="sec-label indigo anim">FEATURE 05</div>
+      <h2 class="sec-title white anim anim-d1">
+        AI가 직접<br>
+        <span style="color:var(--indigo)">진단하고 제안</span>합니다
+      </h2>
+      <p class="sec-desc light anim anim-d2">
+        Gemini 2.5 Flash 기반 AI 엔진이 캠페인 성과를 자동 진단하고,
+        이상 징후를 탐지하며, 다음 캠페인 전략까지 추천합니다.
+        데이터를 보는 것에서 데이터가 말하는 시대로.
+      </p>
+    </div>
+    <div class="sec-right">
+      <div class="ai-cards">
+        <div class="ai-card anim anim-d1">
+          <div class="ai-card-icon indigo">🔬</div>
+          <div class="ai-card-title">캠페인 자동 진단</div>
+          <div class="ai-card-desc">태그/볼륨별 벤치마크 대비 성과를 자동 평가</div>
+          <div class="ai-diag-mockup" id="diag-mockup">
+            <div class="diag-row">
+              <span class="diag-dot green"></span>
+              <span style="flex:1">신학기 매트리스</span>
+              <div class="diag-bar"><div class="diag-bar-fill green" id="diag-1"></div></div>
+              <span style="color:var(--emerald); font-weight:600;">우수</span>
+            </div>
+            <div class="diag-row">
+              <span class="diag-dot yellow"></span>
+              <span style="flex:1">봄맞이 리빙</span>
+              <div class="diag-bar"><div class="diag-bar-fill yellow" id="diag-2"></div></div>
+              <span style="color:var(--amber); font-weight:600;">정상</span>
+            </div>
+            <div class="diag-row">
+              <span class="diag-dot red"></span>
+              <span style="flex:1">할인 알림</span>
+              <div class="diag-bar"><div class="diag-bar-fill red" id="diag-3"></div></div>
+              <span style="color:var(--rose); font-weight:600;">개선</span>
+            </div>
+          </div>
+        </div>
+        <div class="ai-card anim anim-d2">
+          <div class="ai-card-icon rose">🚨</div>
+          <div class="ai-card-title">이상 탐지 알림</div>
+          <div class="ai-card-desc">mean ± 1.5&sigma; 통계 기반 이상치 자동 감지 및 즉시 알림</div>
+        </div>
+        <div class="ai-card anim anim-d3">
+          <div class="ai-card-icon amber">⚖️</div>
+          <div class="ai-card-title">A/B 테스트 시뮬레이터</div>
+          <div class="ai-card-desc">메시지 후보를 5축(긴급성/혜택/길이/개인화/CTA) 점수로 비교</div>
+        </div>
+        <div class="ai-card anim anim-d4">
+          <div class="ai-card-icon emerald">🗺️</div>
+          <div class="ai-card-title">캠페인 플래닝</div>
+          <div class="ai-card-desc">목적·상품·예산 입력 시 과거 벤치마크 기반 전략 자동 추천</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     S09 — FEATURE 6: PURCHASE PATTERNS
+═══════════════════════════════════════════ -->
+<section id="s09">
+  <div class="sec-wrap reverse">
+    <div class="sec-left">
+      <div class="sec-label violet anim" style="color:var(--violet);">FEATURE 06</div>
+      <h2 class="sec-title dark anim anim-d1">
+        고객이 <span style="color:var(--violet)">무엇을, 왜</span><br>
+        사는지까지 추적
+      </h2>
+      <p class="sec-desc dark-text anim anim-d2">
+        CRM 발송 후 구매 전환까지의 여정을 7가지 분석으로 해부합니다.
+        전환 속도, 상품 구성, 시리즈 전환, 교차판매 패턴까지
+        고객 행동의 깊은 층위를 파악합니다.
+      </p>
+    </div>
+    <div class="sec-right">
+      <div class="purchase-mockup">
+        <div class="purchase-metric-grid">
+          <div class="purchase-metric anim anim-d1">
+            <div class="purchase-metric-icon">⏱️</div>
+            <div class="purchase-metric-value" id="pm-speed">0</div>
+            <div class="purchase-metric-label">평균 전환일</div>
+          </div>
+          <div class="purchase-metric anim anim-d2">
+            <div class="purchase-metric-icon">🛒</div>
+            <div class="purchase-metric-value" id="pm-cross">0%</div>
+            <div class="purchase-metric-label">교차판매율</div>
+          </div>
+          <div class="purchase-metric anim anim-d3">
+            <div class="purchase-metric-icon">🔄</div>
+            <div class="purchase-metric-value" id="pm-repeat">0%</div>
+            <div class="purchase-metric-label">재구매율</div>
+          </div>
+        </div>
+        <div class="purchase-chart-mock anim anim-d3">
+          <div class="purchase-chart-title">구매 전환 퍼널</div>
+          <div class="funnel-bars" id="funnel">
+            <div class="funnel-row">
+              <div class="funnel-label">발송</div>
+              <div class="funnel-bar amber" id="fn-1" style="width:0">100%</div>
+            </div>
+            <div class="funnel-row">
+              <div class="funnel-label">열람</div>
+              <div class="funnel-bar emerald" id="fn-2" style="width:0">14.2%</div>
+            </div>
+            <div class="funnel-row">
+              <div class="funnel-label">구매</div>
+              <div class="funnel-bar indigo" id="fn-3" style="width:0">2.8%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     S10 — FEATURE 7: REPORT AUTOMATION
+═══════════════════════════════════════════ -->
+<section id="s10">
+  <div class="sec-wrap">
+    <div class="sec-left">
+      <div class="sec-label cyan anim">FEATURE 07</div>
+      <h2 class="sec-title white anim anim-d1">
+        리포트도<br>
+        <span style="color:var(--cyan)">AI가 씁니다</span>
+      </h2>
+      <p class="sec-desc light anim anim-d2">
+        기간을 선택하면 Gemini AI가 KPI를 집계하고
+        내러티브 형식의 주간/월간 리포트를 자동 생성합니다.
+        복사해서 바로 공유 가능한 보고서 품질.
+      </p>
+      <ul style="margin-top:16px; list-style:none; display:flex; flex-direction:column; gap:8px;" class="anim anim-d3">
+        <li style="font-size:13px; color:#9ca3af;">✦ <span style="color:#e2e8f0;">주간/월간</span> 기간 선택</li>
+        <li style="font-size:13px; color:#9ca3af;">✦ <span style="color:#e2e8f0;">산문체 내러티브</span> — 데이터 카드 아님</li>
+        <li style="font-size:13px; color:#9ca3af;">✦ <span style="color:#e2e8f0;">마크다운/HTML</span> 출력 지원</li>
+      </ul>
+    </div>
+    <div class="sec-right">
+      <div class="report-mockup" id="report-mockup">
+        <div class="report-header">
+          <div class="report-header-icon">📝</div>
+          <div>
+            <div class="report-header-text">주간 CRM 성과 리포트</div>
+            <div class="report-header-sub">2026.03.10 ~ 03.16 | AI 자동 생성</div>
+          </div>
+        </div>
+        <div class="report-line" id="rp-1">
+          이번 주 총 <span class="highlight">12건</span>의 캠페인이 발송되었으며,
+          총 발송 인원은 <span class="highlight">45,230명</span>입니다.
+        </div>
+        <div class="report-line" id="rp-2">
+          평균 CTR은 <span class="green">14.2%</span>로 전주 대비 <span class="green">+2.1%p</span> 상승했습니다.
+          특히 "신학기 매트리스" 캠페인이 <span class="highlight">18.2%</span>로 최고 성과를 기록했습니다.
+        </div>
+        <div class="report-line" id="rp-3">
+          M+1 수주금액은 <span class="highlight">1.2억원</span>으로 집계되며,
+          ROI 기준 상위 캠페인은 VIP 타겟 유형에 집중되어 있습니다.
+        </div>
+        <div class="report-line" id="rp-4">
+          <span style="color:var(--cyan); font-weight:600;">📌 제안:</span>
+          다음 주에는 전환율이 높았던 "재구매 유도" 태그의 캠페인 비중을 확대하고,
+          발송 시간대를 오전 10시~11시로 집중하는 것을 권장합니다.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     S11 — FEATURE MAP
+═══════════════════════════════════════════ -->
+<section id="s11">
+  <div style="text-align:center; padding:60px 24px; width:100%; max-width:1000px;">
+    <div class="sec-label amber anim" style="text-align:center; margin-bottom:16px;">ALL FEATURES</div>
+    <h2 style="font-size:40px; font-weight:800; color:white; margin-bottom:12px;" class="anim anim-d1">
+      7개 핵심 기능, 하나의 플랫폼
+    </h2>
+    <p style="font-size:16px; color:#9ca3af; margin-bottom:40px;" class="anim anim-d2">
+      분석부터 제작, 추적, 자동화까지 — CRM의 전체 생명주기를 커버합니다
+    </p>
+    <div class="fmap-grid" style="margin:0 auto;">
+      <div class="fmap-card" id="fm-1">
+        <div class="fmap-icon">📊</div>
+        <div class="fmap-name">KPI 대시보드</div>
+        <div class="fmap-desc">5개 핵심 지표 실시간 모니터링, 필터, 랭킹</div>
+        <span class="fmap-tag ux">UX</span>
+      </div>
+      <div class="fmap-card" id="fm-2">
+        <div class="fmap-icon">🌐</div>
+        <div class="fmap-name">GA4 유입 분석</div>
+        <div class="fmap-desc">CRM 캠페인별 웹 세션·사용자·페이지뷰 추적</div>
+        <span class="fmap-tag data">DATA</span>
+      </div>
+      <div class="fmap-card" id="fm-3">
+        <div class="fmap-icon">✏️</div>
+        <div class="fmap-name">캠페인 제작</div>
+        <div class="fmap-desc">4단계 워크플로우, AI 문구, UTM 자동 생성</div>
+        <span class="fmap-tag prod">PROD</span>
+      </div>
+      <div class="fmap-card" id="fm-4">
+        <div class="fmap-icon">🗄️</div>
+        <div class="fmap-name">수주 추적</div>
+        <div class="fmap-desc">Excel→ERP 자동 배치 쿼리, M+1/M+3 수주 연결</div>
+        <span class="fmap-tag data">DATA</span>
+      </div>
+      <div class="fmap-card" id="fm-5">
+        <div class="fmap-icon">🤖</div>
+        <div class="fmap-name">AI 분석</div>
+        <div class="fmap-desc">자동 진단, 이상 탐지, A/B 시뮬레이터, 전략 추천</div>
+        <span class="fmap-tag ai">AI</span>
+      </div>
+      <div class="fmap-card" id="fm-6">
+        <div class="fmap-icon">🛒</div>
+        <div class="fmap-name">구매패턴</div>
+        <div class="fmap-desc">시리즈 전환, 전환 속도, 교차판매, 재구매 분석</div>
+        <span class="fmap-tag data">DATA</span>
+      </div>
+      <div class="fmap-card" id="fm-7">
+        <div class="fmap-icon">📝</div>
+        <div class="fmap-name">리포트 자동화</div>
+        <div class="fmap-desc">AI가 주간/월간 성과 리포트를 내러티브로 자동 생성</div>
+        <span class="fmap-tag ai">AI</span>
+      </div>
+      <div class="fmap-card" id="fm-8">
+        <div class="fmap-icon">🔗</div>
+        <div class="fmap-name">URL + 캘린더</div>
+        <div class="fmap-desc">일룸 URL 30+ 자동 매핑, 월별 캠페인 캘린더</div>
+        <span class="fmap-tag prod">PROD</span>
+      </div>
+      <div class="fmap-card" id="fm-9" style="border-style:dashed; border-color:rgba(245,158,11,0.3);">
+        <div class="fmap-icon">🚀</div>
+        <div class="fmap-name" style="color:var(--amber);">더 진화 중</div>
+        <div class="fmap-desc">고객 세그먼트, 자동 발송, 예측 모델 — 계속 확장됩니다</div>
+        <span class="fmap-tag ux">NEXT</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     S12 — IMPACT: BEFORE vs AFTER
+═══════════════════════════════════════════ -->
+<section id="s12">
+  <div style="width:100%; max-width:1000px; padding:60px 48px;">
+    <h2 style="text-align:center; font-size:40px; font-weight:800; color:white; margin-bottom:12px;" class="anim">
+      무엇이 달라졌는가
+    </h2>
+    <p style="text-align:center; font-size:16px; color:#9ca3af; margin-bottom:48px;" class="anim anim-d1">
+      AI CRM 솔루션 도입 전후 비교
+    </p>
+    <div class="impact-grid">
+      <div class="anim anim-d1">
+        <div class="impact-col-title before">BEFORE</div>
+        <div class="impact-item">
+          <div class="impact-icon">❌</div>
+          <div class="impact-text">CRM 발송 후 <strong>CTR만 확인</strong> 가능</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-icon">❌</div>
+          <div class="impact-text">발송 → 수주 <strong>연결 불가</strong>. 데이터 분절.</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-icon">❌</div>
+          <div class="impact-text">성과 보고서 <strong>수동 작성</strong>. 매주 반나절.</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-icon">❌</div>
+          <div class="impact-text">캠페인 개선 방향 <strong>감에 의존</strong></div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-icon">❌</div>
+          <div class="impact-text">CRM 발송 후 <strong>웹 유입 효과 측정 불가</strong></div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-icon">❌</div>
+          <div class="impact-text">캠페인 제작·발송·추적이 <strong>각각 별도 도구</strong></div>
+        </div>
+      </div>
+      <div class="anim anim-d2">
+        <div class="impact-col-title after">AFTER</div>
+        <div class="impact-item">
+          <div class="impact-icon">✅</div>
+          <div class="impact-text">CTR → CVR → <strong>실제 수주금액</strong>까지 Full-Funnel 추적</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-icon">✅</div>
+          <div class="impact-text">ERP 수주 데이터 <strong>자동 연결</strong>. 배치 1,000건 처리.</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-icon">✅</div>
+          <div class="impact-text">AI가 리포트 <strong>자동 생성</strong>. 클릭 한 번.</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-icon">✅</div>
+          <div class="impact-text">벤치마크 기반 <strong>AI 진단 + 전략 추천</strong></div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-icon">✅</div>
+          <div class="impact-text">GA4 연동으로 CRM → <strong>웹 유입까지 Full-Funnel</strong> 추적</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-icon">✅</div>
+          <div class="impact-text">캠페인 제작부터 발송까지 <strong>올인원 워크플로우</strong></div>
+        </div>
+      </div>
+      <div class="impact-center-stat anim anim-d3">
+        <div class="impact-big-num" id="impact-num">0→∞</div>
+        <div class="impact-big-label">CTR에서 멈추던 CRM이, 매출까지 이어지는 Full-Cycle로</div>
+        <div class="ref-bar" style="max-width:600px; margin:24px auto 0; text-align:left;">
+          <div class="ref-title">참고 통계</div>
+          <div class="ref-item">65%의 기업이 이미 생성형 AI 탑재 CRM을 도입 — crm.org 2026</div>
+          <div class="ref-item">AI CRM 도입 시 리드 전환율 최대 20% 향상 — Kixie 2025</div>
+          <div class="ref-item">CRM 자동화 도입 시 영업 생산성 34-40% 부스트 — crm.org 2026</div>
+          <div class="ref-item">CRM 도입 후 고객 유지율 최대 27% 향상 — Kixie 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     S13 — TECH STACK + CTA
+═══════════════════════════════════════════ -->
+<section id="s13">
+  <div style="text-align:center; padding:60px 24px;">
+    <div class="sec-label amber anim" style="text-align:center; margin-bottom:24px;">TECH STACK</div>
+    <div class="tech-grid anim anim-d1" style="margin:0 auto 48px;">
+      <div class="tech-card">
+        <div class="tech-card-icon">⚛️</div>
+        <div class="tech-card-name">React</div>
+        <div class="tech-card-ver">v19</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon">📘</div>
+        <div class="tech-card-name">TypeScript</div>
+        <div class="tech-card-ver">v5.8</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon">⚡</div>
+        <div class="tech-card-name">Vite</div>
+        <div class="tech-card-ver">v6</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon">🎨</div>
+        <div class="tech-card-name">Tailwind CSS</div>
+        <div class="tech-card-ver">v4</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon">🤖</div>
+        <div class="tech-card-name">Gemini AI</div>
+        <div class="tech-card-ver">2.5 Flash</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon">📊</div>
+        <div class="tech-card-name">Recharts</div>
+        <div class="tech-card-ver">v3.7</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon">🗄️</div>
+        <div class="tech-card-name">SQLite</div>
+        <div class="tech-card-ver">better-sqlite3</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon">🏢</div>
+        <div class="tech-card-name">MSSQL</div>
+        <div class="tech-card-ver">ERP 연동</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon">🌐</div>
+        <div class="tech-card-name">GA4 API</div>
+        <div class="tech-card-ver">Data v1</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-icon">📑</div>
+        <div class="tech-card-name">Sheets API</div>
+        <div class="tech-card-ver">내보내기</div>
+      </div>
+    </div>
+
+    <div class="cta-section anim anim-d2" style="margin:0 auto;">
+      <h2 class="cta-title">CRM의 빈칸을 채우다</h2>
+      <p class="cta-sub">
+        데이터가 분절되어 보이지 않던 성과를,<br>
+        AI와 SQL로 연결해 눈에 보이게 만들었습니다.
+      </p>
+      <div class="cta-badge" style="animation: ctaPulse 2s ease-in-out infinite;">
+        ⚡ Built with AI — 영업효율개선팀
+      </div>
+      <div class="cta-author">
+        영업효율개선팀 김선우 &nbsp;|&nbsp; 2026.03
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════ -->
+<script>
+/* ===== DOT NAV 생성 ===== */
+const sections = document.querySelectorAll('section');
+const dotNav = document.getElementById('dot-nav');
+sections.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => sections[i].scrollIntoView({ behavior: 'smooth' });
+  dotNav.appendChild(d);
+});
+const dots = dotNav.querySelectorAll('.dot');
+
+/* ===== PROGRESS BAR ===== */
+const progressBar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  progressBar.style.width = pct + '%';
+});
+
+/* ===== IntersectionObserver — 도트 + 트리거 ===== */
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const idx = [...sections].indexOf(entry.target);
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      const id = entry.target.id;
+      if (id === 's01') startHeroCount();
+      if (id === 's03') startArchFlow();
+      if (id === 's04') startDashDemo();
+      if (id === 's05') startGa4Demo();
+      if (id === 's06') startCampaignCreateDemo();
+      if (id === 's07') startPipelineDemo();
+      if (id === 's08') startDiagDemo();
+      if (id === 's09') startPurchaseDemo();
+      if (id === 's10') startReportDemo();
+      if (id === 's11') startFeatureMap();
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(s => sectionObserver.observe(s));
+
+/* .anim → .visible */
+const animObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.2 });
+document.querySelectorAll('.anim').forEach(el => animObserver.observe(el));
+
+/* ===== UTILS ===== */
+function countTo(id, target, suffix, duration) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = Date.now();
+  const tick = () => {
+    const p = Math.min((Date.now() - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const val = Math.round(eased * target);
+    el.textContent = val + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  };
+  tick();
+}
+
+function animateText(id, frames, interval) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  frames.forEach((text, i) => {
+    setTimeout(() => { el.textContent = text; }, i * interval);
+  });
+}
+
+/* ===== S01 HERO COUNT ===== */
+let heroStarted = false;
+function startHeroCount() {
+  if (heroStarted) return;
+  heroStarted = true;
+  countTo('stat-features', 32, '+', 1500);
+  countTo('stat-components', 65, '+', 1500);
+  countTo('stat-kpi', 8, '', 1000);
+}
+
+/* ===== S03 ARCH FLOW (5 nodes) ===== */
+let archStarted = false;
+function startArchFlow() {
+  if (archStarted) return;
+  archStarted = true;
+  setTimeout(() => { document.getElementById('arch-a1')?.classList.add('visible'); }, 500);
+  setTimeout(() => { document.getElementById('arch-a2')?.classList.add('visible'); }, 1000);
+  setTimeout(() => { document.getElementById('arch-a3')?.classList.add('visible'); }, 1500);
+  setTimeout(() => { document.getElementById('arch-a4')?.classList.add('visible'); }, 2000);
+}
+
+/* ===== S04 DASHBOARD DEMO ===== */
+let dashStarted = false;
+function startDashDemo() {
+  if (dashStarted) return;
+  dashStarted = true;
+  animateText('d-send', ['0', '24', '68', '127', '156'], 200);
+  animateText('d-ctr', ['0%', '5.2%', '9.8%', '12.4%', '14.2%'], 200);
+  animateText('d-cvr', ['0%', '0.8%', '1.5%', '2.1%', '2.8%'], 200);
+  animateText('d-rev', ['0', '28M', '65M', '98M', '1.2억'], 250);
+  animateText('d-roi', ['0%', '120%', '280%', '420%', '580%'], 250);
+  const heights = [45, 72, 38, 85, 55, 90, 62, 78];
+  heights.forEach((h, i) => {
+    setTimeout(() => {
+      const bar = document.getElementById('db' + (i + 1));
+      if (bar) bar.style.height = h + 'px';
+    }, 400 + i * 100);
+  });
+  setTimeout(() => {
+    const line = document.getElementById('dash-line');
+    if (line) line.style.transform = 'scaleX(1)';
+  }, 800);
+  ['dt1', 'dt2', 'dt3'].forEach((id, i) => {
+    setTimeout(() => {
+      const row = document.getElementById(id);
+      if (row) row.classList.add('visible');
+    }, 1200 + i * 300);
+  });
+}
+
+/* ===== S05 GA4 DEMO ===== */
+let ga4Started = false;
+function startGa4Demo() {
+  if (ga4Started) return;
+  ga4Started = true;
+  countTo('ga4-sessions', 2340, '', 1200);
+  countTo('ga4-users', 1820, '', 1200);
+  countTo('ga4-pv', 5670, '', 1200);
+  const bars = [
+    { id: 'ga4-b1', w: '72%', vid: 'ga4-v1', v: '1,680' },
+    { id: 'ga4-b2', w: '48%', vid: 'ga4-v2', v: '1,120' },
+    { id: 'ga4-b3', w: '35%', vid: 'ga4-v3', v: '820' },
+    { id: 'ga4-b4', w: '22%', vid: 'ga4-v4', v: '510' },
+  ];
+  bars.forEach((b, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(b.id);
+      if (el) el.style.width = b.w;
+      const vel = document.getElementById(b.vid);
+      if (vel) vel.textContent = b.v;
+    }, 600 + i * 200);
+  });
+  setTimeout(() => {
+    const line = document.getElementById('ga4-line');
+    if (line) line.style.strokeDashoffset = '0';
+    const area = document.getElementById('ga4-area');
+    if (area) area.style.opacity = '1';
+  }, 1400);
+}
+
+/* ===== S06 CAMPAIGN CREATE DEMO ===== */
+let createStarted = false;
+function startCampaignCreateDemo() {
+  if (createStarted) return;
+  createStarted = true;
+  ['cs-1', 'cs-2', 'cs-3', 'cs-4'].forEach((id, i) => {
+    setTimeout(() => {
+      document.getElementById(id)?.classList.add('visible');
+    }, 400 + i * 500);
+  });
+  ['cs-a1', 'cs-a2', 'cs-a3'].forEach((id, i) => {
+    setTimeout(() => {
+      document.getElementById(id)?.classList.add('visible');
+    }, 700 + i * 500);
+  });
+  // UTM typing animation
+  const utmText = '?utm_source=crm&utm_medium=lms&utm_campaign=spring';
+  const utmEl = document.getElementById('utm-typing');
+  if (utmEl) {
+    let idx = 0;
+    const typeInterval = setInterval(() => {
+      if (idx <= utmText.length) {
+        utmEl.textContent = utmText.substring(0, idx);
+        idx++;
+      } else {
+        clearInterval(typeInterval);
+      }
+    }, 50);
+    // Start typing after step 3 appears
+    setTimeout(() => { idx = 0; }, 1900);
+  }
+}
+
+/* ===== S07 PIPELINE DEMO ===== */
+let pipelineStarted = false;
+function startPipelineDemo() {
+  if (pipelineStarted) return;
+  pipelineStarted = true;
+  const steps = [
+    { step: 'pip-0', delay: 300 },
+    { arrow: 'pip-a0', delay: 600 },
+    { step: 'pip-1', delay: 900 },
+    { arrow: 'pip-a1', delay: 1200 },
+    { step: 'pip-2', delay: 1500 },
+    { arrow: 'pip-a2', delay: 1800 },
+    { step: 'pip-3', delay: 2100 },
+    { arrow: 'pip-a3', delay: 2400 },
+    { result: 'pip-result', delay: 2800 },
+  ];
+  steps.forEach(s => {
+    setTimeout(() => {
+      if (s.step) document.getElementById(s.step)?.classList.add('visible');
+      if (s.arrow) document.getElementById(s.arrow)?.classList.add('visible');
+      if (s.result) document.getElementById(s.result)?.classList.add('visible');
+    }, s.delay);
+  });
+}
+
+/* ===== S08 DIAG DEMO ===== */
+let diagStarted = false;
+function startDiagDemo() {
+  if (diagStarted) return;
+  diagStarted = true;
+  setTimeout(() => { const el = document.getElementById('diag-1'); if (el) el.style.width = '85%'; }, 600);
+  setTimeout(() => { const el = document.getElementById('diag-2'); if (el) el.style.width = '60%'; }, 900);
+  setTimeout(() => { const el = document.getElementById('diag-3'); if (el) el.style.width = '30%'; }, 1200);
+}
+
+/* ===== S09 PURCHASE DEMO ===== */
+let purchaseStarted = false;
+function startPurchaseDemo() {
+  if (purchaseStarted) return;
+  purchaseStarted = true;
+  animateText('pm-speed', ['0', '2', '5', '8', '12'], 250);
+  animateText('pm-cross', ['0%', '5%', '12%', '18%', '23%'], 250);
+  animateText('pm-repeat', ['0%', '3%', '8%', '12%', '15%'], 250);
+  setTimeout(() => { const el = document.getElementById('fn-1'); if (el) el.style.width = '100%'; }, 600);
+  setTimeout(() => { const el = document.getElementById('fn-2'); if (el) el.style.width = '56%'; }, 900);
+  setTimeout(() => { const el = document.getElementById('fn-3'); if (el) el.style.width = '22%'; }, 1200);
+}
+
+/* ===== S10 REPORT DEMO ===== */
+let reportStarted = false;
+function startReportDemo() {
+  if (reportStarted) return;
+  reportStarted = true;
+  ['rp-1', 'rp-2', 'rp-3', 'rp-4'].forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('visible');
+    }, 600 + i * 800);
+  });
+}
+
+/* ===== S11 FEATURE MAP ===== */
+let fmapStarted = false;
+function startFeatureMap() {
+  if (fmapStarted) return;
+  fmapStarted = true;
+  for (let i = 1; i <= 9; i++) {
+    setTimeout(() => {
+      const el = document.getElementById('fm-' + i);
+      if (el) el.classList.add('visible');
+    }, 200 + i * 100);
+  }
+}
+</script>
+</body>
+</html>
