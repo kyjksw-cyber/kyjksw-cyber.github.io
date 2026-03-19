@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데일리 플래너 — 일하는 방식을 바꾸는 워크스페이스</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg-cream: #FAFAF8;
+  --bg-dark: #0f0f13;
+  --bg-mid: #16161d;
+  --bg-gray: #f5f5f7;
+  --indigo: #6366F1;
+  --violet: #8B5CF6;
+  --pink: #EC4899;
+  --rose: #F43F5E;
+  --amber: #F59E0B;
+  --emerald: #10B981;
+  --cyan: #06B6D4;
+  --slate: #94A3B8;
+  --purple: #a78bfa;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --smooth: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+html { scroll-snap-type: y mandatory; scroll-behavior: smooth; overflow-y: scroll; }
+body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-cream); }
+
+/* ===== PROGRESS BAR ===== */
+#progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  background: linear-gradient(90deg, var(--indigo), var(--violet), var(--pink));
+  z-index: 9999; transition: width 0.1s;
+}
+
+/* ===== DOT NAV ===== */
+#dot-nav {
+  position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+  z-index: 9998; display: flex; flex-direction: column; gap: 10px;
+}
+.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #374151; cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+.dot.active { background: var(--indigo); transform: scale(1.4); }
+
+/* ===== SECTIONS ===== */
+section {
+  scroll-snap-align: start;
+  min-height: 100vh; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+
+/* ===== ANIMATION BASE ===== */
+.anim { opacity: 0; transform: translateY(30px); transition: opacity 0.7s var(--smooth), transform 0.7s var(--smooth); }
+.anim.visible { opacity: 1; transform: translateY(0); }
+.anim-d1 { transition-delay: 0.1s; }
+.anim-d2 { transition-delay: 0.2s; }
+.anim-d3 { transition-delay: 0.3s; }
+.anim-d4 { transition-delay: 0.4s; }
+.anim-d5 { transition-delay: 0.5s; }
+
+/* ===== S00 CONCEPT ===== */
+#s00 { background: var(--bg-dark); position: relative; overflow: hidden; }
+.concept-glow-1 {
+  position:absolute; width:500px; height:500px; border-radius:50%;
+  background:radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+  top:-120px; left:-80px; animation: conceptFloat1 16s ease-in-out infinite;
+}
+.concept-glow-2 {
+  position:absolute; width:400px; height:400px; border-radius:50%;
+  background:radial-gradient(circle, rgba(167,139,250,0.1) 0%, transparent 70%);
+  bottom:-100px; right:-60px; animation: conceptFloat2 20s ease-in-out infinite;
+}
+@keyframes conceptFloat1 {
+  0%,100% { transform:translate(0,0) scale(1); }
+  50% { transform:translate(80px,60px) scale(1.15); }
+}
+@keyframes conceptFloat2 {
+  0%,100% { transform:translate(0,0) scale(1); }
+  50% { transform:translate(-60px,-50px) scale(1.1); }
+}
+.concept-eyebrow {
+  font-size:12px; letter-spacing:4px; font-weight:600;
+  color:var(--indigo); margin-bottom:40px;
+  padding:8px 20px; border:1px solid rgba(99,102,241,0.3);
+  border-radius:50px;
+}
+.concept-title {
+  font-size:56px; font-weight:800; line-height:1.2;
+  color:#f1f1f3; margin-bottom:28px;
+}
+.concept-accent {
+  background: linear-gradient(135deg, var(--indigo) 0%, var(--purple) 50%, var(--pink) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.concept-sub {
+  font-size:18px; color:#9ca3af; line-height:1.7; max-width:600px;
+}
+.concept-divider {
+  margin-top:48px; display:flex; gap:8px; align-items:center;
+}
+.concept-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:rgba(99,102,241,0.4);
+  animation: conceptDotPulse 2s ease-in-out infinite;
+}
+.concept-dot:nth-child(2) { animation-delay:0.3s; background:rgba(167,139,250,0.5); }
+.concept-dot:nth-child(3) { animation-delay:0.6s; background:rgba(236,72,153,0.4); }
+@keyframes conceptDotPulse {
+  0%,100% { opacity:0.4; transform:scale(1); }
+  50% { opacity:1; transform:scale(1.5); }
+}
+@media (max-width:768px) {
+  .concept-title { font-size:34px; }
+  .concept-sub { font-size:15px; }
+}
+
+/* ===== @KEYFRAMES ===== */
+@keyframes glow-move {
+  0%   { transform: translate(0,0) scale(1); }
+  33%  { transform: translate(-60px, 40px) scale(1.1); }
+  66%  { transform: translate(40px, -30px) scale(0.95); }
+  100% { transform: translate(0,0) scale(1); }
+}
+@keyframes fadeInUp {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+@keyframes checkPulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+@keyframes checkRipple {
+  0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+  100% { box-shadow: 0 0 0 14px rgba(16,185,129,0); }
+}
+@keyframes strikeSweep {
+  0%   { background-size: 0% 2px; }
+  100% { background-size: 100% 2px; }
+}
+@keyframes confettiFly {
+  0%   { transform: translate(0,0) rotate(0deg) scale(1); opacity:1; }
+  100% { transform: translate(var(--tx), var(--ty)) rotate(var(--tr)) scale(0); opacity:0; }
+}
+@keyframes progressFill {
+  from { width: 0%; }
+  to   { width: var(--target-w); }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+@keyframes currentTimePulse {
+  0%,100% { transform: scale(1); opacity:1; }
+  50%      { transform: scale(1.6); opacity:0.6; }
+}
+@keyframes slotDrop {
+  0%   { transform: scale(0.9); opacity:0.7; }
+  60%  { transform: scale(1.05); }
+  100% { transform: scale(1); opacity:1; }
+}
+@keyframes wolfPeek {
+  0%,10%   { transform: translateY(100%) rotate(-5deg); }
+  20%,80%  { transform: translateY(0%) rotate(0deg); }
+  90%,100% { transform: translateY(100%) rotate(5deg); }
+}
+@keyframes wolfSway {
+  0%,100% { transform: translateX(0); }
+  50%     { transform: translateX(8px); }
+}
+@keyframes plantSway {
+  0%,100% { transform: rotate(-3deg); }
+  50%     { transform: rotate(3deg); }
+}
+@keyframes bloomGlow {
+  0%,100% { filter: drop-shadow(0 0 4px rgba(252,211,77,0.6)); }
+  50%     { filter: drop-shadow(0 0 10px rgba(252,211,77,0.9)); }
+}
+@keyframes plantGrow {
+  0%   { transform: scale(0.8); }
+  60%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+@keyframes sunbeamFloat {
+  0%,100% { opacity:0.15; transform: translateY(0); }
+  50%     { opacity:0.3; transform: translateY(-8px); }
+}
+@keyframes petalFall {
+  0%   { transform: translate(0,0) rotate(0deg); opacity:0.8; }
+  100% { transform: translate(-30px, 120px) rotate(360deg); opacity:0; }
+}
+@keyframes dandelionFloat {
+  0%   { transform: translate(0,0) scale(1); opacity:0.7; }
+  50%  { transform: translate(20px,-40px) scale(1.2); opacity:0.5; }
+  100% { transform: translate(40px,0px) scale(0.8); opacity:0; }
+}
+@keyframes farmerBob {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-4px); }
+}
+@keyframes ctaPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.5); }
+  50%     { box-shadow: 0 0 0 12px rgba(99,102,241,0); }
+}
+@keyframes typewriter {
+  from { width:0; }
+  to   { width:100%; }
+}
+@keyframes countUp { from { opacity:0; } to { opacity:1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes nudgeSlide {
+  from { transform: translateX(110%); opacity:0; }
+  to   { transform: translateX(0); opacity:1; }
+}
+@keyframes toastShow {
+  0%   { transform: translateY(20px); opacity:0; }
+  20%  { transform: translateY(0); opacity:1; }
+  80%  { transform: translateY(0); opacity:1; }
+  100% { transform: translateY(-20px); opacity:0; }
+}
+@keyframes exportFly {
+  from { transform: scale(1) translateX(0); opacity:1; }
+  to   { transform: scale(0.7) translateX(120px); opacity:0; }
+}
+@keyframes aiCardIn {
+  from { transform: translateY(20px); opacity:0; }
+  to   { transform: translateY(0); opacity:1; }
+}
+@keyframes tabSlide {
+  from { opacity:0; transform: translateX(15px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+
+/* check celebrate */
+.check-celebrate { animation: checkPulse 400ms var(--spring), checkRipple 500ms ease-out; }
+.strike-sweep {
+  background: linear-gradient(90deg, #6b7280 0%, #6b7280 100%) no-repeat left center / 0% 2px;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: strikeSweep 400ms ease forwards;
+  text-decoration: line-through;
+  color: #6b7280 !important;
+}
+
+/* ===== S01 HERO ===== */
+#s01 { background: var(--bg-cream); }
+.hero-glow {
+  position: absolute; top: -100px; right: -100px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+  animation: glow-move 20s ease-in-out infinite;
+  pointer-events: none;
+}
+.hero-inner { text-align: center; position: relative; z-index: 1; max-width: 760px; padding: 0 24px; }
+.hero-badge {
+  display: inline-block; border: 1.5px solid var(--indigo);
+  color: var(--indigo); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.15em; padding: 6px 16px; border-radius: 999px;
+  margin-bottom: 32px;
+  animation: fadeInUp 0.6s var(--smooth) both;
+}
+.hero-title-sub {
+  font-size: 56px; font-weight: 800; color: var(--indigo);
+  line-height: 1.15; margin-bottom: 8px;
+  animation: fadeInUp 0.6s var(--smooth) 0.1s both;
+}
+.hero-title-main {
+  font-size: 56px; font-weight: 800; color: #1A1A1A;
+  line-height: 1.15; margin-bottom: 24px;
+  animation: fadeInUp 0.6s var(--smooth) 0.2s both;
+}
+.hero-desc {
+  font-size: 18px; color: #6b7280; margin-bottom: 40px;
+  animation: fadeInUp 0.6s var(--smooth) 0.3s both;
+}
+.hero-cta {
+  display: inline-block; border: 2px solid var(--indigo);
+  color: var(--indigo); font-size: 15px; font-weight: 700;
+  padding: 14px 36px; border-radius: 999px; cursor: pointer;
+  text-decoration: none; transition: all 0.3s var(--smooth);
+  animation: fadeInUp 0.6s var(--smooth) 0.4s both;
+}
+.hero-cta:hover { background: var(--indigo); color: white; transform: translateY(-2px); }
+
+/* ===== SECTION LAYOUT ===== */
+.sec-wrap { width: 100%; max-width: 1200px; padding: 80px 48px; display: flex; align-items: center; gap: 60px; }
+.sec-wrap.reverse { flex-direction: row-reverse; }
+.sec-left { flex: 0 0 40%; }
+.sec-right { flex: 1; }
+.sec-label { font-size: 11px; font-weight: 700; color: var(--indigo); letter-spacing: 0.15em; margin-bottom: 16px; }
+.sec-title { font-size: 40px; font-weight: 800; line-height: 1.25; margin-bottom: 16px; }
+.sec-title.white { color: white; }
+.sec-title.dark { color: #1A1A1A; }
+.sec-desc { font-size: 16px; line-height: 1.7; color: #9ca3af; }
+.sec-desc.dark-text { color: #6b7280; }
+
+/* ===== S02 TASK DEMO ===== */
+#s02 { background: var(--bg-mid); }
+.task-card {
+  background: #1e1e2a; border-radius: 16px; padding: 20px;
+  max-width: 480px; width: 100%;
+}
+.project-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 8px;
+  margin-bottom: 8px; background: rgba(255,255,255,0.04);
+  border-left: 3px solid var(--indigo);
+}
+.project-header.violet { border-left-color: var(--violet); }
+.project-header span { font-size: 13px; font-weight: 700; color: white; }
+.project-badge {
+  font-size: 10px; padding: 2px 8px; border-radius: 999px;
+  background: rgba(99,102,241,0.2); color: var(--indigo); font-weight: 600;
+}
+.project-badge.violet { background: rgba(139,92,246,0.2); color: var(--violet); }
+.task-list { padding-left: 8px; margin-bottom: 16px; }
+.task-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 6px; border-radius: 6px;
+  transition: background 0.2s; cursor: pointer; user-select: none;
+}
+.task-row:hover { background: rgba(255,255,255,0.04); }
+.task-checkbox {
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid #9ca3af;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; cursor: pointer; transition: all 0.25s var(--spring);
+  font-size: 11px; position: relative;
+}
+.task-checkbox[data-status="progress"] { border-color: var(--indigo); background: rgba(99,102,241,0.15); color: var(--indigo); font-size: 10px; }
+.task-checkbox[data-status="done"] { border-color: var(--emerald); background: var(--emerald); color: white; }
+.task-title { font-size: 13px; color: #e2e8f0; transition: color 0.3s; }
+.subtask-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 6px 5px 28px; cursor: pointer; user-select: none;
+}
+.subtask-checkbox {
+  width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid #6b7280;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; cursor: pointer; transition: all 0.25s;
+  font-size: 9px;
+}
+.subtask-checkbox[data-status="done"] { border-color: var(--emerald); background: var(--emerald); color: white; }
+.subtask-title { font-size: 11px; color: #9ca3af; }
+.subtask-title.done { text-decoration: line-through; color: #4b5563; }
+
+/* ===== S03 MULTI VIEW ===== */
+#s03 { background: var(--bg-gray); }
+.view-card {
+  background: white; border-radius: 16px; padding: 20px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08); max-width: 460px;
+}
+.tab-btns { display: flex; gap: 4px; margin-bottom: 20px; background: #f3f4f6; border-radius: 10px; padding: 4px; }
+.tab-btn {
+  flex: 1; padding: 8px; border-radius: 7px; border: none;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  background: transparent; color: #6b7280;
+  transition: all 0.25s var(--smooth);
+}
+.tab-btn.active { background: white; color: var(--indigo); box-shadow: 0 1px 6px rgba(0,0,0,0.1); }
+.tab-content { display: none; animation: tabSlide 0.3s var(--smooth) both; }
+.tab-content.active { display: block; }
+/* Today tab */
+.today-project { margin-bottom: 14px; }
+.today-project-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  padding: 4px 10px; border-radius: 999px;
+  display: inline-block; margin-bottom: 8px;
+}
+.today-task-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px; border-radius: 6px; background: #f9fafb; margin-bottom: 4px;
+}
+.today-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.today-task-name { font-size: 12px; color: #374151; }
+/* Weekly tab */
+.week-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.week-day { text-align: center; }
+.week-day-label { font-size: 10px; color: #9ca3af; font-weight: 600; margin-bottom: 6px; }
+.week-day-num { font-size: 14px; font-weight: 700; color: #374151; margin-bottom: 6px; }
+.week-day-num.today-num { color: var(--indigo); }
+.week-dots { display: flex; flex-direction: column; gap: 2px; align-items: center; }
+.week-dot { width: 6px; height: 6px; border-radius: 50%; }
+/* Progress tab */
+.progress-item { margin-bottom: 14px; }
+.progress-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.progress-name { font-size: 13px; font-weight: 600; color: #374151; }
+.progress-pct { font-size: 12px; color: #6b7280; }
+.progress-track {
+  height: 8px; background: #e5e7eb; border-radius: 999px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 999px; width: 0%;
+  background-size: 200% 100%;
+  transition: width 1s ease-out;
+}
+.progress-fill.shimmer-anim {
+  background-image: linear-gradient(90deg, var(--color,var(--indigo)) 0%, rgba(255,255,255,0.4) 50%, var(--color,var(--indigo)) 100%);
+  animation: shimmer 2s infinite;
+}
+
+/* ===== S04 TIMELINE ===== */
+#s04 { background: var(--bg-dark); }
+.timeline-card {
+  background: #1a1a24; border-radius: 16px; padding: 20px;
+  max-width: 480px; position: relative; overflow: hidden;
+}
+.timeline-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.timeline-header-title { font-size: 13px; font-weight: 700; color: white; }
+.timeline-grid { position: relative; }
+.timeline-row {
+  display: flex; align-items: flex-start; min-height: 32px;
+  border-top: 1px solid rgba(255,255,255,0.05); position: relative;
+}
+.timeline-time { font-size: 10px; color: #9ca3af; width: 44px; padding-top: 6px; flex-shrink: 0; }
+.timeline-slot-area { flex: 1; position: relative; min-height: 32px; }
+.timeline-slot {
+  position: absolute; left: 4px; right: 4px; border-radius: 6px;
+  padding: 4px 8px; font-size: 11px; font-weight: 600; color: white;
+  pointer-events: none;
+}
+.timeline-current-line {
+  position: absolute; left: 44px; right: 0;
+  height: 2px; background: var(--rose); z-index: 10;
+}
+.timeline-current-dot {
+  position: absolute; left: 36px; top: 50%; transform: translateY(-50%);
+  width: 10px; height: 10px; border-radius: 50%; background: var(--rose);
+  animation: currentTimePulse 2s ease-in-out infinite; z-index: 11;
+}
+/* DnD unscheduled card */
+.dnd-unscheduled {
+  position: absolute; top: 10px; left: -110px;
+  background: #1e1e2a; border: 2px solid var(--emerald); border-radius: 8px;
+  padding: 8px 12px; font-size: 12px; font-weight: 600; color: #34d399;
+  white-space: nowrap; z-index: 20;
+  transition: transform 1s var(--smooth), box-shadow 0.3s, top 0.8s var(--smooth), left 1.2s var(--smooth), opacity 0.5s;
+}
+.timeline-drop-highlight {
+  background: rgba(99,102,241,0.12); border-left: 3px solid var(--indigo);
+  transition: background 0.3s;
+}
+
+/* ===== S05 AI LEARNING ===== */
+#s05 { background: var(--bg-gray); }
+.ai-demo-card {
+  background: white; border-radius: 16px; padding: 20px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07); max-width: 440px;
+}
+.ai-done-list { margin-bottom: 16px; }
+.ai-done-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 8px; background: #f0fdf4; margin-bottom: 6px;
+  transition: transform 0.3s var(--smooth), opacity 0.3s;
+}
+.ai-done-icon { width: 20px; height: 20px; border-radius: 50%; background: var(--emerald); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+.ai-done-text { font-size: 13px; color: #374151; text-decoration: line-through; color: #9ca3af; }
+.ai-export-btn {
+  width: 100%; padding: 10px; border-radius: 8px; border: none;
+  background: var(--indigo); color: white; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.25s var(--smooth)); margin-bottom: 14px;
+}
+.ai-export-btn:hover { background: #4f46e5; transform: translateY(-1px); }
+.ai-export-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.ai-result-card {
+  border: 2px solid var(--violet); border-radius: 12px; padding: 14px;
+  opacity: 0; transform: translateY(10px); transition: all 0.4s var(--smooth));
+  background: linear-gradient(135deg, rgba(139,92,246,0.05), rgba(99,102,241,0.05));
+}
+.ai-result-card.visible { opacity: 1; transform: translateY(0); }
+.ai-badge { display: inline-block; background: var(--violet); color: white; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; margin-bottom: 8px; }
+.ai-typing { font-size: 14px; color: #374151; overflow: hidden; white-space: nowrap; width: 0; }
+.ai-typing.type-anim { animation: typewriter 1.5s steps(25) forwards; }
+.ai-toast {
+  position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--emerald); color: white; padding: 10px 24px; border-radius: 999px;
+  font-size: 14px; font-weight: 600; z-index: 9000; opacity: 0;
+  pointer-events: none;
+}
+.ai-toast.show { animation: toastShow 2.5s ease forwards; }
+
+/* ===== S06 GARDEN ===== */
+#s06 {
+  background: linear-gradient(180deg,
+    #e8dcc8 0%, #d6cbae 8%, #c5be9a 20%,
+    #a8b87a 45%, #8aaa68 65%, #7a9e5c 100%);
+}
+.garden-overlay {
+  position: absolute; top: 0; left: 0; right: 0;
+  padding: 48px; text-align: center; z-index: 2; pointer-events: none;
+}
+.garden-title {
+  font-size: 36px; font-weight: 800; color: white;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.3);
+}
+.garden-subtitle {
+  font-size: 16px; color: rgba(255,255,255,0.85); margin-top: 8px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.2);
+}
+.garden-scene {
+  position: relative; width: 100%; max-width: 700px; margin: 0 auto;
+  padding: 80px 24px 60px; z-index: 1;
+}
+/* Plots */
+.garden-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 12px;
+  margin-bottom: 20px;
+}
+.garden-plot {
+  background: #8B7355; border-radius: 8px; aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative; overflow: visible;
+  transition: transform 0.2s var(--spring);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.garden-plot:hover { transform: scale(1.05); }
+.garden-plot.growing { animation: plantGrow 500ms var(--spring) forwards; }
+.plot-bubble {
+  position: absolute; top: -36px; left: 50%; transform: translateX(-50%);
+  background: rgba(255,255,255,0.95); border-radius: 8px; padding: 4px 10px;
+  font-size: 11px; font-weight: 600; color: #374151; white-space: nowrap;
+  opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.garden-plot.show-bubble .plot-bubble { opacity: 1; }
+/* SVG plants */
+.plant-svg { width: 70%; height: 70%; }
+/* Weather particles */
+.weather-layer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; overflow: hidden; }
+.sunbeam {
+  position: absolute; width: 3px; background: rgba(252,211,77,0.5);
+  border-radius: 999px; animation: sunbeamFloat 3s ease-in-out infinite;
+}
+.petal {
+  position: absolute; width: 10px; height: 6px; border-radius: 50%;
+  background: rgba(236,72,153,0.6); animation: petalFall 6s ease-in infinite;
+}
+.dandel {
+  position: absolute; width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.8); animation: dandelionFloat 8s ease-in-out infinite;
+}
+/* Farmers */
+.farmer {
+  position: absolute; font-size: 20px; z-index: 3;
+  animation: farmerBob 1.5s ease-in-out infinite;
+  pointer-events: none; user-select: none;
+}
+/* Wolf */
+.wolf-container {
+  position: absolute; bottom: 0; right: 20px; z-index: 5;
+  animation: wolfPeek 8s ease-in-out 10s both;
+  pointer-events: none;
+}
+.wolf-inner { animation: wolfSway 1s ease-in-out infinite; font-size: 28px; }
+.wolf-bubble {
+  position: absolute; bottom: 100%; right: 0; width: 200px;
+  background: rgba(255,255,255,0.95); border-radius: 12px; padding: 8px 12px;
+  font-size: 11px; font-weight: 600; color: #1f2937; line-height: 1.5;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+
+/* ===== S07 NUDGE — 풀스크린 센터 레이아웃 ===== */
+#s07 { background: var(--bg-mid); }
+.nudge-layout {
+  display: flex; flex-direction: column; align-items: center;
+  width: 100%; max-width: 780px; gap: 20px;
+  margin: 0 auto;
+}
+.nudge-cards-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%;
+  justify-content: center;
+}
+
+/* 운세 카드 — 프리미엄 글래스 */
+.fortune-card {
+  background: linear-gradient(145deg, #4338CA 0%, #6D28D9 40%, #7C3AED 70%, #4F46E5 100%);
+  border-radius: 24px; padding: 28px; color: white;
+  box-shadow: 0 12px 48px rgba(99,102,241,0.35), 0 0 0 1px rgba(255,255,255,0.08) inset;
+  position: relative; overflow: hidden;
+}
+.fortune-card::before {
+  content: ''; position: absolute; top: -50%; right: -30%; width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+  border-radius: 50%; pointer-events: none;
+}
+.fortune-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; position: relative; }
+.fortune-label { font-size: 13px; font-weight: 600; opacity: 0.8; }
+.fortune-score-wrap { text-align: right; }
+.fortune-score { font-size: 48px; font-weight: 900; line-height: 1; letter-spacing: -2px; }
+.fortune-grade { font-size: 14px; font-weight: 600; opacity: 0.85; margin-top: 2px; }
+.fortune-stars { font-size: 18px; margin-bottom: 18px; letter-spacing: 2px; }
+.fortune-categories { display: flex; flex-direction: column; gap: 8px; }
+.fortune-cat {
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(255,255,255,0.1); backdrop-filter: blur(8px);
+  border-radius: 10px; padding: 10px 14px; font-size: 13px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.fortune-cat-label { display: flex; align-items: center; gap: 6px; }
+.fortune-cat-value { font-weight: 700; }
+.fortune-lucky {
+  margin-top: 16px; padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex; gap: 16px; font-size: 12px; opacity: 0.75;
+}
+.fortune-lucky-item { display: flex; align-items: center; gap: 4px; }
+
+/* 날씨 카드 — 미니멀 다크글래스 */
+.weather-card {
+  background: rgba(255,255,255,0.04); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px; padding: 28px; color: white;
+  display: flex; flex-direction: column;
+}
+.weather-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.weather-card-label { font-size: 13px; font-weight: 600; color: #9ca3af; }
+.weather-location { font-size: 12px; color: #6b7280; }
+.weather-current {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+}
+.weather-temp-big { font-size: 52px; font-weight: 900; line-height: 1; letter-spacing: -2px; }
+.weather-icon-big { font-size: 40px; }
+.weather-condition { font-size: 14px; color: #9ca3af; font-weight: 500; }
+.weather-detail-row {
+  display: flex; gap: 12px; margin-bottom: 20px;
+}
+.weather-detail {
+  flex: 1; background: rgba(255,255,255,0.05);
+  border-radius: 10px; padding: 10px 12px; text-align: center;
+}
+.weather-detail-label { font-size: 10px; color: #6b7280; margin-bottom: 4px; }
+.weather-detail-value { font-size: 14px; font-weight: 700; }
+.weather-divider { height: 1px; background: rgba(255,255,255,0.06); margin-bottom: 16px; }
+.weather-forecast-label {
+  font-size: 11px; font-weight: 600; color: #6b7280;
+  letter-spacing: 0.08em; margin-bottom: 12px;
+}
+.weather-forecast {
+  display: flex; justify-content: space-between;
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.5s ease, opacity 0.4s, margin 0.3s;
+}
+.weather-forecast.show {
+  max-height: 100px; opacity: 1; margin-top: 4px;
+}
+.weather-forecast-day {
+  text-align: center; flex: 1;
+}
+.weather-forecast-day-label { font-size: 11px; color: #6b7280; margin-bottom: 4px; }
+.weather-forecast-day-icon { font-size: 18px; margin-bottom: 2px; }
+.weather-forecast-day-temp { font-size: 13px; font-weight: 700; }
+.weather-toggle-btn {
+  margin-top: auto; padding-top: 12px;
+  font-size: 12px; color: var(--indigo); font-weight: 600;
+  cursor: pointer; text-align: center; opacity: 0.8;
+  transition: opacity 0.2s;
+}
+.weather-toggle-btn:hover { opacity: 1; }
+
+/* 넛지 배너 */
+.nudge-banner {
+  background: linear-gradient(135deg, #F59E0B, #FBBF24);
+  color: #1f2937; border-radius: 16px; padding: 16px 24px;
+  font-size: 14px; font-weight: 700; width: 100%;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 4px 20px rgba(245,158,11,0.3);
+  transform: translateY(20px); opacity: 0;
+}
+.nudge-banner.slide-in { animation: nudgeSlideUp 0.5s var(--smooth) 3s forwards; }
+.nudge-icon { font-size: 20px; }
+@keyframes nudgeSlideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .nudge-cards-row { grid-template-columns: 1fr; }
+}
+
+/* ===== S08 자동 이월 ===== */
+#s08 { background: var(--bg-dark); }
+.rollover-demo {
+  max-width: 420px; width: 100%;
+}
+.rollover-day {
+  background: #1e1e2a; border-radius: 16px; padding: 20px;
+  margin-bottom: 12px; transition: all 0.5s var(--smooth);
+}
+.rollover-day.fading { opacity: 0.3; transform: scale(0.95); }
+.rollover-day-label {
+  font-size: 11px; font-weight: 700; color: #9ca3af;
+  letter-spacing: 0.08em; margin-bottom: 12px;
+}
+.rollover-day-label.today-label { color: var(--indigo); }
+.rollover-task {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 8px; margin-bottom: 4px;
+  font-size: 13px; color: #e2e8f0;
+  transition: all 0.4s var(--smooth);
+}
+.rollover-task .r-check {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid #6b7280; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; transition: all 0.3s var(--spring);
+}
+.rollover-task .r-check.done { border-color: var(--emerald); background: var(--emerald); color: white; }
+.rollover-task .r-check.undone { border-color: #6b7280; }
+.rollover-task.completed { text-decoration: line-through; color: #4b5563; }
+.rollover-task.migrating {
+  animation: migrateSlide 0.6s var(--smooth) forwards;
+}
+@keyframes migrateSlide {
+  0% { transform: translateX(0); opacity: 1; }
+  50% { transform: translateX(20px); opacity: 0; }
+  51% { transform: translateX(-20px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+.rollover-arrow {
+  text-align: center; font-size: 20px; color: var(--indigo);
+  margin: 8px 0; opacity: 0; transition: opacity 0.4s;
+}
+.rollover-arrow.show { opacity: 1; }
+
+/* ===== S09 GCal 동기화 ===== */
+#s09 { background: var(--bg-gray); }
+.gcal-demo {
+  max-width: 440px; width: 100%;
+}
+.gcal-card {
+  background: white; border-radius: 16px; padding: 20px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+.gcal-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px;
+}
+.gcal-logo {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: linear-gradient(135deg, #4285F4, #34A853, #FBBC05, #EA4335);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: white;
+}
+.gcal-title { font-size: 14px; font-weight: 700; color: #374151; }
+.gcal-subtitle { font-size: 11px; color: #9ca3af; }
+.gcal-timeline-mini {
+  position: relative; padding-left: 16px;
+  border-left: 2px solid #e5e7eb;
+}
+.gcal-event {
+  position: relative; padding: 10px 14px; margin-bottom: 8px;
+  border-radius: 8px; font-size: 12px; font-weight: 600;
+  opacity: 0; transform: translateX(-10px);
+  transition: all 0.4s var(--smooth);
+}
+.gcal-event.show { opacity: 1; transform: translateX(0); }
+.gcal-event::before {
+  content: ''; position: absolute; left: -21px; top: 14px;
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 2px solid white;
+}
+.gcal-event.blue { background: rgba(66,133,244,0.1); color: #1a73e8; }
+.gcal-event.blue::before { background: #4285F4; }
+.gcal-event.green { background: rgba(52,168,83,0.1); color: #1e8e3e; }
+.gcal-event.green::before { background: #34A853; }
+.gcal-event.red { background: rgba(234,67,53,0.1); color: #d93025; }
+.gcal-event.red::before { background: #EA4335; }
+.gcal-event.yellow { background: rgba(251,188,5,0.1); color: #e37400; }
+.gcal-event.yellow::before { background: #FBBC05; }
+.gcal-event-time { font-size: 10px; opacity: 0.7; font-weight: 400; }
+.gcal-overlay-label {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  background: rgba(66,133,244,0.1); color: #4285F4;
+  padding: 2px 8px; border-radius: 999px; margin-top: 12px;
+  opacity: 0; transition: opacity 0.4s;
+}
+.gcal-overlay-label.show { opacity: 1; }
+
+/* ===== S10 선우AI 챗봇 ===== */
+#s10 { background: var(--bg-mid); }
+.chat-demo {
+  max-width: 420px; width: 100%;
+}
+.chat-card {
+  background: #1e1e2a; border-radius: 20px; padding: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.chat-header {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 16px;
+}
+.chat-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--indigo), var(--violet));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.chat-name { font-size: 14px; font-weight: 700; color: white; }
+.chat-status { font-size: 11px; color: var(--emerald); }
+.chat-messages { min-height: 200px; display: flex; flex-direction: column; gap: 10px; }
+.chat-msg {
+  max-width: 85%; padding: 10px 14px; border-radius: 14px;
+  font-size: 13px; line-height: 1.5;
+  opacity: 0; transform: translateY(10px);
+  transition: all 0.4s var(--smooth);
+}
+.chat-msg.show { opacity: 1; transform: translateY(0); }
+.chat-msg.ai {
+  background: rgba(99,102,241,0.12); color: #c7d2fe;
+  align-self: flex-start; border-bottom-left-radius: 4px;
+}
+.chat-msg.user {
+  background: var(--indigo); color: white;
+  align-self: flex-end; border-bottom-right-radius: 4px;
+}
+.chat-msg .chat-typing {
+  display: inline-block;
+}
+.chat-msg .chat-typing::after {
+  content: ''; display: inline-block;
+  width: 4px; height: 14px; background: currentColor;
+  margin-left: 2px; vertical-align: middle;
+  animation: blink 0.8s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+.chat-input-bar {
+  margin-top: 14px; display: flex; gap: 8px;
+}
+.chat-input {
+  flex: 1; background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 10px 14px;
+  font-size: 12px; color: #9ca3af; outline: none;
+}
+.chat-send {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--indigo); border: none; color: white;
+  font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ===== S11 TECH ===== */
+#s11 { background: var(--bg-gray); }
+.tech-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; max-width: 540px; margin-bottom: 40px; }
+.tech-card {
+  background: white; border-radius: 14px; padding: 20px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06); text-align: center;
+  transition: transform 0.3s var(--spring), box-shadow 0.3s;
+}
+.tech-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+.tech-icon { font-size: 28px; margin-bottom: 8px; }
+.tech-name { font-size: 13px; font-weight: 700; color: #374151; }
+.tech-desc { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+.stats-row { display: flex; gap: 40px; }
+.stat-item { text-align: center; }
+.stat-num { font-size: 36px; font-weight: 800; color: var(--indigo); line-height: 1; }
+.stat-label { font-size: 13px; color: #9ca3af; margin-top: 4px; }
+
+/* ===== S12 기능 종합표 ===== */
+#s12 { background: var(--bg-dark); }
+.feature-summary-wrap {
+  width: 100%; max-width: 900px; padding: 60px 48px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.feature-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  width: 100%;
+}
+.feature-cell {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px; padding: 28px 24px;
+  text-align: center; position: relative; overflow: hidden;
+  transition: transform 0.3s var(--spring), border-color 0.3s, box-shadow 0.3s;
+}
+.feature-cell:hover {
+  transform: translateY(-4px);
+  border-color: rgba(99,102,241,0.3);
+  box-shadow: 0 8px 32px rgba(99,102,241,0.12);
+}
+.feature-cell-icon {
+  font-size: 32px; margin-bottom: 14px;
+  display: block;
+}
+.feature-cell-title {
+  font-size: 15px; font-weight: 700; color: white;
+  margin-bottom: 6px;
+}
+.feature-cell-desc {
+  font-size: 12px; color: #9ca3af; line-height: 1.6;
+}
+.feature-cell-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 3px 10px; border-radius: 999px; margin-top: 12px;
+  letter-spacing: 0.05em;
+}
+.tag-ai { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+.tag-prod { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+.tag-fun { background: rgba(245,158,11,0.15); color: #fcd34d; }
+.tag-ux { background: rgba(236,72,153,0.15); color: #f9a8d4; }
+
+@media (max-width: 768px) {
+  .feature-grid { grid-template-columns: repeat(2, 1fr); }
+  .feature-summary-wrap { padding: 48px 20px; }
+}
+
+/* ===== S13 CTA ===== */
+#s13 { background: var(--bg-dark); }
+.cta-inner { text-align: center; }
+.cta-title { font-size: 44px; font-weight: 800; color: white; margin-bottom: 16px; }
+.cta-desc { font-size: 18px; color: #9ca3af; margin-bottom: 40px; }
+.cta-btn {
+  display: inline-block; background: var(--indigo); color: white;
+  font-size: 16px; font-weight: 700; padding: 16px 48px;
+  border-radius: 999px; text-decoration: none; cursor: pointer;
+  animation: ctaPulse 2s ease-in-out infinite;
+  transition: transform 0.25s var(--smooth), background 0.25s;
+}
+.cta-btn:hover { background: #4f46e5; transform: scale(1.04); }
+.cta-made { font-size: 12px; color: #6b7280; margin-top: 48px; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .sec-wrap { flex-direction: column !important; padding: 60px 32px; gap: 40px; }
+  .sec-left, .sec-right { width: 100%; max-width: 560px; margin: 0 auto; }
+  .sec-title { font-size: 32px; }
+}
+@media (max-width: 768px) {
+  .hero-title-sub, .hero-title-main { font-size: 34px; }
+  .hero-desc { font-size: 15px; }
+  .garden-grid { grid-template-columns: repeat(3,1fr); }
+  .tech-grid { grid-template-columns: repeat(2,1fr); }
+  #dot-nav { display: none; }
+  .sec-wrap { padding: 48px 20px; }
+  .sec-title { font-size: 26px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div id="progress-bar"></div>
+
+<!-- Dot Nav -->
+<div id="dot-nav">
+  <div class="dot active" data-idx="0" onclick="scrollToSection(0)"></div>
+  <div class="dot" data-idx="1" onclick="scrollToSection(1)"></div>
+  <div class="dot" data-idx="2" onclick="scrollToSection(2)"></div>
+  <div class="dot" data-idx="3" onclick="scrollToSection(3)"></div>
+  <div class="dot" data-idx="4" onclick="scrollToSection(4)"></div>
+  <div class="dot" data-idx="5" onclick="scrollToSection(5)"></div>
+  <div class="dot" data-idx="6" onclick="scrollToSection(6)"></div>
+  <div class="dot" data-idx="7" onclick="scrollToSection(7)"></div>
+  <div class="dot" data-idx="8" onclick="scrollToSection(8)"></div>
+  <div class="dot" data-idx="9" onclick="scrollToSection(9)"></div>
+  <div class="dot" data-idx="10" onclick="scrollToSection(10)"></div>
+  <div class="dot" data-idx="11" onclick="scrollToSection(11)"></div>
+  <div class="dot" data-idx="12" onclick="scrollToSection(12)"></div>
+  <div class="dot" data-idx="13" onclick="scrollToSection(13)"></div>
+</div>
+
+<!-- AI Toast -->
+<div class="ai-toast" id="ai-toast">내보내기 완료 ✓</div>
+
+<!-- ===== S00 CONCEPT COPY ===== -->
+<section id="s00" style="background:#0f0f13;">
+  <div class="concept-glow-1"></div>
+  <div class="concept-glow-2"></div>
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 32px;max-width:900px;">
+    <div class="concept-eyebrow anim anim-d1">DAILY PLANNER</div>
+    <h1 class="concept-title anim anim-d2">
+      쉽게 일하고,<br>
+      <span class="concept-accent">AI에게 가르치고,</span><br>
+      다시 도움받는다
+    </h1>
+    <p class="concept-sub anim anim-d3">
+      체계적으로 일하면 AI가 배우고, AI가 배우면 내 하루가 달라집니다
+    </p>
+    <div class="concept-divider anim anim-d4">
+      <span class="concept-dot"></span>
+      <span class="concept-dot"></span>
+      <span class="concept-dot"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S01 HERO ===== -->
+<section id="s01">
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">DAILY PLANNER</div>
+    <div class="hero-title-sub">일하는 방식을 바꾸는</div>
+    <div class="hero-title-main">데일리 플래너</div>
+    <p class="hero-desc">체계적 업무 관리 + AI가 학습하는 당신만의 워크스페이스</p>
+  </div>
+</section>
+
+<!-- ===== S02 체계적 관리 ===== -->
+<section id="s02">
+  <div class="sec-wrap">
+    <div class="sec-left">
+      <p class="sec-label anim anim-d1">기능 01 / ORGANIZED</p>
+      <h2 class="sec-title white anim anim-d2">프로젝트부터<br>서브태스크까지,<br>한 곳에서</h2>
+      <p class="sec-desc anim anim-d3">프로젝트 → 태스크 → 서브태스크 3단계 구조로 모든 업무를 체계적으로 정리합니다.</p>
+    </div>
+    <div class="sec-right anim anim-d2">
+      <div class="task-card" id="auto-task-card">
+        <!-- Project 1 -->
+        <div class="project-header">
+          <span>데일리 플래너 v2</span>
+          <span class="project-badge">6 태스크</span>
+        </div>
+        <div class="task-list">
+          <div class="task-row" id="auto-task-1">
+            <div class="task-checkbox" data-status="open" id="auto-cb-1"></div>
+            <div>
+              <div class="task-title" id="auto-title-1">디자인 시스템 정리</div>
+              <div class="subtask-row">
+                <div class="subtask-checkbox" data-status="done" style="background:var(--emerald);border-color:var(--emerald);color:white">✓</div>
+                <span class="subtask-title done">컬러 팔레트 확정</span>
+              </div>
+              <div class="subtask-row" id="auto-sub-1">
+                <div class="subtask-checkbox" data-status="open" id="auto-subcb-1"></div>
+                <span class="subtask-title" id="auto-subtitle-1">타이포그래피 정리</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-row" id="auto-task-2">
+            <div class="task-checkbox" data-status="open" id="auto-cb-2"></div>
+            <div class="task-title" id="auto-title-2">타임라인 뷰 구현</div>
+          </div>
+          <div class="task-row" id="auto-task-3">
+            <div class="task-checkbox" data-status="open" id="auto-cb-3"></div>
+            <div class="task-title" id="auto-title-3">모바일 반응형 수정</div>
+          </div>
+        </div>
+        <!-- Project 2 -->
+        <div class="project-header violet">
+          <span>AI 학습 연동</span>
+          <span class="project-badge violet">4 태스크</span>
+        </div>
+        <div class="task-list">
+          <div class="task-row" id="auto-task-4">
+            <div class="task-checkbox" data-status="open" id="auto-cb-4"></div>
+            <div class="task-title" id="auto-title-4">완료 태스크 export API</div>
+          </div>
+          <div class="task-row" id="auto-task-5">
+            <div class="task-checkbox" data-status="open" id="auto-cb-5"></div>
+            <div class="task-title" id="auto-title-5">AI 추천 UI 컴포넌트</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S03 멀티뷰 ===== -->
+<section id="s03">
+  <div class="sec-wrap reverse">
+    <div class="sec-left">
+      <p class="sec-label anim anim-d1">기능 02 / MULTI-VIEW</p>
+      <h2 class="sec-title dark anim anim-d2">오늘, 이번주,<br>한달을 한눈에</h2>
+      <p class="sec-desc dark-text anim anim-d3">원하는 단위로 즉시 전환. 오늘의 집중, 이번주 흐름, 한달 진척을 모두 확인할 수 있습니다.</p>
+    </div>
+    <div class="sec-right anim anim-d2">
+      <div class="view-card">
+        <div class="tab-btns">
+          <button class="tab-btn active" onclick="switchTab('today')">오늘</button>
+          <button class="tab-btn" onclick="switchTab('week')">이번주</button>
+          <button class="tab-btn" onclick="switchTab('month')">월간</button>
+        </div>
+        <!-- Today Tab -->
+        <div class="tab-content active" id="tab-today">
+          <div class="today-project">
+            <span class="today-project-label" style="background:rgba(99,102,241,0.1);color:var(--indigo);">데일리 플래너</span>
+            <div class="today-task-item"><div class="today-dot" style="background:var(--indigo)"></div><span class="today-task-name">디자인 시스템 정리</span></div>
+            <div class="today-task-item"><div class="today-dot" style="background:var(--indigo)"></div><span class="today-task-name">타임라인 뷰 구현</span></div>
+          </div>
+          <div class="today-project">
+            <span class="today-project-label" style="background:rgba(139,92,246,0.1);color:var(--violet);">AI 연동</span>
+            <div class="today-task-item"><div class="today-dot" style="background:var(--violet)"></div><span class="today-task-name">Export API 테스트</span></div>
+          </div>
+          <div class="today-project">
+            <span class="today-project-label" style="background:rgba(16,185,129,0.1);color:var(--emerald);">마케팅</span>
+            <div class="today-task-item"><div class="today-dot" style="background:var(--emerald)"></div><span class="today-task-name">랜딩페이지 검토</span></div>
+            <div class="today-task-item"><div class="today-dot" style="background:var(--emerald)"></div><span class="today-task-name">SNS 포스팅 초안</span></div>
+          </div>
+        </div>
+        <!-- Week Tab -->
+        <div class="tab-content" id="tab-week">
+          <div class="week-grid">
+            <div class="week-day"><div class="week-day-label">MON</div><div class="week-day-num">10</div><div class="week-dots"><div class="week-dot" style="background:var(--indigo)"></div><div class="week-dot" style="background:var(--violet)"></div></div></div>
+            <div class="week-day"><div class="week-day-label">TUE</div><div class="week-day-num">11</div><div class="week-dots"><div class="week-dot" style="background:var(--emerald)"></div></div></div>
+            <div class="week-day"><div class="week-day-label">WED</div><div class="week-day-num today-num">12</div><div class="week-dots"><div class="week-dot" style="background:var(--indigo)"></div><div class="week-dot" style="background:var(--rose)"></div><div class="week-dot" style="background:var(--amber)"></div></div></div>
+            <div class="week-day"><div class="week-day-label">THU</div><div class="week-day-num">13</div><div class="week-dots"><div class="week-dot" style="background:var(--cyan)"></div></div></div>
+            <div class="week-day"><div class="week-day-label">FRI</div><div class="week-day-num">14</div><div class="week-dots"><div class="week-dot" style="background:var(--violet)"></div><div class="week-dot" style="background:var(--pink)"></div></div></div>
+          </div>
+        </div>
+        <!-- Month Tab -->
+        <div class="tab-content" id="tab-month">
+          <div class="progress-item">
+            <div class="progress-label-row"><span class="progress-name">데일리 플래너</span><span class="progress-pct" id="pct-1">0%</span></div>
+            <div class="progress-track"><div class="progress-fill" id="bar-1" data-target="72" style="--color:var(--indigo)"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-label-row"><span class="progress-name">AI 연동</span><span class="progress-pct" id="pct-2">0%</span></div>
+            <div class="progress-track"><div class="progress-fill" id="bar-2" data-target="45" style="--color:var(--violet)"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-label-row"><span class="progress-name">마케팅</span><span class="progress-pct" id="pct-3">0%</span></div>
+            <div class="progress-track"><div class="progress-fill" id="bar-3" data-target="88" style="--color:var(--emerald)"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-label-row"><span class="progress-name">인프라</span><span class="progress-pct" id="pct-4">0%</span></div>
+            <div class="progress-track"><div class="progress-fill" id="bar-4" data-target="31" style="--color:var(--amber)"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S04 타임라인 ===== -->
+<section id="s04">
+  <div class="sec-wrap">
+    <div class="sec-left">
+      <p class="sec-label anim anim-d1">기능 03 / TIMELINE</p>
+      <h2 class="sec-title white anim anim-d2">할 일을<br>시간에 배정하세요</h2>
+      <p class="sec-desc anim anim-d3">드래그 앤 드롭으로 태스크를 타임라인에 배정합니다. 시각적으로 하루를 설계하세요.</p>
+    </div>
+    <div class="sec-right anim anim-d2">
+      <div class="timeline-card" id="timeline-card">
+        <div class="timeline-header">
+          <span class="timeline-header-title">오늘 타임라인</span>
+          <span style="font-size:11px;color:#9ca3af">3월 16일 (일)</span>
+        </div>
+        <!-- Unscheduled card (will be animated) -->
+        <div class="dnd-unscheduled" id="dnd-card">📋 코드 리뷰</div>
+        <div class="timeline-grid" id="timeline-grid">
+          <!-- Rows filled by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S05 AI 학습 ===== -->
+<section id="s05">
+  <div class="sec-wrap reverse">
+    <div class="sec-left">
+      <p class="sec-label anim anim-d1">기능 04 / AI LEARNING</p>
+      <h2 class="sec-title dark anim anim-d2">오늘 한 일을<br>AI가 학습합니다</h2>
+      <p class="sec-desc dark-text anim anim-d3">완료된 태스크를 워크스페이스에 내보내면 AI가 패턴을 학습하고 내일 할 일을 추천합니다.</p>
+    </div>
+    <div class="sec-right anim anim-d2">
+      <div class="ai-demo-card">
+        <div style="font-size:12px;font-weight:700;color:#9ca3af;margin-bottom:10px;">오늘 완료된 태스크</div>
+        <div class="ai-done-list" id="ai-done-list">
+          <div class="ai-done-item"><div class="ai-done-icon">✓</div><span class="ai-done-text">기획서 초안 작성</span></div>
+          <div class="ai-done-item"><div class="ai-done-icon">✓</div><span class="ai-done-text">디자인 리뷰 참석</span></div>
+          <div class="ai-done-item"><div class="ai-done-icon">✓</div><span class="ai-done-text">팀 미팅 준비</span></div>
+        </div>
+        <button class="ai-export-btn" id="ai-export-btn" onclick="triggerAiExport()">AI 워크스페이스로 내보내기 →</button>
+        <div class="ai-result-card" id="ai-result">
+          <span class="ai-badge">AI 추천</span>
+          <div class="ai-typing" id="ai-typing">기획서 최종 검토가 필요합니다</div>
+          <div style="font-size:11px;color:#9ca3af;margin-top:6px;">패턴 분석 기반 · 내일 오전 추천</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S06 워킹가든 ===== -->
+<section id="s06">
+  <div class="garden-overlay">
+    <div class="garden-title">일을 하면 정원이 자랍니다</div>
+    <div class="garden-subtitle">태스크를 완료할 때마다 당신의 정원이 성장합니다</div>
+  </div>
+  <div class="garden-scene">
+    <!-- Weather particles -->
+    <div class="weather-layer">
+      <div class="sunbeam" style="left:15%;top:5%;height:80px;animation-delay:0s"></div>
+      <div class="sunbeam" style="left:50%;top:0%;height:60px;animation-delay:1s"></div>
+      <div class="sunbeam" style="left:80%;top:8%;height:90px;animation-delay:2s"></div>
+      <div class="petal" style="left:20%;top:0%;animation-delay:0s"></div>
+      <div class="petal" style="left:40%;top:-5%;animation-delay:1.5s"></div>
+      <div class="petal" style="left:65%;top:5%;animation-delay:3s"></div>
+      <div class="petal" style="left:85%;top:-3%;animation-delay:4.5s"></div>
+      <div class="dandel" style="left:10%;top:10%;animation-delay:0s"></div>
+      <div class="dandel" style="left:70%;top:5%;animation-delay:4s"></div>
+    </div>
+    <!-- Farm grid -->
+    <div class="garden-grid" id="garden-grid"></div>
+    <!-- Wolf -->
+    <div class="wolf-container" id="wolf-container">
+      <div class="wolf-bubble">3시간 동안 안 했으면 턴을 뺏어갑니다! 🐺</div>
+      <div class="wolf-inner">🐺</div>
+    </div>
+    <!-- Farmers (absolute positioned) -->
+    <div class="farmer" id="farmer1" style="font-size:22px;">👨‍🌾</div>
+    <div class="farmer" id="farmer2" style="font-size:22px;">👩‍🌾</div>
+    <div class="farmer" id="farmer3" style="font-size:20px;">🧑‍🌾</div>
+  </div>
+  <div id="garden-message" style="
+    position:absolute; bottom:32px; left:0; right:0; text-align:center; z-index:10;
+    font-size:28px; font-weight:800; color:white;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.4);
+    opacity:0; transform:translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  ">일 할수록 꽃이 펴요 🌸</div>
+</section>
+
+<!-- ===== S07 넛지 ===== -->
+<section id="s07">
+  <div style="width:100%;max-width:900px;padding:60px 48px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:48px;">
+      <p class="sec-label anim anim-d1" style="display:inline-block;">기능 05 / DAILY NUDGE</p>
+      <h2 class="sec-title white anim anim-d2" style="text-align:center;">하루를 여는 작은 넛지</h2>
+      <p class="sec-desc anim anim-d3" style="max-width:500px;margin:0 auto;">매일 아침, 오늘의 운세와 날씨로 기분을 세팅하고 미뤄진 프로젝트 알림을 받으세요.</p>
+    </div>
+    <div class="nudge-layout anim anim-d2">
+      <div class="nudge-cards-row">
+        <!-- 운세 카드 -->
+        <div class="fortune-card">
+          <div class="fortune-top">
+            <div>
+              <div class="fortune-label">🔮 오늘의 운세</div>
+            </div>
+            <div class="fortune-score-wrap">
+              <div class="fortune-score">82<span style="font-size:20px;font-weight:600;">점</span></div>
+              <div class="fortune-grade">대길 ✨</div>
+            </div>
+          </div>
+          <div class="fortune-stars">★★★★☆</div>
+          <div class="fortune-categories">
+            <div class="fortune-cat">
+              <span class="fortune-cat-label">💼 업무운</span>
+              <span class="fortune-cat-value">좋음</span>
+            </div>
+            <div class="fortune-cat">
+              <span class="fortune-cat-label">👥 대인운</span>
+              <span class="fortune-cat-value">매우 좋음</span>
+            </div>
+            <div class="fortune-cat">
+              <span class="fortune-cat-label">💰 금전운</span>
+              <span class="fortune-cat-value">보통</span>
+            </div>
+          </div>
+          <div class="fortune-lucky">
+            <div class="fortune-lucky-item">🎨 럭키컬러 <strong style="color:#a78bfa;">보라</strong></div>
+            <div class="fortune-lucky-item">🔢 럭키넘버 <strong>7</strong></div>
+          </div>
+        </div>
+
+        <!-- 날씨 카드 -->
+        <div class="weather-card">
+          <div class="weather-card-header">
+            <span class="weather-card-label">오늘의 날씨</span>
+            <span class="weather-location">서울특별시</span>
+          </div>
+          <div class="weather-current">
+            <div class="weather-temp-big">12°</div>
+            <div>
+              <div class="weather-icon-big">☀️</div>
+              <div class="weather-condition">맑음</div>
+            </div>
+          </div>
+          <div class="weather-detail-row">
+            <div class="weather-detail">
+              <div class="weather-detail-label">체감</div>
+              <div class="weather-detail-value">9°</div>
+            </div>
+            <div class="weather-detail">
+              <div class="weather-detail-label">습도</div>
+              <div class="weather-detail-value">45%</div>
+            </div>
+            <div class="weather-detail">
+              <div class="weather-detail-label">바람</div>
+              <div class="weather-detail-value">3m/s</div>
+            </div>
+          </div>
+          <div class="weather-divider"></div>
+          <div class="weather-forecast-label">주간 예보</div>
+          <div class="weather-forecast" id="weather-forecast">
+            <div class="weather-forecast-day"><div class="weather-forecast-day-label">월</div><div class="weather-forecast-day-icon">☀️</div><div class="weather-forecast-day-temp">12°</div></div>
+            <div class="weather-forecast-day"><div class="weather-forecast-day-label">화</div><div class="weather-forecast-day-icon">🌧️</div><div class="weather-forecast-day-temp">8°</div></div>
+            <div class="weather-forecast-day"><div class="weather-forecast-day-label">수</div><div class="weather-forecast-day-icon">⛅</div><div class="weather-forecast-day-temp">15°</div></div>
+            <div class="weather-forecast-day"><div class="weather-forecast-day-label">목</div><div class="weather-forecast-day-icon">☁️</div><div class="weather-forecast-day-temp">11°</div></div>
+            <div class="weather-forecast-day"><div class="weather-forecast-day-label">금</div><div class="weather-forecast-day-icon">☀️</div><div class="weather-forecast-day-temp">14°</div></div>
+          </div>
+          <div class="weather-toggle-btn" id="weather-toggle-btn" onclick="toggleWeatherForecast()">주간 예보 보기 ▼</div>
+        </div>
+      </div>
+      <!-- 넛지 배너 -->
+      <div class="nudge-banner" id="nudge-banner">
+        <span class="nudge-icon">⚠️</span>
+        <span>프로젝트 C를 3일째 안 했어요! 오늘 30분만 투자해볼까요?</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S08 자동 이월 ===== -->
+<section id="s08">
+  <div class="sec-wrap">
+    <div class="sec-left">
+      <p class="sec-label anim anim-d1">기능 06 / AUTO ROLLOVER</p>
+      <h2 class="sec-title white anim anim-d2">미완료 태스크는<br>자동으로 내일로</h2>
+      <p class="sec-desc anim anim-d3">완료된 일은 사라지고, 못 한 일은 깨끗한 상태로 다음날에 이월됩니다. 매일 새로 시작하는 느낌.</p>
+    </div>
+    <div class="sec-right anim anim-d2">
+      <div class="rollover-demo" id="rollover-demo">
+        <div class="rollover-day" id="rollover-yesterday">
+          <div class="rollover-day-label">어제 — 3월 15일</div>
+          <div class="rollover-task" id="r-task-1"><div class="r-check done">✓</div><span>기획서 초안 작성</span></div>
+          <div class="rollover-task" id="r-task-2"><div class="r-check done">✓</div><span>디자인 리뷰</span></div>
+          <div class="rollover-task" id="r-task-3"><div class="r-check undone"></div><span>팀 미팅 자료 준비</span></div>
+          <div class="rollover-task" id="r-task-4"><div class="r-check undone"></div><span>코드 리뷰 피드백</span></div>
+        </div>
+        <div class="rollover-arrow" id="rollover-arrow">↓ 자동 이월</div>
+        <div class="rollover-day" id="rollover-today" style="opacity:0;transform:translateY(10px);">
+          <div class="rollover-day-label today-label">오늘 — 3월 16일 ✨</div>
+          <div class="rollover-task" id="r-new-1" style="opacity:0;"><div class="r-check undone"></div><span>팀 미팅 자료 준비</span></div>
+          <div class="rollover-task" id="r-new-2" style="opacity:0;"><div class="r-check undone"></div><span>코드 리뷰 피드백</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S09 GCal 동기화 ===== -->
+<section id="s09">
+  <div class="sec-wrap reverse">
+    <div class="sec-left">
+      <p class="sec-label anim anim-d1">기능 07 / GCAL SYNC</p>
+      <h2 class="sec-title dark anim anim-d2">Google 캘린더와<br>실시간 동기화</h2>
+      <p class="sec-desc dark-text anim anim-d3">회의와 일정이 타임라인에 자동으로 오버레이. 오늘 실제로 쓸 수 있는 시간이 한눈에 보입니다.</p>
+    </div>
+    <div class="sec-right anim anim-d2">
+      <div class="gcal-demo">
+        <div class="gcal-card">
+          <div class="gcal-header">
+            <div class="gcal-logo">G</div>
+            <div>
+              <div class="gcal-title">오늘의 일정</div>
+              <div class="gcal-subtitle">Google Calendar 연동</div>
+            </div>
+          </div>
+          <div class="gcal-timeline-mini" id="gcal-timeline">
+            <div class="gcal-event blue" id="gcal-ev-1"><div class="gcal-event-time">09:00 – 10:00</div>기획 회의</div>
+            <div class="gcal-event green" id="gcal-ev-2"><div class="gcal-event-time">11:00 – 11:30</div>1:1 미팅</div>
+            <div class="gcal-event red" id="gcal-ev-3"><div class="gcal-event-time">14:00 – 15:30</div>팀 주간 회의</div>
+            <div class="gcal-event yellow" id="gcal-ev-4"><div class="gcal-event-time">16:00 – 17:00</div>디자인 리뷰</div>
+          </div>
+          <div class="gcal-overlay-label" id="gcal-overlay-label">📅 타임라인에 자동 반영됨</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S10 선우AI 챗봇 ===== -->
+<section id="s10">
+  <div class="sec-wrap">
+    <div class="sec-left">
+      <p class="sec-label anim anim-d1">기능 08 / AI CHATBOT</p>
+      <h2 class="sec-title white anim anim-d2">AI가 먼저<br>말을 걸어요</h2>
+      <p class="sec-desc anim anim-d3">선우AI가 오늘의 업무 패턴을 분석하고, 할 일 추천과 리마인더를 먼저 보내드립니다.</p>
+    </div>
+    <div class="sec-right anim anim-d2">
+      <div class="chat-demo">
+        <div class="chat-card">
+          <div class="chat-header">
+            <div class="chat-avatar">🤖</div>
+            <div>
+              <div class="chat-name">선우AI</div>
+              <div class="chat-status">● 온라인</div>
+            </div>
+          </div>
+          <div class="chat-messages" id="chat-messages">
+            <div class="chat-msg ai" id="chat-1">안녕하세요! 오늘 캘린더에 회의가 3개 있어요.</div>
+            <div class="chat-msg ai" id="chat-2">어제 미완료된 "코드 리뷰 피드백"을 오전에 먼저 처리하시는 건 어떨까요?</div>
+            <div class="chat-msg user" id="chat-3">좋아, 그렇게 할게!</div>
+            <div class="chat-msg ai" id="chat-4">타임라인에 09:00~10:00으로 배정해뒀어요 👍<br><span style="font-size:11px;opacity:0.7;">오늘도 화이팅이에요!</span></div>
+          </div>
+          <div class="chat-input-bar">
+            <input class="chat-input" placeholder="AI에게 물어보세요..." readonly>
+            <button class="chat-send">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S11 개발 스펙 ===== -->
+<section id="s11">
+  <div class="sec-wrap" style="flex-direction:column;align-items:center;text-align:center;">
+    <div class="anim">
+      <p style="font-size:11px;font-weight:700;color:var(--indigo);letter-spacing:0.15em;margin-bottom:16px;">TECH STACK</p>
+      <h2 class="sec-title dark" style="text-align:center;margin-bottom:40px;">이렇게 만들었습니다</h2>
+    </div>
+    <div class="tech-grid anim anim-d1">
+      <div class="tech-card"><div class="tech-icon">⚛️</div><div class="tech-name">React + TS</div><div class="tech-desc">컴포넌트 아키텍처</div></div>
+      <div class="tech-card"><div class="tech-icon">🗄️</div><div class="tech-name">Supabase</div><div class="tech-desc">실시간 DB + Auth</div></div>
+      <div class="tech-card"><div class="tech-icon">🎨</div><div class="tech-name">Tailwind CSS</div><div class="tech-desc">유틸리티 퍼스트</div></div>
+      <div class="tech-card"><div class="tech-icon">🖱️</div><div class="tech-name">dnd-kit</div><div class="tech-desc">드래그 앤 드롭</div></div>
+      <div class="tech-card"><div class="tech-icon">📅</div><div class="tech-name">GCal API</div><div class="tech-desc">캘린더 동기화</div></div>
+      <div class="tech-card"><div class="tech-icon">📱</div><div class="tech-name">PWA</div><div class="tech-desc">모바일 앱처럼</div></div>
+    </div>
+    <div class="stats-row anim anim-d2">
+      <div class="stat-item"><div class="stat-num" id="stat-commits">0</div><div class="stat-label">커밋</div></div>
+      <div class="stat-item"><div class="stat-num" id="stat-components">0</div><div class="stat-label">컴포넌트</div></div>
+      <div class="stat-item"><div class="stat-num" id="stat-lines">0</div><div class="stat-label">줄 코드</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S12 기능 종합표 ===== -->
+<section id="s12">
+  <div class="feature-summary-wrap">
+    <div style="text-align:center;margin-bottom:40px;">
+      <p class="sec-label anim" style="display:inline-block;">ALL FEATURES</p>
+      <h2 class="sec-title white anim anim-d1" style="text-align:center;">이 모든 기능이<br>하나의 앱에</h2>
+    </div>
+    <div class="feature-grid anim anim-d2">
+      <div class="feature-cell">
+        <span class="feature-cell-icon">🤖</span>
+        <div class="feature-cell-title">AI 워크스페이스 내보내기</div>
+        <div class="feature-cell-desc">완료 태스크를 AI에 전달,<br>패턴 학습 후 내일 할 일 추천</div>
+        <span class="feature-cell-tag tag-ai">AI</span>
+      </div>
+      <div class="feature-cell">
+        <span class="feature-cell-icon">💬</span>
+        <div class="feature-cell-title">AI 챗봇 내재화</div>
+        <div class="feature-cell-desc">선우AI가 먼저 말을 걸고<br>업무 리마인더 & 추천 제공</div>
+        <span class="feature-cell-tag tag-ai">AI</span>
+      </div>
+      <div class="feature-cell">
+        <span class="feature-cell-icon">🔮</span>
+        <div class="feature-cell-title">운세 & 날씨</div>
+        <div class="feature-cell-desc">사주 기반 데일리 운세,<br>실시간 날씨 & 주간 예보</div>
+        <span class="feature-cell-tag tag-fun">NUDGE</span>
+      </div>
+      <div class="feature-cell">
+        <span class="feature-cell-icon">⏰</span>
+        <div class="feature-cell-title">타임라인 커스터마이징</div>
+        <div class="feature-cell-desc">드래그 앤 드롭으로 시간 배정,<br>GCal 자동 오버레이</div>
+        <span class="feature-cell-tag tag-ux">UX</span>
+      </div>
+      <div class="feature-cell">
+        <span class="feature-cell-icon">📋</span>
+        <div class="feature-cell-title">일 / 주 / 월 태스크</div>
+        <div class="feature-cell-desc">3단계 뷰 전환, 진척률 추적,<br>미완료 자동 이월</div>
+        <span class="feature-cell-tag tag-prod">PRODUCTIVITY</span>
+      </div>
+      <div class="feature-cell">
+        <span class="feature-cell-icon">🌱</span>
+        <div class="feature-cell-title">게이미피케이션</div>
+        <div class="feature-cell-desc">워킹가든에서 식물 성장,<br>농사꾼 & 늑대 시스템</div>
+        <span class="feature-cell-tag tag-fun">GAMIFICATION</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S13 CTA ===== -->
+<section id="s13">
+  <div class="cta-inner">
+    <h2 class="cta-title anim">재밌게 봐주셔서 감사합니다!</h2>
+    <p class="cta-desc anim anim-d1">추후 앱스토어 출시까지!!!</p>
+    <p class="cta-made anim anim-d2">Made with Vibe Coding</p>
+  </div>
+</section>
+
+<script>
+/* ===== 섹션 참조 ===== */
+const sections = document.querySelectorAll('section');
+const dots = document.querySelectorAll('.dot');
+const progressBar = document.getElementById('progress-bar');
+
+function scrollToSection(idx) {
+  sections[idx].scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ===== 스크롤 진행 바 ===== */
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  progressBar.style.width = pct + '%';
+});
+
+/* ===== IntersectionObserver — 도트 + 애니메이션 트리거 ===== */
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const idx = [...sections].indexOf(entry.target);
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      // 섹션별 특수 트리거
+      if (entry.target.id === 's02') startTaskAutoplay();
+      if (entry.target.id === 's03') startTabAutoplay();
+      if (entry.target.id === 's04') startTimelineDnD();
+      if (entry.target.id === 's05') startAiAutoplay();
+      if (entry.target.id === 's06') startGardenGrow();
+      if (entry.target.id === 's07') triggerNudge();
+      if (entry.target.id === 's08') startRolloverDemo();
+      if (entry.target.id === 's09') startGcalDemo();
+      if (entry.target.id === 's10') startChatDemo();
+      if (entry.target.id === 's11') startCountUp();
+    } else {
+      if (entry.target.id === 's02') stopTaskAutoplay();
+      if (entry.target.id === 's03') stopTabAutoplay();
+      if (entry.target.id === 's05') stopAiAutoplay();
+    }
+  });
+}, { threshold: 0.45 });
+sections.forEach(s => sectionObserver.observe(s));
+
+/* .anim → .visible */
+const animObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.2 });
+document.querySelectorAll('.anim').forEach(el => animObserver.observe(el));
+
+/* ===== S02 자동 모션 시퀀스 ===== */
+let s02Running = false;
+let s02Timer = null;
+
+function setCheckbox(cbId, status) {
+  const el = document.getElementById(cbId);
+  if (!el) return;
+  el.dataset.status = status;
+  if (status === 'open') { el.textContent = ''; el.style.borderColor = '#9ca3af'; el.style.background = ''; el.style.color = ''; }
+  if (status === 'progress') { el.textContent = '▶'; el.style.borderColor = 'var(--indigo)'; el.style.background = 'rgba(99,102,241,0.15)'; el.style.color = 'var(--indigo)'; }
+  if (status === 'done') {
+    el.textContent = '✓';
+    el.style.borderColor = 'var(--emerald)'; el.style.background = 'var(--emerald)'; el.style.color = 'white';
+    el.classList.add('check-celebrate');
+    spawnConfetti(el);
+    setTimeout(() => el.classList.remove('check-celebrate'), 800);
+  }
+}
+
+function setTitle(titleId, done) {
+  const el = document.getElementById(titleId);
+  if (!el) return;
+  if (done) { el.classList.add('strike-sweep'); }
+  else { el.classList.remove('strike-sweep'); el.style.textDecoration = ''; el.style.color = ''; }
+}
+
+function setSubDone(subCbId, subTitleId, done) {
+  const cb = document.getElementById(subCbId);
+  const t = document.getElementById(subTitleId);
+  if (!cb) return;
+  cb.dataset.status = done ? 'done' : 'open';
+  cb.textContent = done ? '✓' : '';
+  cb.style.background = done ? 'var(--emerald)' : '';
+  cb.style.borderColor = done ? 'var(--emerald)' : '#6b7280';
+  cb.style.color = done ? 'white' : '';
+  if (t) t.classList.toggle('done', done);
+}
+
+function resetAllTasks() {
+  ['auto-cb-1','auto-cb-2','auto-cb-3','auto-cb-4','auto-cb-5'].forEach(id => setCheckbox(id, 'open'));
+  ['auto-title-1','auto-title-2','auto-title-3','auto-title-4','auto-title-5'].forEach(id => setTitle(id, false));
+  setSubDone('auto-subcb-1','auto-subtitle-1', false);
+}
+
+function runTaskSequence() {
+  if (!s02Running) return;
+  resetAllTasks();
+
+  const steps = [
+    { t:500,   fn: () => { setCheckbox('auto-cb-1','progress'); }},
+    { t:1200,  fn: () => { setSubDone('auto-subcb-1','auto-subtitle-1', true); }},
+    { t:1800,  fn: () => { setCheckbox('auto-cb-1','done'); setTitle('auto-title-1', true); }},
+    { t:2500,  fn: () => { setCheckbox('auto-cb-2','progress'); }},
+    { t:3200,  fn: () => { setCheckbox('auto-cb-2','done'); setTitle('auto-title-2', true); }},
+    { t:3800,  fn: () => { setCheckbox('auto-cb-3','done'); setTitle('auto-title-3', true); }},
+    { t:4500,  fn: () => { setCheckbox('auto-cb-4','progress'); }},
+    { t:5200,  fn: () => { setCheckbox('auto-cb-5','done'); setTitle('auto-title-5', true); }},
+    { t:6000,  fn: () => { setCheckbox('auto-cb-4','done'); setTitle('auto-title-4', true); }},
+    { t:7500,  fn: () => { if(s02Running) runTaskSequence(); }},
+  ];
+
+  steps.forEach(step => {
+    setTimeout(() => { if(s02Running) step.fn(); }, step.t);
+  });
+}
+
+function startTaskAutoplay() {
+  if (s02Running) return;
+  s02Running = true;
+  runTaskSequence();
+}
+
+function stopTaskAutoplay() {
+  s02Running = false;
+}
+
+/* ===== Confetti ===== */
+const confettiColors = ['#6366F1','#8B5CF6','#EC4899','#10B981','#F59E0B','#06B6D4'];
+function spawnConfetti(el) {
+  const rect = el.getBoundingClientRect();
+  for (let i = 0; i < 6; i++) {
+    const c = document.createElement('div');
+    c.style.cssText = `
+      position:fixed;
+      left:${rect.left + rect.width/2}px;
+      top:${rect.top + rect.height/2}px;
+      width:7px;height:7px;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+      background:${confettiColors[i]};
+      pointer-events:none;z-index:99999;
+      --tx:${(Math.random()-0.5)*120}px;
+      --ty:${-(Math.random()*80+20)}px;
+      --tr:${(Math.random()-0.5)*360}deg;
+      animation:confettiFly 600ms ease-out forwards;
+    `;
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 700);
+  }
+}
+
+/* ===== S03 탭 전환 ===== */
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent.trim() === ({today:'오늘',week:'이번주',month:'월간'}[name])));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  const el = document.getElementById('tab-' + name);
+  if (el) { el.classList.add('active'); }
+  if (name === 'month') triggerProgressBars();
+}
+
+/* ===== S03 탭 자동 순환 ===== */
+let tabAutoRunning = false;
+let tabAutoTimer = null;
+const tabOrder = ['today','week','month'];
+let tabAutoIdx = 0;
+
+function startTabAutoplay() {
+  if (tabAutoRunning) return;
+  tabAutoRunning = true;
+  tabAutoIdx = 0;
+  switchTab('today');
+  runTabCycle();
+}
+function runTabCycle() {
+  if (!tabAutoRunning) return;
+  tabAutoTimer = setTimeout(() => {
+    if (!tabAutoRunning) return;
+    tabAutoIdx = (tabAutoIdx + 1) % 3;
+    const name = tabOrder[tabAutoIdx];
+    switchTab(name);
+    if (name === 'month') { progressTriggered = false; triggerProgressBars(); }
+    runTabCycle();
+  }, 2000);
+}
+function stopTabAutoplay() {
+  tabAutoRunning = false;
+  if (tabAutoTimer) { clearTimeout(tabAutoTimer); tabAutoTimer = null; }
+}
+
+let progressTriggered = false;
+function triggerProgressBars() {
+  if (progressTriggered) return;
+  progressTriggered = true;
+  const bars = document.querySelectorAll('.progress-fill');
+  bars.forEach((bar, i) => {
+    const target = parseInt(bar.dataset.target);
+    const pctEl = document.getElementById('pct-' + (i+1));
+    bar.style.setProperty('--target-w', target + '%');
+    bar.classList.add('shimmer-anim');
+    let current = 0;
+    const step = () => {
+      current = Math.min(current + 2, target);
+      bar.style.width = current + '%';
+      if (pctEl) pctEl.textContent = current + '%';
+      if (current < target) requestAnimationFrame(step);
+    };
+    setTimeout(step, i * 200);
+  });
+}
+
+/* ===== S04 타임라인 렌더 + DnD 시뮬레이션 ===== */
+const timeSlots = [
+  { time: '09:00', label: '기획서 작성', color: 'var(--indigo)', span: 2, row: 0 },
+  { time: '10:30', label: '디자인 리뷰', color: 'var(--violet)', span: 1, row: 3 },
+  { time: '14:00', label: '팀 미팅', color: 'var(--rose)', span: 3, row: 10 },
+];
+const timeLabels = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00'];
+
+function renderTimeline() {
+  const grid = document.getElementById('timeline-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  // current time at ~13:00 position (row 8)
+  const currentRow = 8;
+  timeLabels.forEach((t, i) => {
+    const row = document.createElement('div');
+    row.className = 'timeline-row';
+    row.id = 'trow-' + i;
+    const timeLabel = document.createElement('div');
+    timeLabel.className = 'timeline-time';
+    timeLabel.textContent = t;
+    const slotArea = document.createElement('div');
+    slotArea.className = 'timeline-slot-area';
+    slotArea.id = 'tslot-' + i;
+    row.appendChild(timeLabel);
+    row.appendChild(slotArea);
+    if (i === currentRow) {
+      const line = document.createElement('div');
+      line.className = 'timeline-current-line';
+      line.style.cssText = 'top:50%;';
+      const dot = document.createElement('div');
+      dot.className = 'timeline-current-dot';
+      dot.style.cssText = 'top:50%;';
+      row.appendChild(line);
+      row.appendChild(dot);
+    }
+    grid.appendChild(row);
+  });
+  // Place pre-existing slots
+  [
+    { row: 0, span: 2, color: 'var(--indigo)', label: '기획서 작성' },
+    { row: 3, span: 1, color: 'var(--violet)', label: '디자인 리뷰' },
+    { row: 10, span: 3, color: 'var(--rose)', label: '팀 미팅' },
+  ].forEach(s => {
+    const area = document.getElementById('tslot-' + s.row);
+    if (!area) return;
+    const slot = document.createElement('div');
+    slot.className = 'timeline-slot';
+    slot.style.cssText = `background:${s.color};top:2px;height:${s.span*32-4}px;`;
+    slot.textContent = s.label;
+    area.appendChild(slot);
+    area.style.height = (s.span * 32) + 'px';
+  });
+}
+
+let dndRunning = false;
+let dndTimer = null;
+function startTimelineDnD() {
+  if (dndRunning) return;
+  dndRunning = true;
+  renderTimeline();
+  runDndCycle();
+}
+function runDndCycle() {
+  const card = document.getElementById('dnd-card');
+  if (!card) return;
+  // Reset
+  card.style.transition = 'none';
+  card.style.top = '10px';
+  card.style.left = '-110px';
+  card.style.opacity = '1';
+  card.style.transform = 'scale(1)';
+  card.style.boxShadow = '';
+  // Remove previous drop slot if any
+  const prev = document.getElementById('dnd-drop-slot');
+  if (prev) prev.remove();
+  const targetRow = document.getElementById('trow-8'); // 13:00
+
+  setTimeout(() => {
+    card.style.transition = 'transform 0.5s var(--spring), box-shadow 0.3s';
+    card.style.transform = 'scale(1.05)';
+    card.style.boxShadow = '0 8px 24px rgba(0,0,0,0.4)';
+  }, 800);
+
+  setTimeout(() => {
+    const tcard = document.getElementById('timeline-card');
+    if (!tcard || !targetRow) return;
+    const cardRect = card.getBoundingClientRect();
+    const targetRect = targetRow.getBoundingClientRect();
+    const tcardRect = tcard.getBoundingClientRect();
+    const relTop = targetRect.top - tcardRect.top;
+    const relLeft = 44 + 4; // time label width + offset
+    card.style.transition = 'top 1.2s var(--smooth), left 1.2s var(--smooth), transform 0.5s, box-shadow 0.5s';
+    card.style.top = relTop + 'px';
+    card.style.left = relLeft + 'px';
+  }, 1600);
+
+  setTimeout(() => {
+    if (targetRow) targetRow.classList.add('timeline-drop-highlight');
+  }, 2000);
+
+  setTimeout(() => {
+    const area = document.getElementById('tslot-8');
+    if (!area) return;
+    const slot = document.createElement('div');
+    slot.id = 'dnd-drop-slot';
+    slot.className = 'timeline-slot';
+    slot.style.cssText = `background:var(--indigo);top:2px;height:28px;animation:slotDrop 400ms var(--spring) forwards;`;
+    slot.textContent = '코드 리뷰';
+    area.appendChild(slot);
+    card.style.opacity = '0';
+  }, 2400);
+
+  setTimeout(() => {
+    if (targetRow) targetRow.classList.remove('timeline-drop-highlight');
+  }, 4000);
+
+  setTimeout(() => {
+    const prev = document.getElementById('dnd-drop-slot');
+    if (prev) prev.remove();
+    dndTimer = setTimeout(runDndCycle, 500);
+  }, 5500);
+}
+
+/* ===== S05 AI Export 자동 모션 ===== */
+let aiAutoRunning = false;
+
+function startAiAutoplay() {
+  if (aiAutoRunning) return;
+  aiAutoRunning = true;
+  runAiSequence();
+}
+function stopAiAutoplay() {
+  aiAutoRunning = false;
+}
+function runAiSequence() {
+  if (!aiAutoRunning) return;
+  const btn = document.getElementById('ai-export-btn');
+  const list = document.getElementById('ai-done-list');
+  const result = document.getElementById('ai-result');
+  const typing = document.getElementById('ai-typing');
+  const toast = document.getElementById('ai-toast');
+  if (!btn) return;
+
+  // Reset state
+  btn.textContent = 'AI 워크스페이스로 내보내기 →';
+  btn.disabled = false;
+  list.style.transform = ''; list.style.opacity = '1';
+  result.classList.remove('visible');
+  typing.classList.remove('type-anim');
+
+  // 1초: 시작
+  setTimeout(() => {
+    if (!aiAutoRunning) return;
+    btn.disabled = true;
+    btn.textContent = '내보내는 중...';
+    list.style.transition = 'transform 0.3s var(--smooth), opacity 0.3s';
+    list.style.transform = 'scale(0.85) translateX(80px)';
+    list.style.opacity = '0';
+  }, 1000);
+
+  // 1.5초: 토스트
+  setTimeout(() => {
+    if (!aiAutoRunning) return;
+    toast.classList.add('show');
+    btn.textContent = '내보내기 완료 ✓';
+  }, 1500);
+
+  // 2.5초: AI 추천 등장
+  setTimeout(() => {
+    if (!aiAutoRunning) return;
+    result.classList.add('visible');
+    typing.classList.add('type-anim');
+  }, 2500);
+
+  // 4초: 토스트 제거
+  setTimeout(() => {
+    if (!aiAutoRunning) return;
+    toast.classList.remove('show');
+  }, 4000);
+
+  // 6.5초: 리셋 후 반복
+  setTimeout(() => {
+    if (!aiAutoRunning) return;
+    list.style.transform = ''; list.style.opacity = '1';
+    result.classList.remove('visible');
+    typing.classList.remove('type-anim');
+    btn.disabled = false;
+    btn.textContent = 'AI 워크스페이스로 내보내기 →';
+    setTimeout(() => { if (aiAutoRunning) runAiSequence(); }, 500);
+  }, 6500);
+}
+// Keep click handler as fallback
+function triggerAiExport() { if (!aiAutoRunning) startAiAutoplay(); }
+
+/* ===== S06 가든 ===== */
+// Stage definitions: 0=bare,1=seed,2=sprout,3=growing,4=bud,5=bloom
+const plantStages = [0, 0, 0, 0, 0, 0, 0, 0]; // all start bare
+const plotMessages = {
+  0: '흙이 비어있어요', 1: '씨앗을 심었어요!', 2: '새싹이 돋았어요!',
+  3: '쑥쑥 자라고 있어요!', 4: '꽃봉오리예요!', 5: '만개했어요! 🌸✨'
+};
+
+function plantSVG(stage) {
+  switch(stage) {
+    case 0: return `<svg viewBox="0 0 60 60" class="plant-svg"><line x1="10" y1="45" x2="50" y2="45" stroke="#6B4F3A" stroke-width="3" stroke-linecap="round"/></svg>`;
+    case 1: return `<svg viewBox="0 0 60 60" class="plant-svg"><ellipse cx="30" cy="44" rx="5" ry="4" fill="#8B6914"/></svg>`;
+    case 2: return `<svg viewBox="0 0 60 60" class="plant-svg" style="animation:plantSway 2s ease-in-out infinite;transform-origin:bottom center;">
+      <line x1="30" y1="50" x2="30" y2="28" stroke="#4CAF50" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="22" cy="34" rx="8" ry="5" fill="#66BB6A" transform="rotate(-30,22,34)"/>
+      <ellipse cx="38" cy="38" rx="8" ry="5" fill="#81C784" transform="rotate(30,38,38)"/>
+    </svg>`;
+    case 3: return `<svg viewBox="0 0 60 60" class="plant-svg" style="animation:plantSway 2.5s ease-in-out infinite;transform-origin:bottom center;">
+      <line x1="30" y1="52" x2="30" y2="20" stroke="#388E3C" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="20" cy="28" rx="10" ry="6" fill="#4CAF50" transform="rotate(-35,20,28)"/>
+      <ellipse cx="40" cy="34" rx="10" ry="6" fill="#66BB6A" transform="rotate(35,40,34)"/>
+      <ellipse cx="22" cy="40" rx="8" ry="5" fill="#81C784" transform="rotate(-25,22,40)"/>
+    </svg>`;
+    case 4: return `<svg viewBox="0 0 60 60" class="plant-svg" style="animation:plantSway 3s ease-in-out infinite;transform-origin:bottom center;">
+      <line x1="30" y1="55" x2="30" y2="16" stroke="#2E7D32" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="20" cy="30" rx="9" ry="5" fill="#4CAF50" transform="rotate(-35,20,30)"/>
+      <ellipse cx="40" cy="38" rx="9" ry="5" fill="#66BB6A" transform="rotate(35,40,38)"/>
+      <ellipse cx="30" cy="14" rx="7" ry="9" fill="#EC4899" opacity="0.9"/>
+    </svg>`;
+    case 5: return `<svg viewBox="0 0 60 60" class="plant-svg" style="animation:bloomGlow 2s ease-in-out infinite,plantSway 4s ease-in-out infinite;transform-origin:bottom center;">
+      <line x1="30" y1="55" x2="30" y2="22" stroke="#1B5E20" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="18" cy="36" rx="9" ry="5" fill="#4CAF50" transform="rotate(-40,18,36)"/>
+      <ellipse cx="42" cy="42" rx="9" ry="5" fill="#66BB6A" transform="rotate(40,42,42)"/>
+      ${[0,72,144,216,288].map(a => {
+        const r = 9, cx = 30 + r*Math.sin(a*Math.PI/180), cy = 18 - r*Math.cos(a*Math.PI/180);
+        return `<ellipse cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" rx="7" ry="5" fill="#F472B6" transform="rotate(${a},${cx.toFixed(1)},${cy.toFixed(1)})" opacity="0.9"/>`;
+      }).join('')}
+      <circle cx="30" cy="18" r="5" fill="#FCD34D"/>
+      <circle cx="30" cy="18" r="2" fill="#F59E0B"/>
+    </svg>`;
+    default: return '';
+  }
+}
+
+function buildGarden() {
+  const grid = document.getElementById('garden-grid');
+  if (!grid) return;
+  plantStages.forEach((stage, i) => {
+    const plot = document.createElement('div');
+    plot.className = 'garden-plot';
+    plot.dataset.stage = stage;
+    plot.dataset.idx = i;
+    const bubble = document.createElement('div');
+    bubble.className = 'plot-bubble';
+    bubble.textContent = plotMessages[stage];
+    plot.innerHTML = plantSVG(stage);
+    plot.appendChild(bubble);
+    plot.addEventListener('click', () => growPlot(plot));
+    grid.appendChild(plot);
+  });
+  animateFarmers();
+}
+
+function growPlot(plot) {
+  let stage = parseInt(plot.dataset.stage);
+  stage = (stage + 1) % 6;
+  plot.dataset.stage = stage;
+  plot.innerHTML = plantSVG(stage);
+  const bubble = document.createElement('div');
+  bubble.className = 'plot-bubble';
+  bubble.textContent = plotMessages[stage];
+  plot.appendChild(bubble);
+  plot.classList.remove('growing');
+  void plot.offsetWidth; // reflow
+  plot.classList.add('growing');
+  plot.classList.add('show-bubble');
+  setTimeout(() => {
+    plot.classList.remove('growing');
+    plot.classList.remove('show-bubble');
+  }, 1200);
+}
+
+/* ===== 농사꾼 이동 ===== */
+function animateFarmers() {
+  const f1 = document.getElementById('farmer1');
+  const f2 = document.getElementById('farmer2');
+  const f3 = document.getElementById('farmer3');
+  const scene = document.querySelector('.garden-scene');
+  if (!f1 || !scene) return;
+  const w = scene.offsetWidth || 600;
+  const h = 240;
+
+  // farmer1: clockwise patrol
+  let a1 = 0;
+  setInterval(() => {
+    a1 += 0.03;
+    const x = w/2 + (w*0.38)*Math.cos(a1);
+    const y = h/2 + (h*0.38)*Math.sin(a1);
+    f1.style.left = x + 'px';
+    f1.style.top = (80 + y*0.5) + 'px';
+    f1.textContent = a1 % (2*Math.PI) < Math.PI ? '👨‍🌾' : '🚶';
+  }, 50);
+
+  // farmer2: zigzag vertical
+  let a2 = 0;
+  setInterval(() => {
+    a2 += 0.022;
+    const x = (w * 0.15) + (a2 * 10) % (w * 0.3);
+    const y = 80 + 60*Math.sin(a2 * 2);
+    f2.style.left = x + 'px';
+    f2.style.top = y + 'px';
+  }, 60);
+
+  // farmer3: horizontal back and forth
+  let a3 = 0;
+  setInterval(() => {
+    a3 += 0.04;
+    const x = w/2 + (w*0.3)*Math.sin(a3);
+    f3.style.left = x + 'px';
+    f3.style.top = '140px';
+    f3.textContent = Math.sin(a3) > 0 ? '🧑‍🌾' : '🏃';
+  }, 55);
+}
+
+buildGarden();
+
+/* ===== S06 순차 성장 모션 ===== */
+let gardenGrowStarted = false;
+function startGardenGrow() {
+  if (gardenGrowStarted) return;
+  gardenGrowStarted = true;
+  const plots = document.querySelectorAll('.garden-plot');
+  let plotIdx = 0;
+  let stageIdx = 1;
+
+  function growNext() {
+    if (plotIdx >= plots.length) {
+      // All plots fully grown — show message
+      const msg = document.getElementById('garden-message');
+      if (msg) { msg.style.opacity = '1'; msg.style.transform = 'translateY(0)'; }
+      return;
+    }
+    const plot = plots[plotIdx];
+    plot.dataset.stage = stageIdx;
+    plot.innerHTML = plantSVG(stageIdx);
+    const bubble = document.createElement('div');
+    bubble.className = 'plot-bubble';
+    bubble.textContent = plotMessages[stageIdx];
+    plot.appendChild(bubble);
+    plot.classList.remove('growing');
+    void plot.offsetWidth;
+    plot.classList.add('growing');
+    plot.classList.add('show-bubble');
+    setTimeout(() => { plot.classList.remove('growing'); plot.classList.remove('show-bubble'); }, 800);
+
+    stageIdx++;
+    if (stageIdx > 5) { stageIdx = 1; plotIdx++; }
+    setTimeout(growNext, 350);
+  }
+  setTimeout(growNext, 600);
+}
+
+/* ===== S07 넛지 + 날씨 ===== */
+function toggleWeatherForecast() {
+  const forecast = document.getElementById('weather-forecast');
+  const btn = document.getElementById('weather-toggle-btn');
+  if (!forecast) return;
+  const isOpen = forecast.classList.toggle('show');
+  if (btn) btn.textContent = isOpen ? '주간 예보 닫기 ▲' : '주간 예보 보기 ▼';
+}
+let nudgeTriggered = false;
+function triggerNudge() {
+  const banner = document.getElementById('nudge-banner');
+  if (banner) banner.classList.add('slide-in');
+  if (nudgeTriggered) return;
+  nudgeTriggered = true;
+  // Auto-open weather forecast after 3s
+  setTimeout(() => {
+    const forecast = document.getElementById('weather-forecast');
+    const btn = document.getElementById('weather-toggle-btn');
+    if (forecast && !forecast.classList.contains('show')) {
+      forecast.classList.add('show');
+      if (btn) btn.textContent = '주간 예보 닫기 ▲';
+    }
+  }, 3000);
+}
+
+/* ===== S08 자동 이월 데모 ===== */
+let rolloverStarted = false;
+function startRolloverDemo() {
+  if (rolloverStarted) return;
+  rolloverStarted = true;
+  const yesterday = document.getElementById('rollover-yesterday');
+  const today = document.getElementById('rollover-today');
+  const arrow = document.getElementById('rollover-arrow');
+  const t1 = document.getElementById('r-task-1');
+  const t2 = document.getElementById('r-task-2');
+  const t3 = document.getElementById('r-task-3');
+  const t4 = document.getElementById('r-task-4');
+  const n1 = document.getElementById('r-new-1');
+  const n2 = document.getElementById('r-new-2');
+
+  // 1초: 완료 항목 fade out
+  setTimeout(() => {
+    if (t1) { t1.classList.add('completed'); t1.style.opacity = '0.3'; }
+    if (t2) { t2.classList.add('completed'); t2.style.opacity = '0.3'; }
+  }, 1000);
+
+  // 2초: 미완료 항목 migrate 애니메이션
+  setTimeout(() => {
+    if (t3) t3.classList.add('migrating');
+    if (t4) t4.classList.add('migrating');
+  }, 2000);
+
+  // 2.5초: 화살표 등장
+  setTimeout(() => {
+    if (arrow) arrow.classList.add('show');
+  }, 2500);
+
+  // 3초: 어제 카드 축소 + 오늘 카드 등장
+  setTimeout(() => {
+    if (yesterday) yesterday.classList.add('fading');
+    if (today) { today.style.opacity = '1'; today.style.transform = 'translateY(0)'; today.style.transition = 'all 0.5s var(--smooth)'; }
+  }, 3000);
+
+  // 3.5초~4초: 이월된 태스크 순차 등장
+  setTimeout(() => { if (n1) { n1.style.opacity = '1'; n1.style.transition = 'opacity 0.4s'; } }, 3500);
+  setTimeout(() => { if (n2) { n2.style.opacity = '1'; n2.style.transition = 'opacity 0.4s'; } }, 4000);
+}
+
+/* ===== S09 GCal 데모 ===== */
+let gcalStarted = false;
+function startGcalDemo() {
+  if (gcalStarted) return;
+  gcalStarted = true;
+  const events = ['gcal-ev-1','gcal-ev-2','gcal-ev-3','gcal-ev-4'];
+  events.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('show');
+    }, 600 + i * 400);
+  });
+  setTimeout(() => {
+    const label = document.getElementById('gcal-overlay-label');
+    if (label) label.classList.add('show');
+  }, 2800);
+}
+
+/* ===== S10 선우AI 챗봇 데모 ===== */
+let chatStarted = false;
+function startChatDemo() {
+  if (chatStarted) return;
+  chatStarted = true;
+  const msgs = ['chat-1','chat-2','chat-3','chat-4'];
+  msgs.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('show');
+    }, 800 + i * 1200);
+  });
+}
+
+/* ===== S11 카운트업 ===== */
+let countStarted = false;
+function startCountUp() {
+  if (countStarted) return;
+  countStarted = true;
+  countTo('stat-commits', 100, '+', 1500);
+  countTo('stat-components', 36, '', 1500);
+  countTo('stat-lines', 11000, '+', 2000);
+}
+function countTo(id, target, suffix, duration) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = Date.now();
+  const tick = () => {
+    const p = Math.min((Date.now()-start)/duration, 1);
+    const eased = 1 - Math.pow(1-p, 3);
+    const val = Math.floor(eased * target);
+    el.textContent = (val >= 1000 ? Math.floor(val/1000)+'k' : val) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  };
+  tick();
+}
+</script>
+</body>
+</html>
