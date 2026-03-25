@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM AI 솔루션 — 보내고 끝이었던 CRM, 이제 끝까지 추적합니다</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg-dark: #0f0f13;
+  --bg-mid: #16161d;
+  --bg-card: #1a1a24;
+  --bg-cream: #FAFAF8;
+  --bg-cream-card: #FFFFFF;
+  --amber: #F59E0B;
+  --amber-light: #FCD34D;
+  --indigo: #6366F1;
+  --violet: #8B5CF6;
+  --emerald: #10B981;
+  --rose: #F43F5E;
+  --cyan: #06B6D4;
+  --slate: #94A3B8;
+  --smooth: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+html { scroll-snap-type: y mandatory; scroll-behavior: smooth; overflow-y: scroll; }
+body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-dark); color: #fff; }
+
+/* ===== PROGRESS BAR ===== */
+#progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  background: linear-gradient(90deg, var(--amber), var(--amber-light), var(--emerald));
+  z-index: 9999; transition: width 0.1s;
+}
+
+/* ===== DOT NAV ===== */
+#dot-nav {
+  position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+  z-index: 9998; display: flex; flex-direction: column; gap: 10px;
+}
+.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.25); cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+.dot.active { background: var(--amber); transform: scale(1.5); }
+.dot.cream-mode { background: rgba(0,0,0,0.2); }
+.dot.cream-mode.active { background: var(--amber); }
+.dot:hover { background: rgba(255,255,255,0.6); transform: scale(1.3); }
+
+/* ===== SECTIONS ===== */
+.section {
+  min-height: 100vh; width: 100%;
+  scroll-snap-align: start; scroll-snap-stop: always;
+  display: flex; align-items: center; justify-content: center;
+  padding: 60px 80px; position: relative; overflow: hidden;
+}
+.section.dark { background: var(--bg-dark); }
+.section.cream { background: var(--bg-cream); }
+.section-inner {
+  width: 100%; max-width: 1200px; display: flex; align-items: center; gap: 60px;
+}
+.section-inner.center-layout { flex-direction: column; align-items: center; text-align: center; }
+
+/* ===== ANIMATIONS ===== */
+.anim { opacity: 0; transform: translateY(30px); transition: opacity 0.7s var(--smooth), transform 0.7s var(--smooth); }
+.anim.visible { opacity: 1; transform: translateY(0); }
+.anim-delay-1 { transition-delay: 0.15s; }
+.anim-delay-2 { transition-delay: 0.3s; }
+.anim-delay-3 { transition-delay: 0.45s; }
+.anim-delay-4 { transition-delay: 0.6s; }
+.anim-delay-5 { transition-delay: 0.75s; }
+
+@keyframes kickPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(245,158,11,0); }
+  50% { transform: scale(1.04); box-shadow: 0 0 24px rgba(245,158,11,0.4); }
+  100% { transform: scale(1); box-shadow: 0 0 0 rgba(245,158,11,0); }
+}
+@keyframes alertShake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes dashMove { from { stroke-dashoffset: 20; } to { stroke-dashoffset: 0; } }
+@keyframes glowPulse {
+  0%,100% { box-shadow: 0 0 20px rgba(245,158,11,0.15); }
+  50% { box-shadow: 0 0 48px rgba(245,158,11,0.55); }
+}
+@keyframes glowPulseAmber {
+  0%,100% { box-shadow: 0 0 12px rgba(245,158,11,0.2); }
+  50% { box-shadow: 0 0 36px rgba(245,158,11,0.6); }
+}
+@keyframes floatBlob {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(30px,-20px) scale(1.05); }
+  66% { transform: translate(-20px,15px) scale(0.97); }
+}
+@keyframes nodeGrow {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes arrowDraw {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0% 0 0); }
+}
+@keyframes barGrow {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@keyframes lineDrawSVG {
+  from { stroke-dashoffset: 300; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes ctaGlow {
+  0%,100% { box-shadow: 0 0 24px rgba(245,158,11,0.3); }
+  50% { box-shadow: 0 0 52px rgba(245,158,11,0.7); }
+}
+@keyframes tagPop {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes nodePulse {
+  0%,100% { box-shadow: 0 0 0 rgba(99,102,241,0); }
+  50% { box-shadow: 0 0 18px rgba(99,102,241,0.5); }
+}
+@keyframes roiGlow {
+  0%,100% { box-shadow: 0 0 16px rgba(245,158,11,0.2); }
+  50% { box-shadow: 0 0 40px rgba(245,158,11,0.7), 0 0 80px rgba(245,158,11,0.3); }
+}
+
+/* ===== FEATURE LABEL ===== */
+.feature-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+  color: var(--amber); text-transform: uppercase; margin-bottom: 14px;
+}
+.feature-label.dark { color: var(--indigo); }
+.section-left { width: 30%; flex-shrink: 0; }
+.section-right { flex: 1; }
+
+/* ===== LEFT COLUMN ===== */
+.left-title { font-size: 22px; font-weight: 800; line-height: 1.35; margin-bottom: 12px; }
+.left-title.cream { color: #111827; }
+.left-sub { font-size: 14px; color: var(--slate); line-height: 1.65; }
+.left-sub.cream { color: #6B7280; }
+
+/* ===== HERO (S0) ===== */
+.hero-blob {
+  position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none;
+}
+.hero-blob-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 70%);
+  top: -100px; left: -100px;
+  animation: floatBlob 18s ease-in-out infinite;
+}
+.hero-blob-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+  bottom: -80px; right: -80px;
+  animation: floatBlob 22s ease-in-out infinite reverse;
+}
+.hero-center { text-align: center; max-width: 820px; margin: 0 auto; }
+.hero-eyebrow {
+  display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: 2px;
+  color: var(--amber); text-transform: uppercase; margin-bottom: 28px;
+  padding: 6px 18px; border: 1px solid rgba(245,158,11,0.35);
+  border-radius: 100px; background: rgba(245,158,11,0.06);
+}
+.hero-title {
+  font-size: clamp(32px, 4.5vw, 56px); font-weight: 800; line-height: 1.2;
+  margin-bottom: 22px; letter-spacing: -0.5px;
+}
+.hero-title em { color: var(--amber); font-style: normal; }
+.hero-sub {
+  font-size: 17px; color: var(--slate); margin-bottom: 60px; line-height: 1.7;
+}
+.hero-kpis { display: flex; gap: 0; justify-content: center; }
+.hero-kpi {
+  text-align: center; padding: 24px 32px;
+  border-right: 1px solid rgba(255,255,255,0.07);
+}
+.hero-kpi:last-child { border-right: none; }
+.hero-kpi-num {
+  font-size: 36px; font-weight: 800; color: var(--amber);
+  letter-spacing: -1px; display: block; line-height: 1;
+}
+.hero-kpi-label { font-size: 12px; color: var(--slate); margin-top: 8px; line-height: 1.4; }
+
+/* ===== DASHBOARD MOCKUP (S1) ===== */
+.mockup-card {
+  background: var(--bg-card); border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.07);
+  overflow: hidden; animation: glowPulse 4s ease-in-out infinite;
+}
+.mockup-titlebar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 18px; background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.mockup-dots { display: flex; gap: 6px; }
+.mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+.mockup-dot.r { background: #FF5F57; }
+.mockup-dot.y { background: #FEBC2E; }
+.mockup-dot.g { background: #28C840; }
+.mockup-title-text { font-size: 12px; font-weight: 600; color: var(--slate); margin-left: 6px; }
+.live-badge {
+  margin-left: auto; font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  color: var(--emerald); background: rgba(16,185,129,0.12);
+  padding: 3px 10px; border-radius: 100px; border: 1px solid rgba(16,185,129,0.3);
+}
+.live-badge::before { content: "● "; font-size: 8px; }
+.mockup-body { padding: 18px; }
+
+/* KPI Grid */
+.kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+.kpi-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+.kpi-card {
+  background: rgba(255,255,255,0.04); border-radius: 10px;
+  padding: 14px 16px; border: 1px solid rgba(255,255,255,0.06);
+  opacity: 0; transition: opacity 0.4s, box-shadow 0.4s;
+}
+.kpi-card.visible { opacity: 1; }
+.kpi-card.roi-card {
+  animation: roiGlow 2.5s ease-in-out infinite;
+  border-color: rgba(245,158,11,0.3);
+}
+.kpi-label { font-size: 10px; color: var(--slate); margin-bottom: 6px; font-weight: 500; }
+.kpi-num { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; line-height: 1; }
+.kpi-num.amber { color: var(--amber); }
+.kpi-num.emerald { color: var(--emerald); }
+.kpi-num.roi { font-size: 28px; color: var(--amber); }
+.kpi-sub { font-size: 10px; color: var(--emerald); margin-top: 5px; font-weight: 600; }
+
+/* Chart bars */
+.chart-area { margin-bottom: 12px; }
+.chart-bars {
+  display: flex; align-items: flex-end; gap: 5px; height: 72px;
+  padding: 0 4px;
+}
+.bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bar {
+  width: 100%; border-radius: 4px 4px 0 0;
+  transform-origin: bottom; transform: scaleY(0);
+  transition: transform 0.6s var(--smooth);
+}
+.bar.amber { background: linear-gradient(180deg, var(--amber) 0%, rgba(245,158,11,0.5) 100%); }
+.bar.emerald { background: linear-gradient(180deg, var(--emerald) 0%, rgba(16,185,129,0.5) 100%); }
+.bar.visible { transform: scaleY(1); }
+
+/* SVG Line Chart */
+.line-chart { width: 100%; height: 52px; }
+.line-chart path { stroke-dasharray: 300; stroke-dashoffset: 300; }
+.line-chart path.visible { animation: lineDrawSVG 1.2s var(--smooth) forwards; }
+
+/* Table rows */
+.dash-table { background: rgba(255,255,255,0.03); border-radius: 8px; overflow: hidden; }
+.dash-row {
+  display: flex; gap: 12px; padding: 8px 14px; font-size: 11px;
+  border-bottom: 1px solid rgba(255,255,255,0.04); align-items: center;
+  opacity: 0; transform: translateX(-12px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.dash-row:last-child { border-bottom: none; }
+.dash-row.visible { opacity: 1; transform: translateX(0); }
+.dash-row-name { flex: 1; color: #e2e8f0; font-weight: 500; }
+.dash-row-ctr { color: var(--amber); font-weight: 700; width: 52px; }
+.dash-row-status { padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 700; }
+.status-good { background: rgba(16,185,129,0.15); color: var(--emerald); }
+.status-warn { background: rgba(244,63,94,0.15); color: var(--rose); }
+
+/* ===== GA4 JOURNEY (S2) ===== */
+.journey-mockup {
+  background: #fff; border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.08); padding: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+.journey-header { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
+.journey-header-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--indigo); }
+.journey-steps { display: flex; align-items: flex-start; gap: 0; margin-bottom: 24px; }
+.journey-node {
+  display: flex; flex-direction: column; align-items: center; flex: 1;
+  opacity: 0; transform: scale(0.7);
+  transition: opacity 0.4s var(--spring), transform 0.4s var(--spring);
+}
+.journey-node.visible { opacity: 1; transform: scale(1); }
+.journey-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 10px; font-weight: 700;
+  transition: box-shadow 0.3s;
+}
+.journey-icon.n0 { background: #F1F5F9; }
+.journey-icon.n1 { background: rgba(99,102,241,0.1); border: 2px solid rgba(99,102,241,0.3); }
+.journey-icon.n2 { background: rgba(6,182,212,0.1); border: 2px solid rgba(6,182,212,0.3); }
+.journey-icon.n3 { background: rgba(16,185,129,0.1); border: 2px solid rgba(16,185,129,0.3); }
+.journey-icon.n4 { background: rgba(245,158,11,0.12); border: 2px solid rgba(245,158,11,0.4); }
+.journey-label { font-size: 11px; font-weight: 700; color: #374151; margin-bottom: 4px; }
+.journey-stat { font-size: 11px; color: #6B7280; text-align: center; }
+.journey-stat b { color: var(--indigo); font-size: 13px; }
+.journey-arrow {
+  display: flex; align-items: center; padding-top: 16px; flex-shrink: 0;
+  opacity: 0; width: 28px;
+  transition: opacity 0.4s;
+}
+.journey-arrow.visible { opacity: 1; }
+.journey-arrow svg { width: 28px; height: 16px; }
+
+/* Channel bars */
+.ch-bars { display: flex; flex-direction: column; gap: 8px; }
+.ch-bar-row { display: flex; align-items: center; gap: 10px; }
+.ch-bar-label { font-size: 11px; color: #6B7280; width: 68px; font-weight: 500; }
+.ch-bar-track { flex: 1; height: 8px; background: #F1F5F9; border-radius: 100px; overflow: hidden; }
+.ch-bar-fill {
+  height: 100%; border-radius: 100px; transform: scaleX(0); transform-origin: left;
+  transition: transform 0.7s var(--smooth);
+}
+.ch-bar-fill.visible { transform: scaleX(1); }
+.ch-bar-fill.c1 { background: var(--indigo); width: 72%; }
+.ch-bar-fill.c2 { background: var(--cyan); width: 48%; }
+.ch-bar-fill.c3 { background: #94A3B8; width: 35%; }
+.ch-pct { font-size: 11px; font-weight: 700; color: #374151; }
+
+/* ===== MESSAGE EDITOR (S3) ===== */
+.editor-phone-wrap { display: flex; gap: 24px; flex: 1; align-items: flex-start; }
+.editor-mockup {
+  flex: 1; background: var(--bg-card); border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08); overflow: hidden;
+}
+.editor-body { padding: 18px; }
+.editor-textarea {
+  width: 100%; min-height: 88px; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+  padding: 14px 16px; font-size: 13px; color: #e2e8f0; font-family: inherit;
+  resize: none; line-height: 1.6;
+}
+.typing-cursor {
+  display: inline-block; width: 2px; height: 14px; background: var(--amber);
+  margin-left: 1px; vertical-align: middle;
+  animation: blink 0.8s step-end infinite;
+}
+.ai-btn {
+  margin-top: 12px; width: 100%; padding: 11px;
+  border-radius: 10px; font-size: 13px; font-weight: 700;
+  border: none; cursor: pointer; letter-spacing: 0.3px;
+  background: linear-gradient(135deg, var(--violet), var(--indigo));
+  color: #fff; transition: transform 0.15s, box-shadow 0.3s;
+}
+.ai-btn.glowing { animation: glowPulse 1.2s ease-in-out infinite; }
+.ai-btn:active { transform: scale(0.96); }
+.ai-result-card {
+  margin-top: 12px; background: rgba(99,102,241,0.08);
+  border: 1px solid rgba(99,102,241,0.3); border-radius: 10px;
+  padding: 14px 16px; font-size: 13px; color: #e2e8f0; line-height: 1.65;
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.ai-result-card.visible { opacity: 1; transform: translateY(0); }
+.ai-result-badge {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  color: var(--emerald); background: rgba(16,185,129,0.12);
+  border: 1px solid rgba(16,185,129,0.3); border-radius: 100px;
+  padding: 3px 12px; margin-top: 10px;
+  opacity: 0; transition: opacity 0.4s;
+}
+.ai-result-badge.visible { opacity: 1; animation: tagPop 0.3s var(--spring); }
+
+/* iPhone mockup */
+.phone-wrap { flex-shrink: 0; width: 180px; }
+.phone-frame {
+  width: 180px; height: 340px; border-radius: 32px;
+  border: 3px solid #2d3748; background: #1e293b; padding: 3px;
+  position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+.phone-notch {
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  width: 72px; height: 22px; background: #1e293b;
+  border-radius: 0 0 16px 16px; z-index: 10;
+}
+.phone-screen {
+  width: 100%; height: 100%; background: #fff; border-radius: 29px;
+  overflow: hidden; display: flex; flex-direction: column;
+}
+.phone-statusbar {
+  display: flex; justify-content: space-between; padding: 14px 16px 6px;
+  font-size: 9px; font-weight: 700; color: #374151;
+}
+.phone-app-header {
+  background: #F1F5F9; padding: 8px 14px;
+  font-size: 10px; font-weight: 700; color: #374151;
+  border-bottom: 1px solid #E5E7EB;
+}
+.phone-messages { padding: 12px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.phone-bubble {
+  background: #F1F5F9; border-radius: 12px 12px 12px 4px;
+  padding: 10px 12px; font-size: 10px; color: #374151; line-height: 1.5;
+  max-width: 90%; opacity: 0; transform: translateY(8px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.phone-bubble.visible { opacity: 1; transform: translateY(0); }
+.phone-bubble-link {
+  font-size: 9px; color: var(--indigo); margin-top: 6px; display: block;
+  opacity: 0; transition: opacity 0.4s;
+}
+.phone-bubble-link.visible { opacity: 1; }
+
+/* Steps */
+.steps-row { display: flex; gap: 0; justify-content: center; margin-top: 24px; }
+.step-item { display: flex; align-items: center; gap: 0; }
+.step-node {
+  display: flex; flex-direction: column; align-items: center;
+  font-size: 11px; color: var(--slate); text-align: center;
+}
+.step-icon-wrap {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(255,255,255,0.06); display: flex; align-items: center;
+  justify-content: center; font-size: 16px; margin-bottom: 6px;
+}
+.step-arrow { width: 32px; color: var(--amber); font-size: 16px; text-align: center; padding-bottom: 20px; }
+
+/* ===== ERP MATCHING (S4) ===== */
+.erp-mockup {
+  background: #fff; border-radius: 16px; padding: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.07); border: 1px solid rgba(0,0,0,0.07);
+}
+.erp-header { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
+.erp-cols { display: flex; align-items: center; gap: 16px; }
+.erp-col { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.erp-mid { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 90px; }
+.erp-customer-card {
+  background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px;
+  padding: 11px 14px; font-size: 12px; font-weight: 600; color: #374151;
+  opacity: 0; transform: translateX(-16px);
+  transition: opacity 0.4s var(--smooth), transform 0.4s var(--smooth);
+}
+.erp-customer-card.visible { opacity: 1; transform: translateX(0); }
+.erp-arrow-big {
+  font-size: 28px; color: var(--amber); font-weight: 900;
+  opacity: 0; transition: opacity 0.4s;
+}
+.erp-arrow-big.visible { opacity: 1; }
+.erp-spinner {
+  width: 28px; height: 28px; border: 3px solid rgba(245,158,11,0.2);
+  border-top-color: var(--amber); border-radius: 50%;
+  animation: spin 0.8s linear infinite; opacity: 0;
+  transition: opacity 0.4s;
+}
+.erp-spinner.visible { opacity: 1; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.erp-query-label { font-size: 9px; color: var(--slate); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+.erp-result-card {
+  background: #F0FDF4; border: 1px solid rgba(16,185,129,0.3); border-radius: 10px;
+  padding: 11px 14px; font-size: 12px; opacity: 0; transform: translateX(16px);
+  transition: opacity 0.4s var(--smooth), transform 0.4s var(--smooth);
+}
+.erp-result-card.visible { opacity: 1; transform: translateX(0); }
+.erp-result-name { font-weight: 600; color: #166534; font-size: 11px; }
+.erp-result-amount { font-weight: 800; color: #15803D; font-size: 13px; }
+.erp-total {
+  margin-top: 20px; text-align: center; padding: 16px;
+  background: rgba(245,158,11,0.06); border-radius: 12px;
+  border: 1px solid rgba(245,158,11,0.25);
+  opacity: 0; transition: opacity 0.5s;
+  animation: glowPulseAmber 2.5s ease-in-out infinite;
+}
+.erp-total.visible { opacity: 1; }
+.erp-total-label { font-size: 11px; color: #6B7280; margin-bottom: 6px; }
+.erp-total-num { font-size: 26px; font-weight: 800; color: var(--amber); }
+.erp-batch-info { margin-top: 12px; display: flex; gap: 16px; justify-content: center; }
+.erp-batch-badge {
+  font-size: 10px; font-weight: 600; color: #6B7280;
+  background: #F1F5F9; padding: 4px 12px; border-radius: 100px;
+}
+
+/* ===== AI DIAGNOSIS (S5) ===== */
+.diag-mockup {
+  background: var(--bg-card); border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08); padding: 20px;
+}
+.diag-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.diag-header-title { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+.diag-badge {
+  font-size: 10px; font-weight: 700; color: var(--emerald);
+  background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3);
+  padding: 3px 12px; border-radius: 100px;
+}
+.diag-bad-card {
+  background: rgba(244,63,94,0.06); border: 1.5px solid rgba(244,63,94,0.3);
+  border-radius: 12px; padding: 16px 18px; margin-bottom: 14px;
+  opacity: 0; transition: opacity 0.5s;
+}
+.diag-bad-card.visible { opacity: 1; }
+.diag-bad-card.shake { animation: alertShake 0.5s ease; }
+.diag-bad-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+.diag-bad-title span { color: var(--rose); }
+.diag-bad-num { font-size: 42px; font-weight: 800; color: var(--rose); line-height: 1; }
+.diag-bad-benchmark { font-size: 12px; color: rgba(244,63,94,0.8); margin-top: 4px; }
+.diag-bar-track { height: 8px; background: rgba(255,255,255,0.07); border-radius: 100px; margin-top: 14px; overflow: hidden; }
+.diag-bar-fill {
+  height: 100%; border-radius: 100px; background: var(--rose);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.7s var(--smooth);
+}
+.diag-bar-fill.visible { transform: scaleX(1); width: 30%; }
+
+.ai-action-card {
+  background: rgba(99,102,241,0.08); border: 1.5px solid rgba(99,102,241,0.3);
+  border-radius: 12px; padding: 14px 16px; margin-bottom: 12px;
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.ai-action-card.visible { opacity: 1; transform: translateY(0); }
+.ai-action-title { font-size: 11px; font-weight: 700; color: var(--indigo); letter-spacing: 0.5px; margin-bottom: 8px; }
+.ai-action-text { font-size: 13px; color: #CBD5E1; line-height: 1.6; margin-bottom: 10px; }
+.ai-action-num { font-size: 26px; font-weight: 800; color: var(--emerald); }
+.ai-action-num-label { font-size: 12px; color: var(--emerald); }
+
+.diag-good-row {
+  background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2);
+  border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+  font-size: 12px; opacity: 0; transition: opacity 0.4s;
+}
+.diag-good-row.visible { opacity: 1; }
+.diag-good-name { flex: 1; color: #94A3B8; }
+.diag-good-ctr { font-weight: 800; color: var(--emerald); }
+.diag-good-badge { font-size: 10px; color: var(--emerald); font-weight: 700; }
+
+/* ===== PURCHASE PATTERN (S6) ===== */
+.timeline-wrap { width: 100%; max-width: 1000px; }
+.timeline-title { font-size: 28px; font-weight: 800; color: #111827; margin-bottom: 10px; }
+.timeline-sub { font-size: 15px; color: #6B7280; margin-bottom: 48px; }
+.timeline-track { display: flex; align-items: flex-start; width: 100%; gap: 0; margin-bottom: 36px; }
+.tl-node {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  opacity: 0; transform: scale(0.75);
+  transition: opacity 0.4s var(--spring), transform 0.4s var(--spring);
+}
+.tl-node.visible { opacity: 1; transform: scale(1); }
+.tl-icon {
+  width: 58px; height: 58px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; margin-bottom: 12px; position: relative;
+}
+.tl-icon.t0 { background: #E5E7EB; }
+.tl-icon.t1 { background: rgba(99,102,241,0.12); border: 2px solid rgba(99,102,241,0.3); }
+.tl-icon.t2 { background: rgba(6,182,212,0.1); border: 2px solid rgba(6,182,212,0.3); }
+.tl-icon.t3 { background: rgba(245,158,11,0.12); border: 2px solid rgba(245,158,11,0.4); animation: glowPulseAmber 2.5s ease-in-out infinite; }
+.tl-icon.t4 { background: rgba(16,185,129,0.1); border: 2px solid rgba(16,185,129,0.3); }
+.tl-label { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px; }
+.tl-days {
+  font-size: 10px; color: #9CA3AF; background: #F1F5F9;
+  padding: 2px 8px; border-radius: 100px; margin-bottom: 6px;
+}
+.tl-arrow {
+  display: flex; align-items: center; padding-top: 20px; flex-shrink: 0;
+  opacity: 0; transition: opacity 0.5s;
+}
+.tl-arrow.visible { opacity: 1; }
+.tl-arrow-line { width: 32px; border-top: 2px dashed rgba(245,158,11,0.4); }
+.tl-arrow-head { color: var(--amber); font-size: 14px; margin-left: -2px; }
+
+.purchase-popup {
+  background: rgba(245,158,11,0.08); border: 1.5px solid rgba(245,158,11,0.3);
+  border-radius: 12px; padding: 12px 16px; margin-top: 0; text-align: left;
+  max-width: 240px; margin: 0 auto;
+  opacity: 0; transform: translateY(10px) scale(0.96);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.purchase-popup.visible { opacity: 1; transform: translateY(0) scale(1); }
+.purchase-popup-label { font-size: 10px; color: var(--amber); font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px; }
+.purchase-popup-item { font-size: 13px; color: #374151; font-weight: 700; }
+
+.tl-kpis { display: flex; justify-content: center; gap: 40px; margin-top: 24px; }
+.tl-kpi { text-align: center; }
+.tl-kpi-num { font-size: 28px; font-weight: 800; color: var(--indigo); }
+.tl-kpi-label { font-size: 12px; color: #9CA3AF; margin-top: 4px; }
+
+/* ===== REPORT (S7) ===== */
+.report-mockup {
+  background: var(--bg-card); border-radius: 16px;
+  border: 1px solid rgba(6,182,212,0.2); padding: 24px;
+  box-shadow: 0 0 32px rgba(6,182,212,0.06);
+}
+.report-header { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.report-header-icon { font-size: 20px; }
+.report-header-title { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+.report-header-meta { font-size: 11px; color: var(--slate); margin-left: auto; }
+.report-lines { display: flex; flex-direction: column; gap: 16px; }
+.report-line {
+  font-size: 14px; color: #94A3B8; line-height: 1.7; padding: 12px 14px;
+  background: rgba(255,255,255,0.03); border-radius: 8px;
+  opacity: 0; transform: translateY(14px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.report-line.visible { opacity: 1; transform: translateY(0); }
+.report-line b { color: var(--amber); font-weight: 700; }
+.report-line.cyan { background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.2); }
+.report-line.cyan b { color: var(--cyan); }
+
+/* ===== FULL CYCLE (S8) ===== */
+.cycle-title { font-size: 30px; font-weight: 800; color: #111827; margin-bottom: 10px; }
+.cycle-sub { font-size: 15px; color: #6B7280; margin-bottom: 48px; }
+.cycle-nodes { display: flex; align-items: stretch; width: 100%; gap: 0; margin-bottom: 40px; }
+.cycle-node {
+  flex: 1; background: #fff; border-radius: 14px; padding: 24px 16px;
+  text-align: center; border: 1px solid #E5E7EB;
+  transition: transform 0.2s, box-shadow 0.2s;
+  opacity: 0; transform: translateY(20px);
+  cursor: default;
+}
+.cycle-node:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
+.cycle-node.visible { opacity: 1; transform: translateY(0); }
+.cycle-node.visible:hover { transform: translateY(-4px); }
+.cycle-node-icon { font-size: 32px; margin-bottom: 12px; display: block; }
+.cycle-node-name { font-size: 13px; font-weight: 700; color: #111827; margin-bottom: 4px; }
+.cycle-node-desc { font-size: 11px; color: #9CA3AF; line-height: 1.5; }
+.cycle-arrow-wrap {
+  display: flex; align-items: center; padding-bottom: 24px; flex-shrink: 0;
+  opacity: 0; transition: opacity 0.4s;
+}
+.cycle-arrow-wrap.visible { opacity: 1; }
+.cycle-arrow-sym { color: var(--amber); font-size: 18px; font-weight: 900; padding: 0 4px; }
+.tech-badges { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.tech-badge {
+  font-size: 11px; font-weight: 600; color: #6B7280;
+  background: #F1F5F9; border: 1px solid #E2E8F0;
+  padding: 6px 16px; border-radius: 100px;
+}
+
+/* ===== CTA (S9) ===== */
+.cta-center { text-align: center; max-width: 700px; margin: 0 auto; }
+.cta-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 24px;
+}
+.cta-title { font-size: clamp(32px, 4vw, 50px); font-weight: 800; line-height: 1.2; margin-bottom: 20px; }
+.cta-title em { color: var(--amber); font-style: normal; }
+.cta-sub { font-size: 16px; color: var(--slate); line-height: 1.7; margin-bottom: 44px; }
+.cta-btn {
+  display: inline-block; padding: 16px 44px; border-radius: 100px;
+  background: var(--amber); color: #000; font-weight: 800; font-size: 16px;
+  text-decoration: none; cursor: pointer; border: none;
+  animation: ctaGlow 2.5s ease-in-out infinite;
+  transition: transform 0.15s;
+}
+.cta-btn:hover { transform: scale(1.04); }
+.cta-author { margin-top: 48px; font-size: 13px; color: rgba(255,255,255,0.3); line-height: 1.8; }
+.cta-blob-1 {
+  position: absolute; width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%);
+  filter: blur(70px); top: -50px; right: -50px;
+  animation: floatBlob 20s ease-in-out infinite;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .section { padding: 60px 40px; }
+  .section-inner { gap: 40px; }
+  .section-left { width: 35%; }
+  .left-title { font-size: 19px; }
+}
+@media (max-width: 768px) {
+  .section { padding: 48px 24px; }
+  .section-inner { flex-direction: column; gap: 32px; }
+  .section-left { width: 100%; }
+  .hero-kpis { flex-wrap: wrap; }
+  .hero-kpi { padding: 16px 20px; }
+  .journey-steps { overflow-x: auto; }
+  .cycle-nodes { flex-wrap: wrap; }
+  .cycle-node { min-width: 140px; }
+  .timeline-track { overflow-x: auto; }
+  #dot-nav { display: none; }
+  .editor-phone-wrap { flex-direction: column; }
+  .phone-wrap { width: 100%; display: flex; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div id="progress-bar"></div>
+
+<!-- Dot Nav -->
+<div id="dot-nav">
+  <div class="dot active" onclick="scrollToSection(0)" title="Hero"></div>
+  <div class="dot" onclick="scrollToSection(1)" title="KPI 대시보드"></div>
+  <div class="dot" onclick="scrollToSection(2)" title="GA4 유입"></div>
+  <div class="dot" onclick="scrollToSection(3)" title="캠페인 제작"></div>
+  <div class="dot" onclick="scrollToSection(4)" title="수주 추적"></div>
+  <div class="dot" onclick="scrollToSection(5)" title="AI 진단"></div>
+  <div class="dot" onclick="scrollToSection(6)" title="구매 패턴"></div>
+  <div class="dot" onclick="scrollToSection(7)" title="리포트 자동화"></div>
+  <div class="dot" onclick="scrollToSection(8)" title="Full-Cycle"></div>
+  <div class="dot" onclick="scrollToSection(9)" title="CTA"></div>
+</div>
+
+<!-- ===================== S0: HERO ===================== -->
+<section class="section dark" data-index="0">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-center">
+    <div class="hero-eyebrow anim">CRM AI Solution — iloom</div>
+    <h1 class="hero-title anim anim-delay-1">
+      보내고 끝이었던 CRM,<br>
+      이제 <em>끝까지 추적</em>합니다
+    </h1>
+    <p class="hero-sub anim anim-delay-2">
+      고객 추출 → 발송 → 유입 추적 → 수주 → AI 분석<br>하나의 플랫폼에서 끊김 없이
+    </p>
+    <div class="hero-kpis anim anim-delay-3">
+      <div class="hero-kpi">
+        <span class="hero-kpi-num" id="hero-n1">0</span>
+        <div class="hero-kpi-label">캠페인 발송<br>건수</div>
+      </div>
+      <div class="hero-kpi">
+        <span class="hero-kpi-num" id="hero-n2">0</span>
+        <div class="hero-kpi-label">평균<br>CTR</div>
+      </div>
+      <div class="hero-kpi">
+        <span class="hero-kpi-num" id="hero-n3">0</span>
+        <div class="hero-kpi-label">구매<br>전환율</div>
+      </div>
+      <div class="hero-kpi">
+        <span class="hero-kpi-num" id="hero-n4">0</span>
+        <div class="hero-kpi-label">M+1<br>수주금액</div>
+      </div>
+      <div class="hero-kpi">
+        <span class="hero-kpi-num" id="hero-n5">0</span>
+        <div class="hero-kpi-label">캠페인<br>ROI</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== S1: KPI DASHBOARD ===================== -->
+<section class="section dark" data-index="1">
+  <div class="section-inner">
+    <div class="section-left">
+      <div class="feature-label anim">FEATURE 01</div>
+      <h2 class="left-title anim anim-delay-1">발송부터 ROI까지,<br>한 화면에 다 본다</h2>
+      <p class="left-sub anim anim-delay-2">12건 캠페인, 45,230명 발송, 1.2억 수주 — 흩어진 숫자들이 하나의 대시보드로 실시간 집계됩니다.</p>
+    </div>
+    <div class="section-right anim anim-delay-2">
+      <div class="mockup-card">
+        <div class="mockup-titlebar">
+          <div class="mockup-dots">
+            <div class="mockup-dot r"></div>
+            <div class="mockup-dot y"></div>
+            <div class="mockup-dot g"></div>
+          </div>
+          <span class="mockup-title-text">CRM 성과 대시보드</span>
+          <span class="live-badge">LIVE</span>
+        </div>
+        <div class="mockup-body">
+          <!-- KPI Grid 3+2 -->
+          <div class="kpi-grid">
+            <div class="kpi-card" id="kc1">
+              <div class="kpi-label">총 발송 건수</div>
+              <div class="kpi-num" id="kn1">0</div>
+              <div class="kpi-sub">↑ 23% 전월 대비</div>
+            </div>
+            <div class="kpi-card" id="kc2">
+              <div class="kpi-label">평균 CTR</div>
+              <div class="kpi-num emerald" id="kn2">0%</div>
+              <div class="kpi-sub">↑ +2.1%p</div>
+            </div>
+            <div class="kpi-card" id="kc3">
+              <div class="kpi-label">구매 전환율</div>
+              <div class="kpi-num" id="kn3">0%</div>
+              <div class="kpi-sub">↑ +0.4%p</div>
+            </div>
+          </div>
+          <div class="kpi-grid-2">
+            <div class="kpi-card" id="kc4">
+              <div class="kpi-label">M+1 수주금액</div>
+              <div class="kpi-num amber" id="kn4">0</div>
+              <div class="kpi-sub">↑ 직전 캠페인 대비</div>
+            </div>
+            <div class="kpi-card roi-card" id="kc5">
+              <div class="kpi-label">캠페인 ROI</div>
+              <div class="kpi-num roi" id="kn5">0%</div>
+              <div class="kpi-sub">발송비 대비 수주</div>
+            </div>
+          </div>
+          <!-- Bar chart -->
+          <div class="chart-area">
+            <div class="chart-bars" id="chart-bars">
+              <div class="bar-wrap"><div class="bar amber" style="height:40px" data-h="40"></div></div>
+              <div class="bar-wrap"><div class="bar emerald" style="height:55px" data-h="55"></div></div>
+              <div class="bar-wrap"><div class="bar amber" style="height:32px" data-h="32"></div></div>
+              <div class="bar-wrap"><div class="bar emerald" style="height:62px" data-h="62"></div></div>
+              <div class="bar-wrap"><div class="bar amber" style="height:45px" data-h="45"></div></div>
+              <div class="bar-wrap"><div class="bar emerald" style="height:58px" data-h="58"></div></div>
+              <div class="bar-wrap"><div class="bar amber" style="height:50px" data-h="50"></div></div>
+              <div class="bar-wrap"><div class="bar emerald" style="height:68px" data-h="68"></div></div>
+            </div>
+            <!-- SVG CTR Line -->
+            <svg class="line-chart" viewBox="0 0 400 52" fill="none">
+              <path id="ctr-line" d="M0,40 C50,35 80,20 120,22 C160,24 180,15 220,12 C260,9 290,18 320,14 C350,10 380,6 400,4"
+                stroke="#6366F1" stroke-width="2.5" fill="none"
+                stroke-dasharray="300" stroke-dashoffset="300"/>
+              <circle cx="400" cy="4" r="4" fill="#6366F1" opacity="0.8"/>
+            </svg>
+          </div>
+          <!-- Table -->
+          <div class="dash-table">
+            <div class="dash-row" id="dr1">
+              <span class="dash-row-name">신학기 매트리스 특가</span>
+              <span class="dash-row-ctr">18.2%</span>
+              <span class="dash-row-status status-good">우수</span>
+            </div>
+            <div class="dash-row" id="dr2">
+              <span class="dash-row-name">봄 가구 교체 이벤트</span>
+              <span class="dash-row-ctr">12.7%</span>
+              <span class="dash-row-status status-good">양호</span>
+            </div>
+            <div class="dash-row" id="dr3">
+              <span class="dash-row-name">할인 쿠폰 알림</span>
+              <span class="dash-row-ctr">4.2%</span>
+              <span class="dash-row-status status-warn">점검필요</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== S2: GA4 JOURNEY ===================== -->
+<section class="section cream" data-index="2">
+  <div class="section-inner">
+    <div class="section-left">
+      <div class="feature-label dark anim">FEATURE 02</div>
+      <h2 class="left-title cream anim anim-delay-1">메시지 클릭 후,<br>고객이 어디로 갔는지 추적</h2>
+      <p class="left-sub cream anim anim-delay-2">GA4 연동으로 클릭부터 구매까지 전 여정을 하나의 흐름으로 시각화합니다.</p>
+    </div>
+    <div class="section-right anim anim-delay-2">
+      <div class="journey-mockup">
+        <div class="journey-header">
+          <div class="journey-header-dot"></div>
+          고객 여정 추적
+        </div>
+        <!-- 5-step journey -->
+        <div class="journey-steps" id="journey-steps">
+          <div class="journey-node" id="jn0">
+            <div class="journey-icon n0">📨</div>
+            <div class="journey-label">CRM 발송</div>
+            <div class="journey-stat"><b id="jstat0">0</b>명</div>
+          </div>
+          <div class="journey-arrow" id="ja0">
+            <svg viewBox="0 0 28 16"><line x1="0" y1="8" x2="20" y2="8" stroke="#6366F1" stroke-width="2" stroke-dasharray="4 3"/><polygon points="18,4 28,8 18,12" fill="#6366F1"/></svg>
+          </div>
+          <div class="journey-node" id="jn1">
+            <div class="journey-icon n1">👆</div>
+            <div class="journey-label">메시지 클릭</div>
+            <div class="journey-stat"><b id="jstat1" style="color:var(--indigo)">0</b>명</div>
+          </div>
+          <div class="journey-arrow" id="ja1">
+            <svg viewBox="0 0 28 16"><line x1="0" y1="8" x2="20" y2="8" stroke="#06B6D4" stroke-width="2" stroke-dasharray="4 3"/><polygon points="18,4 28,8 18,12" fill="#06B6D4"/></svg>
+          </div>
+          <div class="journey-node" id="jn2">
+            <div class="journey-icon n2">🏠</div>
+            <div class="journey-label">공식몰 방문</div>
+            <div class="journey-stat"><b id="jstat2" style="color:var(--cyan)">3분 42초</b></div>
+          </div>
+          <div class="journey-arrow" id="ja2">
+            <svg viewBox="0 0 28 16"><line x1="0" y1="8" x2="20" y2="8" stroke="#10B981" stroke-width="2" stroke-dasharray="4 3"/><polygon points="18,4 28,8 18,12" fill="#10B981"/></svg>
+          </div>
+          <div class="journey-node" id="jn3">
+            <div class="journey-icon n3">📦</div>
+            <div class="journey-label">상품 페이지</div>
+            <div class="journey-stat"><b id="jstat3" style="color:var(--emerald)">0</b> PV</div>
+          </div>
+          <div class="journey-arrow" id="ja3">
+            <svg viewBox="0 0 28 16"><line x1="0" y1="8" x2="20" y2="8" stroke="#F59E0B" stroke-width="2" stroke-dasharray="4 3"/><polygon points="18,4 28,8 18,12" fill="#F59E0B"/></svg>
+          </div>
+          <div class="journey-node" id="jn4">
+            <div class="journey-icon n4">🛒</div>
+            <div class="journey-label">구매 전환</div>
+            <div class="journey-stat"><b id="jstat4" style="color:var(--amber)">0</b>건</div>
+          </div>
+        </div>
+        <!-- Channel bars -->
+        <div style="padding-top:16px; border-top:1px solid #F1F5F9;">
+          <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:12px;">채널별 유입 비중</div>
+          <div class="ch-bars">
+            <div class="ch-bar-row">
+              <span class="ch-bar-label">CRM-LMS</span>
+              <div class="ch-bar-track"><div class="ch-bar-fill c1" id="chb1"></div></div>
+              <span class="ch-pct">72%</span>
+            </div>
+            <div class="ch-bar-row">
+              <span class="ch-bar-label">카카오</span>
+              <div class="ch-bar-track"><div class="ch-bar-fill c2" id="chb2"></div></div>
+              <span class="ch-pct">48%</span>
+            </div>
+            <div class="ch-bar-row">
+              <span class="ch-bar-label">Direct</span>
+              <div class="ch-bar-track"><div class="ch-bar-fill c3" id="chb3"></div></div>
+              <span class="ch-pct">35%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== S3: CAMPAIGN EDITOR ===================== -->
+<section class="section dark" data-index="3">
+  <div class="section-inner">
+    <div class="section-left" style="width:25%">
+      <div class="feature-label anim">FEATURE 03</div>
+      <h2 class="left-title anim anim-delay-1">AI가 문구를 만들고,<br>폰에서 바로 확인</h2>
+      <p class="left-sub anim anim-delay-2">입력 한 줄이면 AI가 전환율 높은 메시지를 즉시 생성. 실시간 미리보기로 확인.</p>
+    </div>
+    <div class="section-right">
+      <div class="editor-phone-wrap anim anim-delay-2">
+        <!-- Editor -->
+        <div class="editor-mockup">
+          <div class="mockup-titlebar">
+            <div class="mockup-dots">
+              <div class="mockup-dot r"></div>
+              <div class="mockup-dot y"></div>
+              <div class="mockup-dot g"></div>
+            </div>
+            <span class="mockup-title-text">메시지 에디터</span>
+          </div>
+          <div class="editor-body">
+            <div class="editor-textarea" id="editor-textarea" style="white-space:pre-wrap;"></div>
+            <button class="ai-btn" id="ai-btn">✨ AI 문구 추천</button>
+            <div class="ai-result-card" id="ai-result">
+              봄에는 좋은 침대가 삶의 질을 바꿉니다. 고객님을 위한 매트리스 특가, 오늘까지만 적용됩니다.
+              <span class="ai-result-badge" id="ai-badge">전환율 +18% 예상</span>
+            </div>
+          </div>
+        </div>
+        <!-- iPhone -->
+        <div class="phone-wrap">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-statusbar">
+                <span>9:41</span><span>●●●</span>
+              </div>
+              <div class="phone-app-header">📱 일룸 CRM 메시지</div>
+              <div class="phone-messages">
+                <div class="phone-bubble" id="phone-bubble">
+                  <span id="phone-text"></span>
+                </div>
+                <a class="phone-bubble-link" id="phone-link">🔗 iloom.co.kr/spring-event</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Steps -->
+      <div class="steps-row anim anim-delay-4" style="margin-top:24px;">
+        <div class="step-item">
+          <div class="step-node"><div class="step-icon-wrap">🎯</div><span>세그먼트 선택</span></div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-item">
+          <div class="step-node"><div class="step-icon-wrap">✍️</div><span>주제 입력</span></div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-item">
+          <div class="step-node"><div class="step-icon-wrap">✨</div><span>AI 생성</span></div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-item">
+          <div class="step-node"><div class="step-icon-wrap">📱</div><span>즉시 발송</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== S4: ERP MATCHING ===================== -->
+<section class="section cream" data-index="4">
+  <div class="section-inner">
+    <div class="section-left">
+      <div class="feature-label dark anim">FEATURE 04</div>
+      <h2 class="left-title cream anim anim-delay-1">발송한 고객,<br>ERP에서 슈슉 찾아냅니다</h2>
+      <p class="left-sub cream anim anim-delay-2">고객코드 기반 SQL 자동 쿼리로 1,000건도 5초 안에 역추적. M+1/M+3 기간별 자동 집계.</p>
+    </div>
+    <div class="section-right anim anim-delay-2">
+      <div class="erp-mockup">
+        <div class="erp-header">
+          🗄️ ERP 수주 역추적
+        </div>
+        <div class="erp-cols">
+          <!-- Left: customers -->
+          <div class="erp-col">
+            <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:1px;margin-bottom:8px;">발송 고객</div>
+            <div class="erp-customer-card" id="ecc1">A00123 · 김○○</div>
+            <div class="erp-customer-card" id="ecc2">A00456 · 이○○</div>
+            <div class="erp-customer-card" id="ecc3">A00789 · 박○○</div>
+          </div>
+          <!-- Mid: arrow + spinner -->
+          <div class="erp-mid">
+            <div class="erp-arrow-big" id="erp-arrow">→</div>
+            <div class="erp-spinner" id="erp-spinner"></div>
+            <div class="erp-query-label" style="margin-top:6px;">SQL 쿼리</div>
+          </div>
+          <!-- Right: results -->
+          <div class="erp-col">
+            <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:1px;margin-bottom:8px;">수주 확인</div>
+            <div class="erp-result-card" id="erc1">
+              <div class="erp-result-name">✅ 매트리스 세트</div>
+              <div class="erp-result-amount">2,340,000원</div>
+            </div>
+            <div class="erp-result-card" id="erc2">
+              <div class="erp-result-name">✅ 리빙 소파</div>
+              <div class="erp-result-amount">1,890,000원</div>
+            </div>
+            <div class="erp-result-card" id="erc3">
+              <div class="erp-result-name">✅ 학생 책상</div>
+              <div class="erp-result-amount">890,000원</div>
+            </div>
+          </div>
+        </div>
+        <!-- Total -->
+        <div class="erp-total" id="erp-total">
+          <div class="erp-total-label">총 매칭 수주금액</div>
+          <div class="erp-total-num" id="erp-total-num">0원</div>
+          <div class="erp-batch-info" style="margin-top:12px;">
+            <span class="erp-batch-badge">1,000건 배치처리</span>
+            <span class="erp-batch-badge">M+1 / M+3 자동집계</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== S5: AI DIAGNOSIS ===================== -->
+<section class="section dark" data-index="5">
+  <div class="section-inner">
+    <div class="section-left" style="width:32%">
+      <div class="feature-label anim">FEATURE 05</div>
+      <h2 class="left-title anim anim-delay-1">불량 캠페인을 찾고,<br>다음 액션을 알려줍니다</h2>
+      <p class="left-sub anim anim-delay-2">AI가 벤치마크 대비 저성과 캠페인을 자동 감지하고, 구체적인 개선 방향을 제시합니다.</p>
+    </div>
+    <div class="section-right anim anim-delay-2">
+      <div class="diag-mockup">
+        <div class="diag-header">
+          <span class="diag-header-title">✨ 캠페인 자동 진단</span>
+          <span class="diag-badge" id="diag-badge" style="opacity:0;transition:opacity 0.5s;">AI 분석 완료</span>
+        </div>
+        <!-- Bad campaign -->
+        <div class="diag-bad-card" id="diag-bad">
+          <div class="diag-bad-title"><span>🚨</span> 할인 알림 캠페인</div>
+          <div class="diag-bad-num" id="diag-ctr-num">4.2%</div>
+          <div class="diag-bad-benchmark">벤치마크 대비 −62% · 즉시 점검 필요</div>
+          <div class="diag-bar-track">
+            <div class="diag-bar-fill" id="diag-bar"></div>
+          </div>
+        </div>
+        <!-- AI Action -->
+        <div class="ai-action-card" id="ai-action">
+          <div class="ai-action-title">💡 AI 제안</div>
+          <div class="ai-action-text">발송 시간을 오전 10시로 변경하면</div>
+          <div><span class="ai-action-num" id="action-num">+0%</span><span class="ai-action-num-label"> CTR 개선 예상</span></div>
+        </div>
+        <!-- Good campaign -->
+        <div class="diag-good-row" id="diag-good">
+          <span class="diag-good-name">✅ 신학기 매트리스 캠페인</span>
+          <span class="diag-good-ctr">CTR 18.2%</span>
+          <span class="diag-good-badge">우수</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== S6: PURCHASE PATTERN ===================== -->
+<section class="section cream" data-index="6">
+  <div class="section-inner center-layout">
+    <div class="timeline-wrap">
+      <div class="feature-label dark anim" style="text-align:center;">FEATURE 06</div>
+      <h2 class="timeline-title anim anim-delay-1">문자 이후, 고객의 여정이 보입니다</h2>
+      <p class="timeline-sub anim anim-delay-2">발송→열람→방문→구매→재구매까지, 평균 구매 사이클을 데이터로 파악하세요</p>
+
+      <!-- Timeline -->
+      <div class="timeline-track anim anim-delay-2">
+        <div class="tl-node" id="tln0">
+          <div class="tl-icon t0">📨</div>
+          <div class="tl-label">발송</div>
+          <div class="tl-days">D+0</div>
+        </div>
+        <div class="tl-arrow" id="tla0"><div class="tl-arrow-line"></div><div class="tl-arrow-head">▶</div></div>
+        <div class="tl-node" id="tln1">
+          <div class="tl-icon t1">👁️</div>
+          <div class="tl-label">열람</div>
+          <div class="tl-days">+3일</div>
+        </div>
+        <div class="tl-arrow" id="tla1"><div class="tl-arrow-line"></div><div class="tl-arrow-head">▶</div></div>
+        <div class="tl-node" id="tln2">
+          <div class="tl-icon t2">🏠</div>
+          <div class="tl-label">공식몰 방문</div>
+          <div class="tl-days">+5일</div>
+        </div>
+        <div class="tl-arrow" id="tla2"><div class="tl-arrow-line"></div><div class="tl-arrow-head">▶</div></div>
+        <div class="tl-node" id="tln3">
+          <div class="tl-icon t3">🛒</div>
+          <div class="tl-label">구매</div>
+          <div class="tl-days">+4일</div>
+        </div>
+        <div class="tl-arrow" id="tla3"><div class="tl-arrow-line"></div><div class="tl-arrow-head">▶</div></div>
+        <div class="tl-node" id="tln4">
+          <div class="tl-icon t4">🔄</div>
+          <div class="tl-label">재구매</div>
+          <div class="tl-days">+30일</div>
+        </div>
+      </div>
+
+      <!-- Purchase popup (below the purchase node) -->
+      <div style="display:flex;justify-content:center;margin-bottom:32px;">
+        <div class="purchase-popup" id="purchase-popup">
+          <div class="purchase-popup-label">무엇을 구매했나?</div>
+          <div class="purchase-popup-item">쿠시노 프레임 + 쿠시노 매트리스</div>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="tl-kpis anim anim-delay-4">
+        <div class="tl-kpi">
+          <div class="tl-kpi-num" id="tlk1">0</div>
+          <div class="tl-kpi-label">평균 전환일</div>
+        </div>
+        <div class="tl-kpi">
+          <div class="tl-kpi-num" id="tlk2" style="color:var(--emerald)">0%</div>
+          <div class="tl-kpi-label">교차판매율</div>
+        </div>
+        <div class="tl-kpi">
+          <div class="tl-kpi-num" id="tlk3" style="color:var(--amber)">0%</div>
+          <div class="tl-kpi-label">재구매율</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== S7: REPORT AUTOMATION ===================== -->
+<section class="section dark" data-index="7">
+  <div class="section-inner">
+    <div class="section-left">
+      <div class="feature-label anim">FEATURE 07</div>
+      <h2 class="left-title anim anim-delay-1">매주 쓰던 보고서,<br>AI가 1초에 씁니다</h2>
+      <p class="left-sub anim anim-delay-2">캠페인 결과가 자동 집계되어 주간 성과 리포트가 즉시 생성. 공유 한 번으로 끝.</p>
+    </div>
+    <div class="section-right anim anim-delay-2">
+      <div class="report-mockup">
+        <div class="report-header">
+          <span class="report-header-icon">📝</span>
+          <span class="report-header-title">주간 CRM 성과 리포트</span>
+          <span class="report-header-meta">2026.03.10~03.16 | AI 자동 생성</span>
+        </div>
+        <div class="report-lines">
+          <div class="report-line" id="rl1">이번 주 총 <b>12건</b> 캠페인, <b>45,230명</b> 발송 완료</div>
+          <div class="report-line" id="rl2">평균 CTR <b>14.2%</b>, 전주 대비 <b>+2.1%p</b> 상승</div>
+          <div class="report-line" id="rl3">M+1 수주금액 <b>1.2억원</b>, ROI <b>580%</b> 달성</div>
+          <div class="report-line cyan" id="rl4">📌 다음 주에는 <b>재구매 유도 캠페인</b> 비중 확대 권장</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== S8: FULL CYCLE ===================== -->
+<section class="section cream" data-index="8">
+  <div class="section-inner center-layout">
+    <div class="feature-label dark anim" style="text-align:center;">FULL-CYCLE PLATFORM</div>
+    <h2 class="cycle-title anim anim-delay-1">5단계 Full-Cycle, 끊김 없이</h2>
+    <p class="cycle-sub anim anim-delay-2">각 단계가 유기적으로 연결되어 데이터가 자동으로 흐릅니다</p>
+    <div class="cycle-nodes anim anim-delay-2" id="cycle-nodes">
+      <div class="cycle-node" id="cn0">
+        <span class="cycle-node-icon">📋</span>
+        <div class="cycle-node-name">고객 추출</div>
+        <div class="cycle-node-desc">세그먼트 기반<br>타겟 자동 추출</div>
+      </div>
+      <div class="cycle-arrow-wrap" id="ca0"><span class="cycle-arrow-sym">→</span></div>
+      <div class="cycle-node" id="cn1">
+        <span class="cycle-node-icon">📨</span>
+        <div class="cycle-node-name">캠페인 제작</div>
+        <div class="cycle-node-desc">AI 문구 생성<br>+ 즉시 발송</div>
+      </div>
+      <div class="cycle-arrow-wrap" id="ca1"><span class="cycle-arrow-sym">→</span></div>
+      <div class="cycle-node" id="cn2">
+        <span class="cycle-node-icon">🌐</span>
+        <div class="cycle-node-name">GA4 유입</div>
+        <div class="cycle-node-desc">클릭→방문<br>전 여정 추적</div>
+      </div>
+      <div class="cycle-arrow-wrap" id="ca2"><span class="cycle-arrow-sym">→</span></div>
+      <div class="cycle-node" id="cn3">
+        <span class="cycle-node-icon">🗄️</span>
+        <div class="cycle-node-name">SQL 역추적</div>
+        <div class="cycle-node-desc">ERP 수주<br>자동 매칭</div>
+      </div>
+      <div class="cycle-arrow-wrap" id="ca3"><span class="cycle-arrow-sym">→</span></div>
+      <div class="cycle-node" id="cn4">
+        <span class="cycle-node-icon">📈</span>
+        <div class="cycle-node-name">성과 분석</div>
+        <div class="cycle-node-desc">ROI·AI 진단<br>자동 리포트</div>
+      </div>
+    </div>
+    <div class="tech-badges anim anim-delay-4">
+      <span class="tech-badge">React 19</span>
+      <span class="tech-badge">Vite 6</span>
+      <span class="tech-badge">Gemini 2.5</span>
+      <span class="tech-badge">GA4 API</span>
+      <span class="tech-badge">SQLite</span>
+      <span class="tech-badge">MSSQL</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== S9: CTA ===================== -->
+<section class="section dark" data-index="9">
+  <div class="cta-blob-1"></div>
+  <div class="cta-center">
+    <div class="cta-eyebrow anim">iloom CRM AI Solution</div>
+    <h2 class="cta-title anim anim-delay-1">CRM의 <em>빈칸</em>을 채우다</h2>
+    <p class="cta-sub anim anim-delay-2">
+      발송 후 아무것도 몰랐던 그 공백.<br>
+      이제 고객이 어디서 오고, 무엇을 사고, 언제 돌아오는지 — 전부 보입니다.
+    </p>
+    <div class="cta-author anim anim-delay-3">
+      일룸 영업효율개선팀 · 김선우<br>
+      <span style="font-size:11px;opacity:0.6;">CRM × AI 전환 프로젝트 — 2026</span>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ========== SCROLL & NAV ========== */
+const sections = document.querySelectorAll('.section');
+const dots = document.querySelectorAll('.dot');
+const progressBar = document.getElementById('progress-bar');
+
+// Dot cream mode
+const creamSections = [2, 4, 6, 8];
+function updateDotMode(idx) {
+  if (creamSections.includes(idx)) {
+    dots.forEach(d => d.classList.add('cream-mode'));
+  } else {
+    dots.forEach(d => d.classList.remove('cream-mode'));
+  }
+}
+
+// Dot active
+function updateDots(idx) {
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+  updateDotMode(idx);
+}
+
+function scrollToSection(i) { sections[i].scrollIntoView({ behavior: 'smooth' }); }
+
+// Progress bar + dot update on scroll
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  progressBar.style.width = (window.scrollY / total * 100) + '%';
+  sections.forEach((s, i) => {
+    const rect = s.getBoundingClientRect();
+    if (rect.top <= window.innerHeight * 0.5 && rect.bottom >= window.innerHeight * 0.5) {
+      updateDots(i);
+    }
+  });
+}, { passive: true });
+
+/* ========== INTERSECTION OBSERVER (threshold 0.4) ========== */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.anim').forEach(el => el.classList.add('visible'));
+      const idx = parseInt(e.target.dataset.index);
+      triggerSection(idx);
+    }
+  });
+}, { threshold: 0.4 });
+
+sections.forEach(s => observer.observe(s));
+
+/* ========== UTILITIES ========== */
+function countTo(id, target, suffix, duration, decimals = 0) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let start = 0, startTime = null;
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    const progress = Math.min((ts - startTime) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const val = (target * ease);
+    el.textContent = (decimals > 0 ? val.toFixed(decimals) : Math.floor(val)) + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function typeText(id, text, speed = 80) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let i = 0;
+  el.textContent = '';
+  const cursor = document.createElement('span');
+  cursor.className = 'typing-cursor';
+  el.parentNode.appendChild(cursor);
+  function next() {
+    if (i < text.length) {
+      el.textContent += text[i++];
+      setTimeout(next, speed + Math.random() * 40);
+    } else {
+      setTimeout(() => cursor.remove(), 1000);
+    }
+  }
+  next();
+}
+
+/* ========== SECTION TRIGGERS (1-time flag) ========== */
+const triggered = {};
+
+function triggerSection(idx) {
+  if (triggered[idx]) return;
+  triggered[idx] = true;
+
+  if (idx === 0) triggerS0();
+  if (idx === 1) triggerS1();
+  if (idx === 2) triggerS2();
+  if (idx === 3) triggerS3();
+  if (idx === 4) triggerS4();
+  if (idx === 5) triggerS5();
+  if (idx === 6) triggerS6();
+  if (idx === 7) triggerS7();
+  if (idx === 8) triggerS8();
+}
+
+/* === S0: Hero countup === */
+function triggerS0() {
+  setTimeout(() => {
+    countTo('hero-n1', 156, '건', 1600);
+    countTo('hero-n2', 14.2, '%', 1600, 1);
+    countTo('hero-n3', 2.8, '%', 1600, 1);
+    countTo('hero-n4', 1.2, '억', 1800, 1);
+    countTo('hero-n5', 580, '%', 1800);
+  }, 300);
+}
+
+/* === S1: Dashboard === */
+function triggerS1() {
+  // KPI cards appear with stagger
+  const cards = ['kc1','kc2','kc3','kc4','kc5'];
+  cards.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('visible'); el.style.animation = 'kickPulse 0.6s ease'; }
+    }, 400 + i * 200);
+  });
+  // Count up KPI numbers
+  setTimeout(() => countTo('kn1', 156, '건', 1000), 600);
+  setTimeout(() => countTo('kn2', 14.2, '%', 1000, 1), 800);
+  setTimeout(() => countTo('kn3', 2.8, '%', 1000, 1), 1000);
+  setTimeout(() => { document.getElementById('kn4').textContent = '1.2억'; }, 1200);
+  setTimeout(() => countTo('kn5', 580, '%', 1200), 1400);
+
+  // Bars
+  setTimeout(() => {
+    document.querySelectorAll('.bar').forEach((b, i) => {
+      setTimeout(() => b.classList.add('visible'), i * 80);
+    });
+  }, 800);
+
+  // SVG line
+  setTimeout(() => {
+    document.getElementById('ctr-line').classList.add('visible');
+  }, 1200);
+
+  // Table rows
+  ['dr1','dr2','dr3'].forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('visible');
+    }, 1600 + i * 300);
+  });
+}
+
+/* === S2: GA4 Journey === */
+function triggerS2() {
+  const nodes = ['jn0','jn1','jn2','jn3','jn4'];
+  const arrows = ['ja0','ja1','ja2','ja3'];
+  const stats = [
+    { id:'jstat0', target:45230, suffix:'', duration:1200 },
+    { id:'jstat1', target:2340, suffix:'', duration:1000 },
+    null, // time string
+    { id:'jstat3', target:5670, suffix:'', duration:1000 },
+    { id:'jstat4', target:65, suffix:'', duration:900 }
+  ];
+
+  nodes.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('visible');
+      // arrow
+      if (i < arrows.length) {
+        setTimeout(() => {
+          const a = document.getElementById(arrows[i]);
+          if (a) a.classList.add('visible');
+        }, 200);
+      }
+      // stat countup
+      if (stats[i]) countTo(stats[i].id, stats[i].target, stats[i].suffix, stats[i].duration);
+    }, 300 + i * 500);
+  });
+
+  // Channel bars
+  setTimeout(() => {
+    ['chb1','chb2','chb3'].forEach((id, i) => {
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('visible');
+      }, i * 200);
+    });
+  }, 3000);
+}
+
+/* === S3: Campaign Editor === */
+let editorTimer = null;
+function triggerS3() {
+  const input = '매트리스 36% 할인';
+  const aiText = '봄에는 좋은 침대가 삶의 질을 바꿉니다. 고객님을 위한 매트리스 특가, 오늘까지만 적용됩니다.';
+
+  // 0.5s: cursor blink in textarea
+  const ta = document.getElementById('editor-textarea');
+  if (!ta) return;
+  ta.textContent = '';
+  const cur = document.createElement('span');
+  cur.className = 'typing-cursor';
+  ta.appendChild(cur);
+
+  // 1s: type input text
+  setTimeout(() => {
+    cur.remove();
+    let i = 0;
+    const c2 = document.createElement('span');
+    c2.className = 'typing-cursor';
+    function typeInput() {
+      if (i < input.length) {
+        ta.textContent = input.slice(0, ++i);
+        ta.appendChild(c2);
+        setTimeout(typeInput, 100 + Math.random() * 50);
+      } else {
+        // 3s: AI button glow
+        setTimeout(() => {
+          const btn = document.getElementById('ai-btn');
+          if (btn) btn.classList.add('glowing');
+          // 3.5s: click effect
+          setTimeout(() => {
+            if (btn) { btn.style.transform = 'scale(0.95)'; setTimeout(() => btn.style.transform = '', 200); }
+            c2.remove();
+            // 4s: AI result
+            setTimeout(() => {
+              const result = document.getElementById('ai-result');
+              if (result) result.classList.add('visible');
+              // Type phone bubble simultaneously
+              const phoneText = document.getElementById('phone-text');
+              const phoneBubble = document.getElementById('phone-bubble');
+              if (phoneText && phoneBubble) {
+                phoneBubble.classList.add('visible');
+                let pi = 0;
+                phoneText.textContent = '';
+                function typePhone() {
+                  if (pi < aiText.length) {
+                    phoneText.textContent = aiText.slice(0, ++pi);
+                    setTimeout(typePhone, 30);
+                  } else {
+                    setTimeout(() => {
+                      const link = document.getElementById('phone-link');
+                      if (link) link.classList.add('visible');
+                    }, 500);
+                  }
+                }
+                typePhone();
+              }
+              // 5s: badge
+              setTimeout(() => {
+                const badge = document.getElementById('ai-badge');
+                if (badge) badge.classList.add('visible');
+              }, 1000);
+            }, 500);
+          }, 500);
+        }, 1500);
+      }
+    }
+    typeInput();
+  }, 1000);
+}
+
+/* === S4: ERP Matching === */
+function triggerS4() {
+  // Left cards
+  ['ecc1','ecc2','ecc3'].forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('visible');
+    }, 300 + i * 300);
+  });
+  // Arrow + spinner
+  setTimeout(() => {
+    const a = document.getElementById('erp-arrow');
+    const s = document.getElementById('erp-spinner');
+    if (a) a.classList.add('visible');
+    if (s) s.classList.add('visible');
+  }, 1200);
+  // Right cards
+  ['erc1','erc2','erc3'].forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('visible');
+    }, 1800 + i * 350);
+  });
+  // Spinner hide
+  setTimeout(() => {
+    const s = document.getElementById('erp-spinner');
+    if (s) s.style.opacity = '0';
+  }, 3000);
+  // Total
+  setTimeout(() => {
+    const t = document.getElementById('erp-total');
+    if (t) t.classList.add('visible');
+    countTo('erp-total-num', 5120000, '원', 1200);
+  }, 3200);
+}
+
+/* === S5: AI Diagnosis === */
+function triggerS5() {
+  // Bad card
+  setTimeout(() => {
+    const bad = document.getElementById('diag-bad');
+    if (bad) {
+      bad.classList.add('visible');
+      setTimeout(() => bad.classList.add('shake'), 400);
+    }
+  }, 400);
+  // Progress bar
+  setTimeout(() => {
+    const bar = document.getElementById('diag-bar');
+    if (bar) bar.classList.add('visible');
+  }, 900);
+  // AI action card
+  setTimeout(() => {
+    const ac = document.getElementById('ai-action');
+    if (ac) ac.classList.add('visible');
+    countTo('action-num', 12, '%', 800);
+    const el = document.getElementById('action-num');
+    if (el) el.textContent = '+0%'; // reset for countup
+    let n = 0;
+    const timer = setInterval(() => {
+      if (n >= 12) { clearInterval(timer); return; }
+      n++;
+      if (el) el.textContent = '+' + n + '%';
+    }, 70);
+  }, 1600);
+  // AI badge
+  setTimeout(() => {
+    const b = document.getElementById('diag-badge');
+    if (b) b.style.opacity = '1';
+  }, 2000);
+  // Good campaign
+  setTimeout(() => {
+    const g = document.getElementById('diag-good');
+    if (g) g.classList.add('visible');
+  }, 2400);
+}
+
+/* === S6: Purchase Pattern === */
+function triggerS6() {
+  const tlNodes = ['tln0','tln1','tln2','tln3','tln4'];
+  const tlArrows = ['tla0','tla1','tla2','tla3'];
+
+  tlNodes.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('visible');
+      if (i < tlArrows.length) {
+        setTimeout(() => {
+          const a = document.getElementById(tlArrows[i]);
+          if (a) a.classList.add('visible');
+        }, 200);
+      }
+    }, 200 + i * 500);
+  });
+
+  // Purchase popup at purchase node (index 3)
+  setTimeout(() => {
+    const p = document.getElementById('purchase-popup');
+    if (p) p.classList.add('visible');
+  }, 200 + 3 * 500 + 300);
+
+  // KPI countups
+  setTimeout(() => {
+    countTo('tlk1', 12, '일', 900);
+    countTo('tlk2', 23, '%', 1000);
+    countTo('tlk3', 15, '%', 1000);
+  }, 3000);
+}
+
+/* === S7: Report === */
+function triggerS7() {
+  ['rl1','rl2','rl3','rl4'].forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('visible');
+    }, 400 + i * 800);
+  });
+}
+
+/* === S8: Full Cycle === */
+function triggerS8() {
+  const cycleNodes = ['cn0','cn1','cn2','cn3','cn4'];
+  const cycleArrows = ['ca0','ca1','ca2','ca3'];
+
+  cycleNodes.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('visible');
+      if (i < cycleArrows.length) {
+        setTimeout(() => {
+          const a = document.getElementById(cycleArrows[i]);
+          if (a) a.classList.add('visible');
+        }, 200);
+      }
+    }, 200 + i * 300);
+  });
+}
+
+/* === Initial: trigger S0 if visible === */
+window.addEventListener('load', () => {
+  const s0 = sections[0];
+  if (s0.getBoundingClientRect().top < window.innerHeight) {
+    s0.querySelectorAll('.anim').forEach(el => el.classList.add('visible'));
+    triggerSection(0);
+  }
+});
+</script>
+</body>
+</html>
