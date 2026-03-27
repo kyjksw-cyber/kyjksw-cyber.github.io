@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/ai-daily-planner/manifest.json" />
+    <meta name="theme-color" content="#6366F1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="플래너" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+
+    <!-- SEO -->
+    <meta name="description" content="일룸 영업효율개선팀 데일리 플래너" />
+    <meta name="application-name" content="데일리 플래너" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Galmuri11&display=swap" rel="stylesheet" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <title>데일리 플래너</title>
+    <script type="module" crossorigin src="/ai-daily-planner/assets/index-BQJgYf-e.js"></script>
+    <link rel="stylesheet" crossorigin href="/ai-daily-planner/assets/index-cvj9rmMp.css">
+  </head>
+  <body>
+    <script>
+      // Dark mode init
+      if (localStorage.getItem('planner-dark') === '1') {
+        document.documentElement.classList.add('dark')
+      }
+
+      // Unregister old service workers to prevent stale cache
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          regs.forEach(r => r.unregister())
+        })
+      }
+    </script>
+    <div id="root"></div>
+  </body>
+</html>
