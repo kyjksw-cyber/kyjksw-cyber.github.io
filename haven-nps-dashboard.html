@@ -60,6 +60,14 @@
     font-size: 11px; color: var(--text-muted); background: var(--bg-card);
     border: 1px solid var(--border-light); padding: 4px 12px; border-radius: 6px; cursor: pointer;
   }
+  .nav-sheet-btn {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600;
+    color: var(--green); background: var(--green-dim); border: 1px solid rgba(61,214,140,0.25);
+    padding: 5px 14px; border-radius: 20px; text-decoration: none; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-sheet-btn:hover { background: rgba(61,214,140,0.22); border-color: rgba(61,214,140,0.4); }
+  .nav-sheet-btn svg { width: 14px; height: 14px; }
 
   /* ── LAYOUT ── */
   .dashboard { padding: 24px 28px; max-width: 1400px; margin: 0 auto; }
@@ -187,6 +195,21 @@
   }
   .resp-count { font-size: 24px; font-weight: 800; }
   .resp-label { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+  .resp-sub { display: flex; justify-content: center; gap: 12px; margin-top: 8px; font-size: 10px; }
+  .resp-sub-item { display: flex; align-items: center; gap: 4px; color: var(--text-dim); }
+  .resp-sub-val { font-weight: 700; }
+  .resp-rate { font-size: 11px; font-weight: 700; margin-top: 6px; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+  .resp-rate.good { background: var(--green-dim); color: var(--green); }
+  .resp-rate.mid { background: var(--orange-dim); color: var(--orange); }
+  .resp-rate.low { background: var(--red-dim); color: var(--red); }
+  .send-summary {
+    display: flex; justify-content: center; gap: 24px; margin-bottom: 24px;
+    padding: 12px 20px; background: var(--bg-card); border: 1px solid var(--border-light);
+    border-radius: 10px; font-size: 12px; color: var(--text-muted);
+  }
+  .send-summary-item { display: flex; align-items: center; gap: 6px; }
+  .send-summary-val { font-size: 18px; font-weight: 800; color: var(--text); }
+  .send-summary-label { font-size: 10px; }
 
   /* ── LOADING ── */
   .loading-overlay {
@@ -245,6 +268,10 @@
     <div class="nav-subtitle">NPS 실시간 대시보드</div>
   </div>
   <div class="nav-right">
+    <a class="nav-sheet-btn" id="sheetLink" href="#" target="_blank" title="구글시트 원본 열기" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      구글시트 원본
+    </a>
     <div class="nav-time" id="updateTime">업데이트: -</div>
     <div class="live-badge"><div class="live-dot"></div>LIVE</div>
   </div>
@@ -252,20 +279,53 @@
 
 <div class="dashboard">
 
-  <!-- ── 응답 현황 ── -->
-  <div class="section-label" style="margin-top:4px">응답 현황</div>
+  <!-- ── 발송 & 응답 현황 ── -->
+  <div class="section-label" style="margin-top:4px">발송 & 응답 현황 <span style="font-size:9px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--text-dim)">3/27 발송 시작</span></div>
+  <div class="send-summary" id="sendSummary" style="display:none">
+    <div class="send-summary-item">
+      <span class="send-summary-label">총 발송</span>
+      <span class="send-summary-val" id="totalSend">-</span>
+      <span class="send-summary-label">명</span>
+    </div>
+    <div class="send-summary-item" style="color:var(--text-dim)">|</div>
+    <div class="send-summary-item">
+      <span class="send-summary-label">총 응답</span>
+      <span class="send-summary-val" style="color:var(--green)" id="totalResp">-</span>
+      <span class="send-summary-label">건</span>
+    </div>
+    <div class="send-summary-item" style="color:var(--text-dim)">|</div>
+    <div class="send-summary-item">
+      <span class="send-summary-label">종합 응답률</span>
+      <span class="send-summary-val" style="color:var(--gold)" id="totalRate">-</span>
+    </div>
+  </div>
   <div class="resp-row">
     <div class="resp-card">
       <div class="resp-count" id="s1Count" style="color:var(--s1)">-</div>
       <div class="resp-label">설문 1 · 견적고객</div>
+      <div class="resp-sub" id="s1SendInfo" style="display:none">
+        <div class="resp-sub-item">발송 <span class="resp-sub-val" id="s1Send">-</span></div>
+        <div class="resp-sub-item">응답 <span class="resp-sub-val" id="s1Resp">-</span></div>
+      </div>
+      <div id="s1Rate"></div>
     </div>
     <div class="resp-card">
       <div class="resp-count" id="s2Count" style="color:var(--s2)">-</div>
       <div class="resp-label">설문 2 · 구매고객</div>
+      <div class="resp-sub" id="s2SendInfo" style="display:none">
+        <div class="resp-sub-item">발송 <span class="resp-sub-val" id="s2Send">-</span></div>
+        <div class="resp-sub-item">응답 <span class="resp-sub-val" id="s2Resp">-</span></div>
+      </div>
+      <div id="s2Rate"></div>
     </div>
     <div class="resp-card">
       <div class="resp-count" id="s3Count" style="color:var(--s3)">-</div>
       <div class="resp-label">설문 3 · 사용고객</div>
+      <div class="resp-sub" id="s3SendInfo" style="display:none">
+        <div class="resp-sub-item">발송 <span class="resp-sub-val" id="s3Send">-</span></div>
+        <div class="resp-sub-item">응답 <span class="resp-sub-val" id="s3Resp">-</span></div>
+      </div>
+      <div id="s3Rate"></div>
     </div>
   </div>
 
@@ -888,6 +948,53 @@ function renderInsights(kpis) {
 }
 
 // ═══════════════════════════════════════════════════
+// 발송 건수 렌더링
+// ═══════════════════════════════════════════════════
+function renderSendCounts(data, resp1, resp2, resp3) {
+  // sendCounts 시트에서 설문별 누적 발송 건수를 읽어옴
+  // 시트 형식: 설문구분 | 누적발송 (예: "설문1", 41)
+  const sc = data.sendCounts || [];
+  if (sc.length === 0) return;
+
+  let send1 = 0, send2 = 0, send3 = 0;
+  sc.forEach(row => {
+    const label = Object.values(row).find(v => typeof v === 'string' && v.includes('설문'));
+    const countVal = Object.values(row).find(v => typeof v === 'number' && v > 0);
+    if (!label || !countVal) return;
+    if (label.includes('1')) send1 = countVal;
+    else if (label.includes('2')) send2 = countVal;
+    else if (label.includes('3')) send3 = countVal;
+  });
+
+  const totalSend = send1 + send2 + send3;
+  const totalResp = resp1 + resp2 + resp3;
+  if (totalSend === 0) return;
+
+  // 총합 바
+  document.getElementById('sendSummary').style.display = 'flex';
+  document.getElementById('totalSend').textContent = totalSend;
+  document.getElementById('totalResp').textContent = totalResp;
+  const totalRate = Math.round(totalResp / totalSend * 100);
+  document.getElementById('totalRate').textContent = totalRate + '%';
+
+  // 설문별 발송/응답률
+  function showSurveyRate(idx, send, resp) {
+    if (send === 0) return;
+    document.getElementById('s' + idx + 'SendInfo').style.display = 'flex';
+    document.getElementById('s' + idx + 'Send').textContent = send;
+    document.getElementById('s' + idx + 'Resp').textContent = resp;
+    const rate = Math.round(resp / send * 100);
+    const rateEl = document.getElementById('s' + idx + 'Rate');
+    const cls = rate >= 20 ? 'good' : rate >= 10 ? 'mid' : 'low';
+    rateEl.innerHTML = '<span class="resp-rate ' + cls + '">응답률 ' + rate + '%</span>';
+  }
+
+  showSurveyRate(1, send1, resp1);
+  showSurveyRate(2, send2, resp2);
+  showSurveyRate(3, send3, resp3);
+}
+
+// ═══════════════════════════════════════════════════
 // 탭 전환
 // ═══════════════════════════════════════════════════
 document.getElementById('voiceTabs').addEventListener('click', e => {
@@ -915,6 +1022,16 @@ async function main() {
   document.getElementById('s1Count').textContent = s1.length;
   document.getElementById('s2Count').textContent = s2.length;
   document.getElementById('s3Count').textContent = s3.length;
+
+  // 발송 건수 (sendCounts 시트에서 가져옴)
+  renderSendCounts(data, s1.length, s2.length, s3.length);
+
+  // 구글시트 원본 링크
+  if (data.meta && data.meta.sheetId) {
+    const sheetBtn = document.getElementById('sheetLink');
+    sheetBtn.href = 'https://docs.google.com/spreadsheets/d/' + data.meta.sheetId;
+    sheetBtn.style.display = 'inline-flex';
+  }
 
   // 업데이트 시각
   const now = data.meta ? new Date(data.meta.lastUpdated) : new Date();
