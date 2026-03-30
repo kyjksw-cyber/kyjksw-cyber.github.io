@@ -970,20 +970,22 @@ async function fetchSendCounts() {
     campaigns.forEach(c => { codeToId[c.campaign_code] = c.id; });
 
     // 2) daily_snapshots에서 캠페인별 DISTINCT 고객 수 조회
+    // customer_code가 NULL인 경우가 있으므로 customer_name + phone_number도 함께 가져옴
     const ids = campaigns.map(c => c.id);
     const snapRes = await fetch(
-      `${SB_URL}/rest/v1/daily_snapshots?select=campaign_id,customer_code&campaign_id=in.(${ids.map(i => '"' + i + '"').join(',')})`,
+      `${SB_URL}/rest/v1/daily_snapshots?select=campaign_id,customer_code,customer_name,phone_number&campaign_id=in.(${ids.map(i => '"' + i + '"').join(',')})`,
       { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
     );
     const snapshots = await snapRes.json();
     if (!snapshots || snapshots.length === 0) return null;
 
-    // 캠페인별 DISTINCT 고객코드 집계
+    // 캠페인별 DISTINCT 고객 집계 (customer_code > customer_name > phone_number 순)
     const countByCampaign = {};
     ids.forEach(id => { countByCampaign[id] = new Set(); });
     snapshots.forEach(s => {
-      if (s.customer_code && countByCampaign[s.campaign_id]) {
-        countByCampaign[s.campaign_id].add(s.customer_code);
+      const key = s.customer_code || s.customer_name || s.phone_number;
+      if (key && countByCampaign[s.campaign_id]) {
+        countByCampaign[s.campaign_id].add(key);
       }
     });
 
