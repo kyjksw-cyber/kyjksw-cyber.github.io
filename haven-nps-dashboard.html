@@ -490,6 +490,11 @@
 // ═══════════════════════════════════════════════════
 const API_URL = 'https://script.google.com/macros/s/AKfycbzB_hdsn3sFNh6J4XKH0Er3tRwyLnNw1ZpCMDX6rn_RwvZ_bjXoBNw2PcZiLB0AtImL/exec';
 
+// Supabase (20.10 CRM 자동화 대시보드와 동일 DB)
+const SB_URL = 'https://sqbzyscqaopcobnawpur.supabase.co';
+const SB_KEY = 'sb_publishable_l35sO5li0HUEyT58blY1mg_vFGQt0A2';
+const NPS_CAMPAIGN_CODES = ['견적24_헤이븐NPS1', '수주24_헤이븐NPS2', '수주25_헤이븐NPS3'];
+
 // KPI 목표 기준
 const TARGETS = {
   npsPurchase: 30,
@@ -948,24 +953,55 @@ function renderInsights(kpis) {
 }
 
 // ═══════════════════════════════════════════════════
-// 발송 건수 렌더링
+// 발송 건수 — Supabase에서 조회 (20.10 CRM 자동화 DB)
 // ═══════════════════════════════════════════════════
-function renderSendCounts(data, resp1, resp2, resp3) {
-  // sendCounts 시트에서 설문별 누적 발송 건수를 읽어옴
-  // 시트 형식: 설문구분 | 누적발송 (예: "설문1", 41)
-  const sc = data.sendCounts || [];
-  if (sc.length === 0) return;
+async function fetchSendCounts() {
+  try {
+    // 1) campaigns 테이블에서 NPS 캠페인 ID 조회
+    const campRes = await fetch(
+      `${SB_URL}/rest/v1/campaigns?select=id,campaign_code&campaign_code=in.(${NPS_CAMPAIGN_CODES.map(c => '"' + c + '"').join(',')})`,
+      { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
+    );
+    const campaigns = await campRes.json();
+    if (!campaigns || campaigns.length === 0) return null;
 
-  let send1 = 0, send2 = 0, send3 = 0;
-  sc.forEach(row => {
-    const label = Object.values(row).find(v => typeof v === 'string' && v.includes('설문'));
-    const countVal = Object.values(row).find(v => typeof v === 'number' && v > 0);
-    if (!label || !countVal) return;
-    if (label.includes('1')) send1 = countVal;
-    else if (label.includes('2')) send2 = countVal;
-    else if (label.includes('3')) send3 = countVal;
-  });
+    // 캠페인 코드→ID 매핑
+    const codeToId = {};
+    campaigns.forEach(c => { codeToId[c.campaign_code] = c.id; });
 
+    // 2) daily_snapshots에서 캠페인별 DISTINCT 고객 수 조회
+    const ids = campaigns.map(c => c.id);
+    const snapRes = await fetch(
+      `${SB_URL}/rest/v1/daily_snapshots?select=campaign_id,customer_code&campaign_id=in.(${ids.map(i => '"' + i + '"').join(',')})`,
+      { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
+    );
+    const snapshots = await snapRes.json();
+    if (!snapshots || snapshots.length === 0) return null;
+
+    // 캠페인별 DISTINCT 고객코드 집계
+    const countByCampaign = {};
+    ids.forEach(id => { countByCampaign[id] = new Set(); });
+    snapshots.forEach(s => {
+      if (s.customer_code && countByCampaign[s.campaign_id]) {
+        countByCampaign[s.campaign_id].add(s.customer_code);
+      }
+    });
+
+    return {
+      s1: countByCampaign[codeToId['견적24_헤이븐NPS1']]?.size || 0,
+      s2: countByCampaign[codeToId['수주24_헤이븐NPS2']]?.size || 0,
+      s3: countByCampaign[codeToId['수주25_헤이븐NPS3']]?.size || 0,
+    };
+  } catch (err) {
+    console.warn('Supabase 발송 건수 조회 실패:', err);
+    return null;
+  }
+}
+
+function renderSendCounts(sendCounts, resp1, resp2, resp3) {
+  if (!sendCounts) return;
+
+  const { s1: send1, s2: send2, s3: send3 } = sendCounts;
   const totalSend = send1 + send2 + send3;
   const totalResp = resp1 + resp2 + resp3;
   if (totalSend === 0) return;
@@ -1023,8 +1059,10 @@ async function main() {
   document.getElementById('s2Count').textContent = s2.length;
   document.getElementById('s3Count').textContent = s3.length;
 
-  // 발송 건수 (sendCounts 시트에서 가져옴)
-  renderSendCounts(data, s1.length, s2.length, s3.length);
+  // 발송 건수 (Supabase에서 비동기 조회)
+  fetchSendCounts().then(sendCounts => {
+    renderSendCounts(sendCounts, s1.length, s2.length, s3.length);
+  });
 
   // 구글시트 원본 링크
   if (data.meta && data.meta.sheetId) {
