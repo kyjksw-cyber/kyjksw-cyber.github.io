@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Cache buster
+        run: echo "${{ github.sha }}-$(date +%s)" > .deploy-timestamp
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
