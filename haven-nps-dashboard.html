@@ -89,6 +89,7 @@
 
   /* ── KPI ROW ── */
   .kpi-row { display: grid; grid-template-columns: repeat(6,1fr); gap: 12px; margin-bottom: 24px; }
+  .kpi-row.three { grid-template-columns: repeat(3,1fr); }
   .kpi-card {
     background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px;
     padding: 16px; position: relative; overflow: hidden;
@@ -114,6 +115,14 @@
   .kpi-change.neutral { color: var(--text-muted); }
   .kpi-target { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
   .kpi-warn { font-size: 9px; color: var(--orange); margin-top: 4px; font-style: italic; }
+  /* 설문 태그 (개요 탭의 전체 KPI에 설문 출처 표시) */
+  .kpi-tag {
+    display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 4px;
+    margin-left: 4px; vertical-align: middle;
+  }
+  .kpi-tag.s1 { background: rgba(232,184,75,0.18); color: var(--s1); }
+  .kpi-tag.s2 { background: rgba(61,214,140,0.14); color: var(--s2); }
+  .kpi-tag.s3 { background: rgba(91,156,246,0.14); color: var(--s3); }
 
   /* ── CARDS ── */
   .card {
@@ -156,17 +165,6 @@
   .ng-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
   .ng-meta { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); }
 
-  /* ── TABS ── */
-  .tab-bar { display: flex; gap: 2px; margin-bottom: 16px; }
-  .tab-btn {
-    padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 600;
-    background: transparent; color: var(--text-muted); border: 1px solid var(--border-light);
-    cursor: pointer; transition: all 0.2s;
-  }
-  .tab-btn.active { background: var(--blue-dim); color: var(--blue); border-color: rgba(91,156,246,0.3); }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
   /* ── VOICE CARDS (주관식) ── */
   .voice-list { display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; }
   .voice-card {
@@ -196,30 +194,6 @@
   .alert-item.good .alert-text strong { color: var(--green); }
   .alert-text span { color: var(--text-muted); }
 
-  /* ── RESPONSE SUMMARY ── */
-  .resp-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
-  .resp-card {
-    background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 10px;
-    padding: 14px 16px; text-align: center;
-  }
-  .resp-count { font-size: 24px; font-weight: 800; }
-  .resp-label { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
-  .resp-sub { display: flex; justify-content: center; gap: 12px; margin-top: 8px; font-size: 10px; }
-  .resp-sub-item { display: flex; align-items: center; gap: 4px; color: var(--text-dim); }
-  .resp-sub-val { font-weight: 700; }
-  .resp-rate { font-size: 11px; font-weight: 700; margin-top: 6px; padding: 2px 8px; border-radius: 4px; display: inline-block; }
-  .resp-rate.good { background: var(--green-dim); color: var(--green); }
-  .resp-rate.mid { background: var(--orange-dim); color: var(--orange); }
-  .resp-rate.low { background: var(--red-dim); color: var(--red); }
-  .send-summary {
-    display: flex; justify-content: center; gap: 24px; margin-bottom: 24px;
-    padding: 12px 20px; background: var(--bg-card); border: 1px solid var(--border-light);
-    border-radius: 10px; font-size: 12px; color: var(--text-muted);
-  }
-  .send-summary-item { display: flex; align-items: center; gap: 6px; }
-  .send-summary-val { font-size: 18px; font-weight: 800; color: var(--text); }
-  .send-summary-label { font-size: 10px; }
-
   /* ── LOADING ── */
   .loading-overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -247,18 +221,89 @@
     display: flex; justify-content: space-between; color: var(--text-dim); font-size: 11px;
   }
 
+  /* ════════════════════════════════
+     메인 탭 네비게이션
+  ════════════════════════════════ */
+  .main-tabs {
+    display: flex; gap: 4px; margin-bottom: 20px;
+    background: var(--bg-card); padding: 4px; border-radius: 12px; border: 1px solid var(--border);
+  }
+  .main-tab {
+    flex: 1; padding: 10px 16px; border-radius: 10px; font-size: 12px; font-weight: 700;
+    text-align: center; cursor: pointer; transition: all 0.2s; color: var(--text-muted);
+    background: transparent; border: none;
+  }
+  .main-tab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .main-tab.active { color: var(--text); background: var(--bg-card2); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+  /* ── 탭 콘텐츠 뷰 ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ════════════════════════════════
+     여정 퍼널
+  ════════════════════════════════ */
+  .journey-funnel {
+    display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 0; align-items: center; margin-bottom: 28px;
+  }
+  .journey-card {
+    background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px;
+    padding: 24px 20px; cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden;
+  }
+  .journey-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  .journey-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+  .journey-card.s1::before { background: var(--s1); }
+  .journey-card.s1:hover { border-color: rgba(232,184,75,0.4); box-shadow: 0 8px 24px rgba(232,184,75,0.15); }
+  .journey-card.s2::before { background: var(--s2); }
+  .journey-card.s2:hover { border-color: rgba(61,214,140,0.4); box-shadow: 0 8px 24px rgba(61,214,140,0.15); }
+  .journey-card.s3::before { background: var(--s3); }
+  .journey-card.s3:hover { border-color: rgba(91,156,246,0.4); box-shadow: 0 8px 24px rgba(91,156,246,0.15); }
+  .journey-arrow {
+    display: flex; align-items: center; justify-content: center; padding: 0 8px;
+  }
+  .journey-arrow svg { width: 28px; height: 28px; color: var(--text-dim); }
+
+  /* ════════════════════════════════
+     설문 상세 헤더
+  ════════════════════════════════ */
+  .survey-header {
+    background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px;
+    padding: 20px 24px; margin-bottom: 20px; display: flex; justify-content: space-between;
+    align-items: center; position: relative; overflow: hidden;
+  }
+  .survey-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+  .survey-header.s1::before { background: var(--s1); }
+  .survey-header.s2::before { background: var(--s2); }
+  .survey-header.s3::before { background: var(--s3); }
+  .survey-header-info { display: flex; flex-direction: column; gap: 4px; }
+  .survey-header-title { font-size: 16px; font-weight: 800; }
+  .survey-header-sub { font-size: 11px; color: var(--text-muted); }
+  .survey-header-stats { display: flex; gap: 28px; }
+  .survey-stat { text-align: center; }
+  .survey-stat-val { font-size: 22px; font-weight: 800; line-height: 1; }
+  .survey-stat-label { font-size: 10px; color: var(--text-dim); margin-top: 3px; }
+
+  /* ── 반응형 ── */
   @media (max-width: 1100px) {
     .kpi-row { grid-template-columns: repeat(3,1fr); }
+    .kpi-row.three { grid-template-columns: repeat(3,1fr); }
     .main-grid { grid-template-columns: 1fr; }
     .three-grid { grid-template-columns: 1fr 1fr; }
-    .resp-row { grid-template-columns: 1fr 1fr 1fr; }
+    .journey-funnel { grid-template-columns: 1fr; gap: 12px; }
+    .journey-arrow { transform: rotate(90deg); padding: 4px 0; }
   }
   @media (max-width: 720px) {
     .kpi-row { grid-template-columns: repeat(2,1fr); }
+    .kpi-row.three { grid-template-columns: repeat(2,1fr); }
     .three-grid { grid-template-columns: 1fr; }
-    .resp-row { grid-template-columns: 1fr; }
+    .two-grid { grid-template-columns: 1fr; }
     .topnav { padding: 0 16px; }
     .dashboard { padding: 16px; }
+    .main-tabs { flex-wrap: wrap; }
+    .main-tab { flex: none; min-width: calc(50% - 4px); }
+    .survey-header { flex-direction: column; gap: 16px; }
+    .survey-header-stats { justify-content: center; }
   }
 </style>
 </head>
@@ -295,214 +340,503 @@
 
 <div class="dashboard">
 
-  <!-- ── 발송 & 응답 현황 ── -->
-  <div class="section-label" style="margin-top:4px">발송 & 응답 현황 <span style="font-size:9px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--text-dim)">3/27 발송 시작</span></div>
-  <div class="send-summary" id="sendSummary" style="display:none">
-    <div class="send-summary-item">
-      <span class="send-summary-label">총 발송</span>
-      <span class="send-summary-val" id="totalSend">-</span>
-      <span class="send-summary-label">명</span>
-    </div>
-    <div class="send-summary-item" style="color:var(--text-dim)">|</div>
-    <div class="send-summary-item">
-      <span class="send-summary-label">총 응답</span>
-      <span class="send-summary-val" style="color:var(--green)" id="totalResp">-</span>
-      <span class="send-summary-label">건</span>
-    </div>
-    <div class="send-summary-item" style="color:var(--text-dim)">|</div>
-    <div class="send-summary-item">
-      <span class="send-summary-label">종합 응답률</span>
-      <span class="send-summary-val" style="color:var(--gold)" id="totalRate">-</span>
-    </div>
-  </div>
-  <div class="resp-row">
-    <div class="resp-card">
-      <div class="resp-count" id="s1Count" style="color:var(--s1)">-</div>
-      <div class="resp-label">설문 1 · 견적고객</div>
-      <div class="resp-sub" id="s1SendInfo" style="display:none">
-        <div class="resp-sub-item">발송 <span class="resp-sub-val" id="s1Send">-</span></div>
-        <div class="resp-sub-item">응답 <span class="resp-sub-val" id="s1Resp">-</span></div>
-      </div>
-      <div id="s1Rate"></div>
-    </div>
-    <div class="resp-card">
-      <div class="resp-count" id="s2Count" style="color:var(--s2)">-</div>
-      <div class="resp-label">설문 2 · 구매고객</div>
-      <div class="resp-sub" id="s2SendInfo" style="display:none">
-        <div class="resp-sub-item">발송 <span class="resp-sub-val" id="s2Send">-</span></div>
-        <div class="resp-sub-item">응답 <span class="resp-sub-val" id="s2Resp">-</span></div>
-      </div>
-      <div id="s2Rate"></div>
-    </div>
-    <div class="resp-card">
-      <div class="resp-count" id="s3Count" style="color:var(--s3)">-</div>
-      <div class="resp-label">설문 3 · 사용고객</div>
-      <div class="resp-sub" id="s3SendInfo" style="display:none">
-        <div class="resp-sub-item">발송 <span class="resp-sub-val" id="s3Send">-</span></div>
-        <div class="resp-sub-item">응답 <span class="resp-sub-val" id="s3Resp">-</span></div>
-      </div>
-      <div id="s3Rate"></div>
-    </div>
+  <!-- ════════════════════════════════════════
+       메인 탭 네비
+  ════════════════════════════════════════ -->
+  <div class="main-tabs">
+    <button class="main-tab active" onclick="switchTab(0)">여정 개요</button>
+    <button class="main-tab" onclick="switchTab(1)">설문 1 · 견적</button>
+    <button class="main-tab" onclick="switchTab(2)">설문 2 · 구매</button>
+    <button class="main-tab" onclick="switchTab(3)">설문 3 · 사용</button>
   </div>
 
-  <!-- ── KPI ROW ── -->
-  <div class="section-label">핵심 지표 현황</div>
-  <div class="kpi-row" id="kpiRow">
-    <div class="kpi-card c-gold" id="kpi-nps-purchase">
-      <div class="kpi-label">NPS — 구매직후</div>
-      <div class="kpi-value">-</div>
-      <div class="kpi-change neutral">데이터 대기 중</div>
-      <div class="kpi-target">목표: +30</div>
-    </div>
-    <div class="kpi-card c-blue" id="kpi-nps-3m">
-      <div class="kpi-label">NPS — 3개월 후</div>
-      <div class="kpi-value">-</div>
-      <div class="kpi-change neutral">데이터 대기 중</div>
-      <div class="kpi-target">목표: +40</div>
-    </div>
-    <div class="kpi-card c-green" id="kpi-reconsider">
-      <div class="kpi-label">재검토 의향율</div>
-      <div class="kpi-value">-</div>
-      <div class="kpi-change neutral">데이터 대기 중</div>
-      <div class="kpi-target">목표: 40%</div>
-    </div>
-    <div class="kpi-card c-orange" id="kpi-purchase-sat">
-      <div class="kpi-label">구매 경험 만족도</div>
-      <div class="kpi-value">-</div>
-      <div class="kpi-change neutral">데이터 대기 중</div>
-      <div class="kpi-target">목표: 4.0점</div>
-    </div>
-    <div class="kpi-card c-red" id="kpi-install-sat">
-      <div class="kpi-label">시공 만족도</div>
-      <div class="kpi-value">-</div>
-      <div class="kpi-change neutral">데이터 대기 중</div>
-      <div class="kpi-target">목표: 4.0점</div>
-    </div>
-    <div class="kpi-card c-purple" id="kpi-crosssell">
-      <div class="kpi-label">크로스셀 가능성</div>
-      <div class="kpi-value">-</div>
-      <div class="kpi-change neutral">데이터 대기 중</div>
-      <div class="kpi-target">목표: 30%</div>
-    </div>
-  </div>
+  <!-- ════════════════════════════════════════
+       탭 0: 여정 개요
+  ════════════════════════════════════════ -->
+  <div class="view active" id="view-overview">
 
-  <!-- ── NPS 추세 + 게이지 ── -->
-  <div class="section-label">NPS 추이</div>
-  <div class="main-grid">
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-title">NPS 월별 변화 추이</div>
-        </div>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--s2)"></div>구매직후</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--s3)"></div>3개월 후</div>
-        </div>
-      </div>
-      <div class="card-body">
-        <div id="npsChartWrap" style="position:relative;height:220px;">
-          <canvas id="npsChart"></canvas>
-        </div>
-        <div id="npsChartEmpty" class="empty-state" style="display:none;">
-          <div class="empty-icon">📊</div>
-          <div class="empty-msg">2개월 이상 데이터가 쌓이면 추세 차트가 표시됩니다.</div>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">NPS 현황</div>
-      </div>
-      <div class="card-body">
-        <div class="nps-gauges" id="npsGauges">
-          <div class="nps-gauge-item">
-            <div class="ng-top">
-              <div class="ng-label" style="color:var(--s2)">구매직후 NPS</div>
-              <div class="ng-value" style="color:var(--s2)" id="npsGauge2">-</div>
-            </div>
-            <div class="ng-bar"><div class="ng-fill" id="npsFill2" style="background:var(--s2);width:0%"></div></div>
-            <div class="ng-meta"><span id="npsDistText2">추천 -% · 중립 -% · 비추천 -%</span><span style="color:var(--gold)">목표: +30</span></div>
+    <!-- 여정 퍼널 -->
+    <div class="section-label" style="margin-top:4px">고객 여정 퍼널 <span style="font-size:9px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--text-dim)">카드 클릭 시 상세 이동</span></div>
+    <div class="journey-funnel">
+
+      <!-- S1 카드 -->
+      <div class="journey-card s1" onclick="switchTab(1)">
+        <div style="font-size:11px;font-weight:700;color:var(--s1);margin-bottom:4px">STEP 1</div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:2px">견적 고객</div>
+        <div style="font-size:10px;color:var(--text-dim);margin-bottom:14px">견적 후 14일 미구매</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:800" id="j-s1-send">-</div>
+            <div style="font-size:9px;color:var(--text-dim)">발송</div>
           </div>
-          <div class="nps-gauge-item">
-            <div class="ng-top">
-              <div class="ng-label" style="color:var(--s3)">3개월 후 NPS</div>
-              <div class="ng-value" style="color:var(--s3)" id="npsGauge3">-</div>
-            </div>
-            <div class="ng-bar"><div class="ng-fill" id="npsFill3" style="background:var(--s3);width:0%"></div></div>
-            <div class="ng-meta"><span id="npsDistText3">추천 -% · 중립 -% · 비추천 -%</span><span style="color:var(--gold)">목표: +40</span></div>
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:800;color:var(--s1)" id="j-s1-resp">-</div>
+            <div style="font-size:9px;color:var(--text-dim)">응답</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:800" id="j-s1-rate">-</div>
+            <div style="font-size:9px;color:var(--text-dim)">응답률</div>
           </div>
         </div>
+        <div style="border-top:1px solid var(--border);padding-top:12px">
+          <div style="font-size:9px;color:var(--text-dim);margin-bottom:4px">대표 KPI</div>
+          <div style="font-size:11px;font-weight:700;color:var(--s1)" id="j-s1-kpi">재검토 의향 -</div>
+        </div>
+      </div>
+
+      <!-- 화살표 -->
+      <div class="journey-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+
+      <!-- S2 카드 -->
+      <div class="journey-card s2" onclick="switchTab(2)">
+        <div style="font-size:11px;font-weight:700;color:var(--s2);margin-bottom:4px">STEP 2</div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:2px">구매 고객</div>
+        <div style="font-size:10px;color:var(--text-dim);margin-bottom:14px">구매 후 7일 이내</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:800" id="j-s2-send">-</div>
+            <div style="font-size:9px;color:var(--text-dim)">발송</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:800;color:var(--s2)" id="j-s2-resp">-</div>
+            <div style="font-size:9px;color:var(--text-dim)">응답</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:800" id="j-s2-rate">-</div>
+            <div style="font-size:9px;color:var(--text-dim)">응답률</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:12px">
+          <div style="font-size:9px;color:var(--text-dim);margin-bottom:4px">대표 KPI</div>
+          <div style="font-size:11px;font-weight:700;color:var(--s2)" id="j-s2-kpi">NPS 구매직후 -</div>
+        </div>
+      </div>
+
+      <!-- 화살표 -->
+      <div class="journey-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+
+      <!-- S3 카드 -->
+      <div class="journey-card s3" onclick="switchTab(3)">
+        <div style="font-size:11px;font-weight:700;color:var(--s3);margin-bottom:4px">STEP 3</div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:2px">사용 고객</div>
+        <div style="font-size:10px;color:var(--text-dim);margin-bottom:14px">구매 후 3개월</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:800" id="j-s3-send">-</div>
+            <div style="font-size:9px;color:var(--text-dim)">발송</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:800;color:var(--s3)" id="j-s3-resp">-</div>
+            <div style="font-size:9px;color:var(--text-dim)">응답</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:800" id="j-s3-rate">-</div>
+            <div style="font-size:9px;color:var(--text-dim)">응답률</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:12px">
+          <div style="font-size:9px;color:var(--text-dim);margin-bottom:4px">대표 KPI</div>
+          <div style="font-size:11px;font-weight:700;color:var(--s3)" id="j-s3-kpi">NPS 3개월 -</div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ── 분포 차트 3열 ── -->
-  <div class="section-label">선택형 응답 분포</div>
-  <div class="three-grid">
-    <div class="card">
-      <div class="card-header"><div class="card-title" style="color:var(--s1)">인지 경로</div></div>
-      <div class="card-body"><div class="bar-list" id="distAwareness"></div></div>
+    <!-- 전체 KPI 6열 -->
+    <div class="section-label">핵심 지표 현황</div>
+    <div class="kpi-row" id="kpiRow">
+      <div class="kpi-card c-gold" id="kpi-nps-purchase">
+        <div class="kpi-label">NPS — 구매직후 <span class="kpi-tag s2">S2</span></div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: +30</div>
+      </div>
+      <div class="kpi-card c-blue" id="kpi-nps-3m">
+        <div class="kpi-label">NPS — 3개월 후 <span class="kpi-tag s3">S3</span></div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: +40</div>
+      </div>
+      <div class="kpi-card c-green" id="kpi-reconsider">
+        <div class="kpi-label">재검토 의향율 <span class="kpi-tag s1">S1</span></div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: 40%</div>
+      </div>
+      <div class="kpi-card c-orange" id="kpi-purchase-sat">
+        <div class="kpi-label">구매 경험 만족도 <span class="kpi-tag s2">S2</span></div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: 4.0점</div>
+      </div>
+      <div class="kpi-card c-red" id="kpi-install-sat">
+        <div class="kpi-label">시공 만족도 <span class="kpi-tag s2">S2</span></div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: 4.0점</div>
+      </div>
+      <div class="kpi-card c-purple" id="kpi-crosssell">
+        <div class="kpi-label">크로스셀 가능성 <span class="kpi-tag s3">S3</span></div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: 30%</div>
+      </div>
     </div>
-    <div class="card">
-      <div class="card-header"><div class="card-title" style="color:var(--s1)">미구매 원인</div></div>
-      <div class="card-body"><div class="bar-list" id="distNonPurchase"></div></div>
-    </div>
-    <div class="card">
-      <div class="card-header"><div class="card-title" style="color:var(--s2)">배송/시공 불편사항</div></div>
-      <div class="card-body"><div class="bar-list" id="distDelivery"></div></div>
-    </div>
-  </div>
 
-  <!-- ── 5점 척도 + 복수선택 ── -->
-  <div class="section-label">만족도 지표 & 고객 인사이트</div>
-  <div class="three-grid">
-    <div class="card">
-      <div class="card-header"><div class="card-title">5점 척도 요약</div></div>
-      <div class="card-body"><div class="bar-list" id="scalesSummary"></div></div>
+    <!-- NPS 추이 차트 + 게이지 -->
+    <div class="section-label">NPS 추이</div>
+    <div class="main-grid">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">NPS 월별 변화 추이</div>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--s2)"></div>구매직후</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--s3)"></div>3개월 후</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="npsChartWrap" style="position:relative;height:220px;">
+            <canvas id="npsChart"></canvas>
+          </div>
+          <div id="npsChartEmpty" class="empty-state" style="display:none;">
+            <div class="empty-icon">📊</div>
+            <div class="empty-msg">2개월 이상 데이터가 쌓이면 추세 차트가 표시됩니다.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">NPS 현황</div>
+        </div>
+        <div class="card-body">
+          <div class="nps-gauges" id="npsGauges">
+            <div class="nps-gauge-item">
+              <div class="ng-top">
+                <div class="ng-label" style="color:var(--s2)">구매직후 NPS</div>
+                <div class="ng-value" style="color:var(--s2)" id="npsGauge2">-</div>
+              </div>
+              <div class="ng-bar"><div class="ng-fill" id="npsFill2" style="background:var(--s2);width:0%"></div></div>
+              <div class="ng-meta"><span id="npsDistText2">추천 -% · 중립 -% · 비추천 -%</span><span style="color:var(--gold)">목표: +30</span></div>
+            </div>
+            <div class="nps-gauge-item">
+              <div class="ng-top">
+                <div class="ng-label" style="color:var(--s3)">3개월 후 NPS</div>
+                <div class="ng-value" style="color:var(--s3)" id="npsGauge3">-</div>
+              </div>
+              <div class="ng-bar"><div class="ng-fill" id="npsFill3" style="background:var(--s3);width:0%"></div></div>
+              <div class="ng-meta"><span id="npsDistText3">추천 -% · 중립 -% · 비추천 -%</span><span style="color:var(--gold)">목표: +40</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="card">
+
+  </div><!-- /view-overview -->
+
+  <!-- ════════════════════════════════════════
+       탭 1: 설문 1 상세 — 금색 테마
+  ════════════════════════════════════════ -->
+  <div class="view" id="view-s1">
+
+    <!-- 설문 헤더 -->
+    <div class="survey-header s1">
+      <div class="survey-header-info">
+        <div class="survey-header-title" style="color:var(--s1)">설문 1 · 미구매 원인 분석</div>
+        <div class="survey-header-sub">견적 후 14일 미구매 고객 대상</div>
+      </div>
+      <div class="survey-header-stats">
+        <div class="survey-stat">
+          <div class="survey-stat-val" id="sh1-send">-</div>
+          <div class="survey-stat-label">발송</div>
+        </div>
+        <div class="survey-stat">
+          <div class="survey-stat-val" style="color:var(--s1)" id="sh1-resp">-</div>
+          <div class="survey-stat-label">응답</div>
+        </div>
+        <div class="survey-stat">
+          <div class="survey-stat-val" id="sh1-rate">-</div>
+          <div class="survey-stat-label">응답률</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI 3열 -->
+    <div class="section-label">핵심 지표</div>
+    <div class="kpi-row three" style="margin-bottom:24px">
+      <div class="kpi-card c-gold" id="kpi-s1-price">
+        <div class="kpi-label">가격 민감도</div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: ≤3.5점 (낮을수록 좋음)</div>
+      </div>
+      <div class="kpi-card c-green" id="kpi-s1-reconsider">
+        <div class="kpi-label">재검토 의향률</div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: ≥40%</div>
+      </div>
+      <div class="kpi-card c-orange" id="kpi-s1-sales">
+        <div class="kpi-label">세일즈 효과성</div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: ≥4.0점</div>
+      </div>
+    </div>
+
+    <!-- 분포 차트 2열 -->
+    <div class="section-label">선택형 응답 분포</div>
+    <div class="two-grid">
+      <div class="card">
+        <div class="card-header"><div class="card-title" style="color:var(--s1)">인지 경로</div></div>
+        <div class="card-body"><div class="bar-list" id="s1-distAwareness"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title" style="color:var(--s1)">미구매 원인</div></div>
+        <div class="card-body"><div class="bar-list" id="s1-distNonPurchase"></div></div>
+      </div>
+    </div>
+
+    <!-- 복수선택: 헤이븐 강점 -->
+    <div class="section-label">헤이븐 강점 (복수선택)</div>
+    <div class="card" style="margin-bottom:24px">
       <div class="card-header"><div class="card-title" style="color:var(--green)">헤이븐 강점</div></div>
-      <div class="card-body"><div class="bar-list" id="distStrengths"></div></div>
+      <div class="card-body"><div class="bar-list" id="s1-distStrengths"></div></div>
     </div>
-    <div class="card">
-      <div class="card-header"><div class="card-title" style="color:var(--red)">개선 필요 요소</div></div>
-      <div class="card-body"><div class="bar-list" id="distWeakness"></div></div>
-    </div>
-  </div>
 
-  <!-- ── 주관식 응답 ── -->
-  <div class="section-label">고객의 목소리 (Voice of Customer)</div>
-  <div class="card" style="margin-bottom:24px">
-    <div class="card-header">
-      <div class="tab-bar" id="voiceTabs">
-        <button class="tab-btn active" data-tab="voice-all">전체</button>
-        <button class="tab-btn" data-tab="voice-s1">설문1 · 견적</button>
-        <button class="tab-btn" data-tab="voice-s2">설문2 · 구매</button>
-        <button class="tab-btn" data-tab="voice-s3">설문3 · 사용</button>
+    <!-- VoC -->
+    <div class="section-label">고객의 목소리</div>
+    <div class="two-grid">
+      <div class="card">
+        <div class="card-header"><div class="card-title">경쟁사 대비 의견</div></div>
+        <div class="card-body"><div class="voice-list" id="s1-voiceCompetitor"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">자유 의견</div></div>
+        <div class="card-body"><div class="voice-list" id="s1-voiceFree"></div></div>
       </div>
     </div>
-    <div class="card-body">
-      <div class="tab-content active" id="voice-all"><div class="voice-list" id="voiceAll"></div></div>
-      <div class="tab-content" id="voice-s1"><div class="voice-list" id="voiceS1"></div></div>
-      <div class="tab-content" id="voice-s2"><div class="voice-list" id="voiceS2"></div></div>
-      <div class="tab-content" id="voice-s3"><div class="voice-list" id="voiceS3"></div></div>
-    </div>
-  </div>
 
-  <!-- ── 인사이트 ── -->
-  <div class="section-label">자동 인사이트</div>
-  <div class="alert-list" id="insights" style="margin-bottom:24px"></div>
+    <!-- 인사이트 -->
+    <div class="section-label">인사이트</div>
+    <div class="alert-list" id="s1-insights" style="margin-bottom:24px"></div>
+
+  </div><!-- /view-s1 -->
+
+  <!-- ════════════════════════════════════════
+       탭 2: 설문 2 상세 — 초록 테마
+  ════════════════════════════════════════ -->
+  <div class="view" id="view-s2">
+
+    <!-- 설문 헤더 -->
+    <div class="survey-header s2">
+      <div class="survey-header-info">
+        <div class="survey-header-title" style="color:var(--s2)">설문 2 · 구매·시공 만족도</div>
+        <div class="survey-header-sub">구매 후 7일 이내 고객 대상</div>
+      </div>
+      <div class="survey-header-stats">
+        <div class="survey-stat">
+          <div class="survey-stat-val" id="sh2-send">-</div>
+          <div class="survey-stat-label">발송</div>
+        </div>
+        <div class="survey-stat">
+          <div class="survey-stat-val" style="color:var(--s2)" id="sh2-resp">-</div>
+          <div class="survey-stat-label">응답</div>
+        </div>
+        <div class="survey-stat">
+          <div class="survey-stat-val" id="sh2-rate">-</div>
+          <div class="survey-stat-label">응답률</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI 3열 -->
+    <div class="section-label">핵심 지표</div>
+    <div class="kpi-row three" style="margin-bottom:24px">
+      <div class="kpi-card c-green" id="kpi-s2-purchase-sat">
+        <div class="kpi-label">구매 만족도</div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: ≥4.0점</div>
+      </div>
+      <div class="kpi-card c-orange" id="kpi-s2-install-sat">
+        <div class="kpi-label">시공 만족도</div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: ≥4.0점</div>
+      </div>
+      <div class="kpi-card c-gold" id="kpi-s2-nps">
+        <div class="kpi-label">NPS — 구매직후</div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: ≥+30</div>
+      </div>
+    </div>
+
+    <!-- NPS 게이지 (구매직후) -->
+    <div class="section-label">NPS 상세</div>
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-header"><div class="card-title">구매직후 NPS 게이지</div></div>
+      <div class="card-body">
+        <div class="nps-gauge-item" style="background:transparent;border:none;padding:0">
+          <div class="ng-top">
+            <div class="ng-label" style="color:var(--s2);font-size:13px">구매직후 NPS</div>
+            <div class="ng-value" style="color:var(--s2);font-size:28px" id="s2-npsGauge">-</div>
+          </div>
+          <div class="ng-bar" style="height:10px;margin:12px 0"><div class="ng-fill" id="s2-npsFill" style="background:var(--s2);width:0%"></div></div>
+          <div class="ng-meta" style="font-size:12px"><span id="s2-npsDistText">추천 -% · 중립 -% · 비추천 -%</span><span style="color:var(--gold)">목표: +30</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 배송/시공 불편사항 -->
+    <div class="section-label">선택형 응답 분포</div>
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-header"><div class="card-title" style="color:var(--s2)">배송/시공 불편사항</div></div>
+      <div class="card-body"><div class="bar-list" id="s2-distDelivery"></div></div>
+    </div>
+
+    <!-- VoC -->
+    <div class="section-label">고객의 목소리</div>
+    <div class="three-grid">
+      <div class="card">
+        <div class="card-header"><div class="card-title">구매 이유</div></div>
+        <div class="card-body"><div class="voice-list" id="s2-voicePurchase"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">배송/시공 이유</div></div>
+        <div class="card-body"><div class="voice-list" id="s2-voiceDelivery"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">NPS 이유</div></div>
+        <div class="card-body"><div class="voice-list" id="s2-voiceNPS"></div></div>
+      </div>
+    </div>
+
+    <!-- 인사이트 -->
+    <div class="section-label">인사이트</div>
+    <div class="alert-list" id="s2-insights" style="margin-bottom:24px"></div>
+
+  </div><!-- /view-s2 -->
+
+  <!-- ════════════════════════════════════════
+       탭 3: 설문 3 상세 — 파랑 테마
+  ════════════════════════════════════════ -->
+  <div class="view" id="view-s3">
+
+    <!-- 설문 헤더 -->
+    <div class="survey-header s3">
+      <div class="survey-header-info">
+        <div class="survey-header-title" style="color:var(--s3)">설문 3 · 사용 만족도</div>
+        <div class="survey-header-sub">구매 후 3개월 고객 대상</div>
+      </div>
+      <div class="survey-header-stats">
+        <div class="survey-stat">
+          <div class="survey-stat-val" id="sh3-send">-</div>
+          <div class="survey-stat-label">발송</div>
+        </div>
+        <div class="survey-stat">
+          <div class="survey-stat-val" style="color:var(--s3)" id="sh3-resp">-</div>
+          <div class="survey-stat-label">응답</div>
+        </div>
+        <div class="survey-stat">
+          <div class="survey-stat-val" id="sh3-rate">-</div>
+          <div class="survey-stat-label">응답률</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI 3열 -->
+    <div class="section-label">핵심 지표</div>
+    <div class="kpi-row three" style="margin-bottom:24px">
+      <div class="kpi-card c-blue" id="kpi-s3-sat">
+        <div class="kpi-label">전반 만족도</div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: ≥4.2점</div>
+      </div>
+      <div class="kpi-card c-green" id="kpi-s3-value">
+        <div class="kpi-label">가성비</div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: ≥3.8점</div>
+      </div>
+      <div class="kpi-card c-gold" id="kpi-s3-nps">
+        <div class="kpi-label">NPS — 3개월 후</div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: ≥+40</div>
+      </div>
+    </div>
+
+    <!-- NPS 게이지 (3개월) -->
+    <div class="section-label">NPS 상세</div>
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-header"><div class="card-title">3개월 후 NPS 게이지</div></div>
+      <div class="card-body">
+        <div class="nps-gauge-item" style="background:transparent;border:none;padding:0">
+          <div class="ng-top">
+            <div class="ng-label" style="color:var(--s3);font-size:13px">3개월 후 NPS</div>
+            <div class="ng-value" style="color:var(--s3);font-size:28px" id="s3-npsGauge">-</div>
+          </div>
+          <div class="ng-bar" style="height:10px;margin:12px 0"><div class="ng-fill" id="s3-npsFill" style="background:var(--s3);width:0%"></div></div>
+          <div class="ng-meta" style="font-size:12px"><span id="s3-npsDistText">추천 -% · 중립 -% · 비추천 -%</span><span style="color:var(--gold)">목표: +40</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 복수선택 2열: 강점 + 약점 -->
+    <div class="section-label">선택형 응답 분포</div>
+    <div class="two-grid">
+      <div class="card">
+        <div class="card-header"><div class="card-title" style="color:var(--green)">마음에 드는 점</div></div>
+        <div class="card-body"><div class="bar-list" id="s3-distStrengths"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title" style="color:var(--red)">아쉬운 점</div></div>
+        <div class="card-body"><div class="bar-list" id="s3-distWeakness"></div></div>
+      </div>
+    </div>
+
+    <!-- 추가 KPI: 크로스셀 -->
+    <div class="section-label">크로스셀 가능성</div>
+    <div class="kpi-row three" style="margin-bottom:24px">
+      <div class="kpi-card c-purple" id="kpi-s3-crosssell">
+        <div class="kpi-label">크로스셀 가능성</div>
+        <div class="kpi-value">-</div>
+        <div class="kpi-change neutral">데이터 대기 중</div>
+        <div class="kpi-target">목표: ≥30%</div>
+      </div>
+    </div>
+
+    <!-- VoC -->
+    <div class="section-label">고객의 목소리</div>
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-header"><div class="card-title">자유 의견</div></div>
+      <div class="card-body"><div class="voice-list" id="s3-voiceFree"></div></div>
+    </div>
+
+    <!-- 인사이트 -->
+    <div class="section-label">인사이트</div>
+    <div class="alert-list" id="s3-insights" style="margin-bottom:24px"></div>
+
+  </div><!-- /view-s3 -->
 
   <!-- ── FOOTER ── -->
   <div class="dash-footer">
     <span>헤이븐 NPS 설문 체계 · 영업효율개선팀</span>
     <span id="footerTime">-</span>
   </div>
-</div>
+
+</div><!-- /dashboard -->
 
 <script>
 // ═══════════════════════════════════════════════════
-// 설정 — Apps Script 웹앱 URL을 여기에 붙여넣기
+// 설정
 // ═══════════════════════════════════════════════════
 const API_URL = 'https://script.google.com/macros/s/AKfycbzB_hdsn3sFNh6J4XKH0Er3tRwyLnNw1ZpCMDX6rn_RwvZ_bjXoBNw2PcZiLB0AtImL/exec';
 
@@ -530,7 +864,6 @@ const TARGETS = {
 async function fetchData() {
   if (!API_URL) {
     document.getElementById('loading').classList.add('hidden');
-    renderEmpty();
     return null;
   }
   try {
@@ -541,15 +874,8 @@ async function fetchData() {
   } catch (err) {
     console.error('Fetch error:', err);
     document.getElementById('loading').classList.add('hidden');
-    renderEmpty();
     return null;
   }
-}
-
-function renderEmpty() {
-  document.querySelectorAll('.bar-list, .voice-list').forEach(el => {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-msg">아직 응답이 없습니다.</div></div>';
-  });
 }
 
 // ═══════════════════════════════════════════════════
@@ -710,46 +1036,6 @@ function renderBarList(containerId, data, color) {
   `).join('');
 }
 
-function renderScalesSummary(s1, s2, s3) {
-  const items = [];
-
-  const priceSens = calcAvg(s1, '가격이 결정에');
-  if (priceSens.avg !== null) items.push({ label: '가격 민감도 (S1)', value: priceSens.avg.toFixed(1), target: '≤3.5', met: priceSens.avg <= 3.5 });
-
-  const salesEff = calcAvg(s1, '매장에서 받으신');
-  if (salesEff.avg !== null) items.push({ label: '세일즈 효과성 (S1)', value: salesEff.avg.toFixed(1), target: '-', met: true });
-
-  const purchaseSat = calcAvg(s2, '구매 과정');
-  if (purchaseSat.avg !== null) items.push({ label: '구매 만족도 (S2)', value: purchaseSat.avg.toFixed(1), target: '≥4.0', met: purchaseSat.avg >= 4.0 });
-
-  const installSat = calcAvg(s2, '배송이나 설치 과정');
-  if (installSat.avg !== null) items.push({ label: '시공 만족도 (S2)', value: installSat.avg.toFixed(1), target: '≥4.0', met: installSat.avg >= 4.0 });
-
-  const sat3m = calcAvg(s3, '전반적으로 만족');
-  if (sat3m.avg !== null) items.push({ label: '3개월 만족도 (S3)', value: sat3m.avg.toFixed(1), target: '≥4.2', met: sat3m.avg >= 4.2 });
-
-  const vfm = calcAvg(s3, '가격만큼의 가치');
-  if (vfm.avg !== null) items.push({ label: '가성비 (S3)', value: vfm.avg.toFixed(1), target: '≥3.8', met: vfm.avg >= 3.8 });
-
-  const el = document.getElementById('scalesSummary');
-  if (items.length === 0) {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-msg">아직 응답이 없습니다.</div></div>';
-    return;
-  }
-
-  el.innerHTML = items.map(d => `
-    <div class="bar-item">
-      <div class="bar-top">
-        <div class="bar-name">${d.label}</div>
-        <div class="bar-pct" style="color:${d.met ? 'var(--green)' : 'var(--orange)'}">${d.value} <span style="font-size:10px;color:var(--text-dim)">${d.target}</span></div>
-      </div>
-      <div class="bar-track">
-        <div class="bar-fill" style="width:${(parseFloat(d.value) / 5) * 100}%;background:${d.met ? 'var(--green)' : 'var(--orange)'}"></div>
-      </div>
-    </div>
-  `).join('');
-}
-
 // ═══════════════════════════════════════════════════
 // 주관식 렌더링
 // ═══════════════════════════════════════════════════
@@ -796,44 +1082,33 @@ function extractVoices(s1, s2, s3) {
   return voices;
 }
 
-function renderVoices(voices) {
-  const containers = {
-    all: document.getElementById('voiceAll'),
-    S1: document.getElementById('voiceS1'),
-    S2: document.getElementById('voiceS2'),
-    S3: document.getElementById('voiceS3')
-  };
-
-  const emptyHTML = '<div class="empty-state"><div class="empty-icon">💬</div><div class="empty-msg">아직 주관식 응답이 없습니다.</div></div>';
-
-  if (voices.length === 0) {
-    Object.values(containers).forEach(el => { if (el) el.innerHTML = emptyHTML; });
-    return;
+// 단일 voice 카드 HTML 생성 (내부 유틸)
+function voiceHTML(v) {
+  const dateStr = v.date ? new Date(v.date).toLocaleDateString('ko-KR') : '-';
+  const tagColor = v.survey === 'S1' ? 'var(--s1)' : v.survey === 'S2' ? 'var(--s2)' : 'var(--s3)';
+  let scoreHTML = '';
+  if (v.score !== null) {
+    const cls = v.score >= 4 ? 'high' : v.score >= 3 ? 'mid' : 'low';
+    scoreHTML = `<span class="voice-score ${cls}">${v.score}점</span>`;
   }
-
-  function voiceHTML(v) {
-    const dateStr = v.date ? new Date(v.date).toLocaleDateString('ko-KR') : '-';
-    const tagColor = v.survey === 'S1' ? 'var(--s1)' : v.survey === 'S2' ? 'var(--s2)' : 'var(--s3)';
-    let scoreHTML = '';
-    if (v.score !== null) {
-      const cls = v.score >= 4 ? 'high' : v.score >= 3 ? 'mid' : 'low';
-      scoreHTML = `<span class="voice-score ${cls}">${v.score}점</span>`;
-    }
-    return `
-      <div class="voice-card">
-        <div class="voice-meta">
-          <div><span style="color:${tagColor};font-weight:700;font-size:11px">${v.survey}</span> <span style="font-size:11px;color:var(--text-muted)">${v.label}</span></div>
-          <div style="display:flex;gap:8px;align-items:center">${scoreHTML}<span class="voice-date">${dateStr}</span></div>
-        </div>
-        <div class="voice-text">${v.text}</div>
+  return `
+    <div class="voice-card">
+      <div class="voice-meta">
+        <div><span style="color:${tagColor};font-weight:700;font-size:11px">${v.survey}</span> <span style="font-size:11px;color:var(--text-muted)">${v.label}</span></div>
+        <div style="display:flex;gap:8px;align-items:center">${scoreHTML}<span class="voice-date">${dateStr}</span></div>
       </div>
-    `;
-  }
+      <div class="voice-text">${v.text}</div>
+    </div>
+  `;
+}
 
-  containers.all.innerHTML = voices.slice(0, 20).map(voiceHTML).join('') || emptyHTML;
-  containers.S1.innerHTML = voices.filter(v => v.survey === 'S1').slice(0, 20).map(voiceHTML).join('') || emptyHTML;
-  containers.S2.innerHTML = voices.filter(v => v.survey === 'S2').slice(0, 20).map(voiceHTML).join('') || emptyHTML;
-  containers.S3.innerHTML = voices.filter(v => v.survey === 'S3').slice(0, 20).map(voiceHTML).join('') || emptyHTML;
+// 특정 컨테이너에 voice 목록 렌더
+function renderVoiceList(containerId, voices) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const emptyHTML = '<div class="empty-state"><div class="empty-icon">💬</div><div class="empty-msg">아직 주관식 응답이 없습니다.</div></div>';
+  if (!voices || voices.length === 0) { el.innerHTML = emptyHTML; return; }
+  el.innerHTML = voices.slice(0, 20).map(voiceHTML).join('') || emptyHTML;
 }
 
 // ═══════════════════════════════════════════════════
@@ -928,47 +1203,6 @@ function renderNPSChart(s2, s3) {
 }
 
 // ═══════════════════════════════════════════════════
-// 인사이트 자동 생성
-// ═══════════════════════════════════════════════════
-function renderInsights(kpis) {
-  const el = document.getElementById('insights');
-  const alerts = [];
-
-  if (kpis.npsPurchase !== null) {
-    if (kpis.npsPurchase >= TARGETS.npsPurchase) alerts.push({ type: 'good', icon: '✅', title: 'NPS 구매직후 목표 달성', msg: `현재 +${kpis.npsPurchase} (목표: +${TARGETS.npsPurchase})` });
-    else alerts.push({ type: 'warn', icon: '⚠️', title: 'NPS 구매직후 목표 미달', msg: `현재 +${kpis.npsPurchase} (목표: +${TARGETS.npsPurchase})` });
-  }
-
-  if (kpis.nps3m !== null) {
-    if (kpis.nps3m >= TARGETS.nps3m) alerts.push({ type: 'good', icon: '✅', title: 'NPS 3개월 목표 달성', msg: `현재 +${kpis.nps3m} (목표: +${TARGETS.nps3m})` });
-    else alerts.push({ type: 'warn', icon: '⚠️', title: 'NPS 3개월 목표 미달', msg: `현재 +${kpis.nps3m} (목표: +${TARGETS.nps3m})` });
-  }
-
-  if (kpis.installSat !== null && kpis.installSat < TARGETS.installSat) {
-    alerts.push({ type: 'warn', icon: '🔧', title: '시공 만족도 주의', msg: `현재 ${kpis.installSat.toFixed(1)}점 (목표: ${TARGETS.installSat}점) — 배송/시공 프로세스 점검 필요` });
-  }
-
-  if (kpis.reconsider !== null && kpis.reconsider >= TARGETS.reconsider) {
-    alerts.push({ type: 'info', icon: '🎯', title: '재검토 의향 높음', msg: `${kpis.reconsider}%의 미구매 고객이 재검토 의향 — 리타겟팅 캠페인 적기` });
-  }
-
-  if (kpis.crosssell !== null && kpis.crosssell >= TARGETS.crosssell) {
-    alerts.push({ type: 'good', icon: '🛋️', title: '크로스셀 기회', msg: `${kpis.crosssell}% 고객이 일룸 다른 제품에 관심 — CRM 캠페인 대상` });
-  }
-
-  if (alerts.length === 0) {
-    alerts.push({ type: 'info', icon: '📊', title: '데이터 수집 중', msg: '응답이 쌓이면 자동 인사이트가 생성됩니다.' });
-  }
-
-  el.innerHTML = alerts.map(a => `
-    <div class="alert-item ${a.type}">
-      <div class="alert-icon">${a.icon}</div>
-      <div class="alert-text"><strong>${a.title}</strong><span>${a.msg}</span></div>
-    </div>
-  `).join('');
-}
-
-// ═══════════════════════════════════════════════════
 // 발송 건수 — Supabase에서 조회 (20.10 CRM 자동화 DB)
 // ═══════════════════════════════════════════════════
 async function fetchSendCounts() {
@@ -986,7 +1220,6 @@ async function fetchSendCounts() {
     campaigns.forEach(c => { codeToId[c.campaign_code] = c.id; });
 
     // 2) daily_snapshots에서 캠페인별 DISTINCT 고객 수 조회
-    // customer_code가 NULL인 경우가 있으므로 customer_name + phone_number도 함께 가져옴
     const ids = campaigns.map(c => c.id);
     const snapRes = await fetch(
       `${SB_URL}/rest/v1/daily_snapshots?select=campaign_id,customer_code,customer_name,phone_number&campaign_id=in.(${ids.map(i => '"' + i + '"').join(',')})`,
@@ -995,7 +1228,7 @@ async function fetchSendCounts() {
     const snapshots = await snapRes.json();
     if (!snapshots || snapshots.length === 0) return null;
 
-    // 캠페인별 DISTINCT 고객 집계 (customer_code > customer_name > phone_number 순)
+    // 캠페인별 DISTINCT 고객 집계
     const countByCampaign = {};
     ids.forEach(id => { countByCampaign[id] = new Set(); });
     snapshots.forEach(s => {
@@ -1016,184 +1249,11 @@ async function fetchSendCounts() {
   }
 }
 
-function renderSendCounts(sendCounts, resp1, resp2, resp3) {
-  if (!sendCounts) return;
-
-  const { s1: send1, s2: send2, s3: send3 } = sendCounts;
-  const totalSend = send1 + send2 + send3;
-  const totalResp = resp1 + resp2 + resp3;
-  if (totalSend === 0) return;
-
-  // 총합 바
-  document.getElementById('sendSummary').style.display = 'flex';
-  document.getElementById('totalSend').textContent = totalSend;
-  document.getElementById('totalResp').textContent = totalResp;
-  const totalRate = Math.round(totalResp / totalSend * 100);
-  document.getElementById('totalRate').textContent = totalRate + '%';
-
-  // 설문별 발송/응답률
-  function showSurveyRate(idx, send, resp) {
-    if (send === 0) return;
-    document.getElementById('s' + idx + 'SendInfo').style.display = 'flex';
-    document.getElementById('s' + idx + 'Send').textContent = send;
-    document.getElementById('s' + idx + 'Resp').textContent = resp;
-    const rate = Math.round(resp / send * 100);
-    const rateEl = document.getElementById('s' + idx + 'Rate');
-    const cls = rate >= 20 ? 'good' : rate >= 10 ? 'mid' : 'low';
-    rateEl.innerHTML = '<span class="resp-rate ' + cls + '">응답률 ' + rate + '%</span>';
-  }
-
-  showSurveyRate(1, send1, resp1);
-  showSurveyRate(2, send2, resp2);
-  showSurveyRate(3, send3, resp3);
-}
-
-// ═══════════════════════════════════════════════════
-// 탭 전환
-// ═══════════════════════════════════════════════════
-document.getElementById('voiceTabs').addEventListener('click', e => {
-  if (!e.target.classList.contains('tab-btn')) return;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-  e.target.classList.add('active');
-  document.getElementById(e.target.dataset.tab).classList.add('active');
-});
-
-// ═══════════════════════════════════════════════════
-// 메인 실행
-// ═══════════════════════════════════════════════════
-async function main() {
-  const data = await fetchData();
-  document.getElementById('loading').classList.add('hidden');
-
-  if (!data) return;
-
-  const s1 = data.survey1 || [];
-  const s2 = data.survey2 || [];
-  const s3 = data.survey3 || [];
-
-  // 응답 건수
-  document.getElementById('s1Count').textContent = s1.length;
-  document.getElementById('s2Count').textContent = s2.length;
-  document.getElementById('s3Count').textContent = s3.length;
-
-  // 발송 건수 (Supabase에서 비동기 조회)
-  fetchSendCounts().then(sendCounts => {
-    renderSendCounts(sendCounts, s1.length, s2.length, s3.length);
-  });
-
-  // 구글시트 원본 링크
-  if (data.meta && data.meta.sheetId) {
-    const sheetBtn = document.getElementById('sheetLink');
-    sheetBtn.href = 'https://docs.google.com/spreadsheets/d/' + data.meta.sheetId;
-    sheetBtn.style.display = 'inline-flex';
-  }
-
-  // 업데이트 시각
-  const now = data.meta ? new Date(data.meta.lastUpdated) : new Date();
-  const timeStr = now.toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-  document.getElementById('updateTime').textContent = '업데이트: ' + timeStr;
-  document.getElementById('footerTime').textContent = timeStr;
-
-  // ── KPI 산출 ──
-  const npsPurchase = calcNPS(s2, '추천');
-  const nps3m = calcNPS(s3, '추천');
-  const reconsider = calcRate45(s1, '앞으로 헤이븐을 다시');
-  const purchaseSat = calcAvg(s2, '구매 과정');
-  const installSat = calcAvg(s2, '배송이나 설치 과정');
-  const crosssell = calcRate45(s3, '다른 가구나 침구');
-
-  // KPI 카드 업데이트
-  updateKPI('kpi-nps-purchase', npsPurchase.nps, '', TARGETS.npsPurchase, false);
-  addSmallSampleWarning('kpi-nps-purchase', npsPurchase.n);
-
-  updateKPI('kpi-nps-3m', nps3m.nps, '', TARGETS.nps3m, false);
-  addSmallSampleWarning('kpi-nps-3m', nps3m.n);
-
-  updateKPI('kpi-reconsider', reconsider.rate, '%', TARGETS.reconsider, false);
-  addSmallSampleWarning('kpi-reconsider', reconsider.n);
-
-  updateKPI('kpi-purchase-sat', purchaseSat.avg, '', TARGETS.purchaseSat, false);
-  addSmallSampleWarning('kpi-purchase-sat', purchaseSat.n);
-
-  updateKPI('kpi-install-sat', installSat.avg, '', TARGETS.installSat, false);
-  addSmallSampleWarning('kpi-install-sat', installSat.n);
-
-  updateKPI('kpi-crosssell', crosssell.rate, '%', TARGETS.crosssell, false);
-  addSmallSampleWarning('kpi-crosssell', crosssell.n);
-
-  // NPS 게이지
-  document.getElementById('npsGauge2').textContent = npsPurchase.nps !== null ? (npsPurchase.nps >= 0 ? '+' : '') + npsPurchase.nps : '-';
-  document.getElementById('npsFill2').style.width = npsPurchase.nps !== null ? Math.min(100, Math.max(0, (npsPurchase.nps + 100) / 2)) + '%' : '0%';
-  document.getElementById('npsDistText2').textContent = npsPurchase.n > 0
-    ? `추천 ${npsPurchase.promoters}% · 중립 ${npsPurchase.passives}% · 비추천 ${npsPurchase.detractors}%`
-    : '데이터 대기 중';
-
-  document.getElementById('npsGauge3').textContent = nps3m.nps !== null ? (nps3m.nps >= 0 ? '+' : '') + nps3m.nps : '-';
-  document.getElementById('npsFill3').style.width = nps3m.nps !== null ? Math.min(100, Math.max(0, (nps3m.nps + 100) / 2)) + '%' : '0%';
-  document.getElementById('npsDistText3').textContent = nps3m.n > 0
-    ? `추천 ${nps3m.promoters}% · 중립 ${nps3m.passives}% · 비추천 ${nps3m.detractors}%`
-    : '데이터 대기 중';
-
-  // NPS 추세 차트
-  renderNPSChart(s2, s3);
-
-  // ── 분포 차트 ──
-  renderBarList('distAwareness', calcDistribution(s1, '일룸 매트리스'), 'var(--s1)');
-  renderBarList('distNonPurchase', calcDistribution(s1, '이번에 헤이븐 구매를 보류'), 'var(--s1)');
-  renderBarList('distDelivery', calcDistribution(s2, '배송이나 설치에서 불편'), 'var(--s2)');
-
-  // ── 5점 척도 + 복수선택 ──
-  renderScalesSummary(s1, s2, s3);
-  renderBarList('distStrengths', calcMultiDistribution([...s1, ...s3], '괜찮았던 점').concat(calcMultiDistribution(s3, '마음에 드는 점')).reduce((acc, item) => {
-    const existing = acc.find(a => a.label === item.label);
-    if (existing) { existing.count += item.count; existing.pct = Math.round(existing.count / (s1.length + s3.length) * 100); }
-    else acc.push({...item});
-    return acc;
-  }, []).sort((a, b) => b.count - a.count), 'var(--green)');
-  renderBarList('distWeakness', calcMultiDistribution(s3, '아쉬운 점'), 'var(--red)');
-
-  // ── 주관식 ──
-  const voices = extractVoices(s1, s2, s3);
-  renderVoices(voices);
-
-  // ── 인사이트 ──
-  renderInsights({
-    npsPurchase: npsPurchase.nps,
-    nps3m: nps3m.nps,
-    reconsider: reconsider.rate,
-    purchaseSat: purchaseSat.avg,
-    installSat: installSat.avg,
-    crosssell: crosssell.rate
-  });
-}
-
-// ═══════════════════════════════════════════════════
-// 새로고침 (읽기 전용 — Supabase/Google Sheets 재조회)
-// ═══════════════════════════════════════════════════
-async function refreshAll() {
-  const btn = document.getElementById('refreshBtn');
-  btn.classList.add('spinning');
-  btn.disabled = true;
-  document.getElementById('loading').classList.remove('hidden');
-
-  await main();
-  await fetchSnapshotDate();
-
-  btn.classList.remove('spinning');
-  btn.disabled = false;
-}
-
 // ═══════════════════════════════════════════════════
 // Supabase 마지막 스냅샷 날짜 조회
 // ═══════════════════════════════════════════════════
 async function fetchSnapshotDate() {
   try {
-    const res = await fetch(
-      `${SB_URL}/rest/v1/daily_snapshots?select=snapshot_date&campaign_id=in.(${NPS_CAMPAIGN_CODES.map(() => '').join(',')})&order=snapshot_date.desc&limit=1`,
-      { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
-    );
-    // 캠페인 ID가 필요하므로 campaigns 먼저 조회
     const campRes = await fetch(
       `${SB_URL}/rest/v1/campaigns?select=id&campaign_code=in.(${NPS_CAMPAIGN_CODES.map(c => '"' + c + '"').join(',')})`,
       { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
@@ -1220,6 +1280,369 @@ async function fetchSnapshotDate() {
     console.warn('스냅샷 날짜 조회 실패:', err);
     document.getElementById('snapshotDate').textContent = 'Supabase: 조회 실패';
   }
+}
+
+// ═══════════════════════════════════════════════════
+// 탭 전환 (메인 탭)
+// ═══════════════════════════════════════════════════
+function switchTab(idx) {
+  document.querySelectorAll('.main-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.view').forEach((v, i) => v.classList.toggle('active', i === idx));
+}
+
+// ═══════════════════════════════════════════════════
+// 렌더 함수 — 탭 0: 여정 개요
+// ═══════════════════════════════════════════════════
+function renderOverview(s1, s2, s3, sendCounts) {
+  const resp1 = s1.length, resp2 = s2.length, resp3 = s3.length;
+
+  // 여정 퍼널 카드 수치 업데이트
+  function fillJourneyCard(prefix, send, resp) {
+    document.getElementById('j-' + prefix + '-resp').textContent = resp;
+    if (send > 0) {
+      document.getElementById('j-' + prefix + '-send').textContent = send;
+      document.getElementById('j-' + prefix + '-rate').textContent = Math.round(resp / send * 100) + '%';
+    } else {
+      document.getElementById('j-' + prefix + '-send').textContent = '-';
+      document.getElementById('j-' + prefix + '-rate').textContent = '-';
+    }
+  }
+
+  if (sendCounts) {
+    fillJourneyCard('s1', sendCounts.s1, resp1);
+    fillJourneyCard('s2', sendCounts.s2, resp2);
+    fillJourneyCard('s3', sendCounts.s3, resp3);
+  } else {
+    // 발송 건수 없이 응답만 표시
+    document.getElementById('j-s1-resp').textContent = resp1;
+    document.getElementById('j-s2-resp').textContent = resp2;
+    document.getElementById('j-s3-resp').textContent = resp3;
+  }
+
+  // 여정 퍼널 대표 KPI
+  const reconsider = calcRate45(s1, '앞으로 헤이븐을 다시');
+  const npsPurchase = calcNPS(s2, '추천');
+  const nps3m = calcNPS(s3, '추천');
+
+  document.getElementById('j-s1-kpi').textContent =
+    reconsider.rate !== null ? '재검토 의향 ' + reconsider.rate + '%' : '재검토 의향 -';
+  document.getElementById('j-s2-kpi').textContent =
+    npsPurchase.nps !== null ? 'NPS 구매직후 ' + (npsPurchase.nps >= 0 ? '+' : '') + npsPurchase.nps : 'NPS 구매직후 -';
+  document.getElementById('j-s3-kpi').textContent =
+    nps3m.nps !== null ? 'NPS 3개월 ' + (nps3m.nps >= 0 ? '+' : '') + nps3m.nps : 'NPS 3개월 -';
+
+  // 전체 KPI 6열
+  const purchaseSat = calcAvg(s2, '구매 과정');
+  const installSat = calcAvg(s2, '배송이나 설치 과정');
+  const crosssell = calcRate45(s3, '다른 가구나 침구');
+
+  updateKPI('kpi-nps-purchase', npsPurchase.nps, '', TARGETS.npsPurchase, false);
+  addSmallSampleWarning('kpi-nps-purchase', npsPurchase.n);
+
+  updateKPI('kpi-nps-3m', nps3m.nps, '', TARGETS.nps3m, false);
+  addSmallSampleWarning('kpi-nps-3m', nps3m.n);
+
+  updateKPI('kpi-reconsider', reconsider.rate, '%', TARGETS.reconsider, false);
+  addSmallSampleWarning('kpi-reconsider', reconsider.n);
+
+  updateKPI('kpi-purchase-sat', purchaseSat.avg, '', TARGETS.purchaseSat, false);
+  addSmallSampleWarning('kpi-purchase-sat', purchaseSat.n);
+
+  updateKPI('kpi-install-sat', installSat.avg, '', TARGETS.installSat, false);
+  addSmallSampleWarning('kpi-install-sat', installSat.n);
+
+  updateKPI('kpi-crosssell', crosssell.rate, '%', TARGETS.crosssell, false);
+  addSmallSampleWarning('kpi-crosssell', crosssell.n);
+
+  // NPS 게이지 (개요 탭)
+  document.getElementById('npsGauge2').textContent = npsPurchase.nps !== null ? (npsPurchase.nps >= 0 ? '+' : '') + npsPurchase.nps : '-';
+  document.getElementById('npsFill2').style.width = npsPurchase.nps !== null ? Math.min(100, Math.max(0, (npsPurchase.nps + 100) / 2)) + '%' : '0%';
+  document.getElementById('npsDistText2').textContent = npsPurchase.n > 0
+    ? `추천 ${npsPurchase.promoters}% · 중립 ${npsPurchase.passives}% · 비추천 ${npsPurchase.detractors}%`
+    : '데이터 대기 중';
+
+  document.getElementById('npsGauge3').textContent = nps3m.nps !== null ? (nps3m.nps >= 0 ? '+' : '') + nps3m.nps : '-';
+  document.getElementById('npsFill3').style.width = nps3m.nps !== null ? Math.min(100, Math.max(0, (nps3m.nps + 100) / 2)) + '%' : '0%';
+  document.getElementById('npsDistText3').textContent = nps3m.n > 0
+    ? `추천 ${nps3m.promoters}% · 중립 ${nps3m.passives}% · 비추천 ${nps3m.detractors}%`
+    : '데이터 대기 중';
+
+  // NPS 추이 차트
+  renderNPSChart(s2, s3);
+}
+
+// ═══════════════════════════════════════════════════
+// 렌더 함수 — 탭 1: 설문 1 상세
+// ═══════════════════════════════════════════════════
+function renderSurvey1(s1, sendCounts) {
+  const resp = s1.length;
+
+  // 헤더 수치
+  document.getElementById('sh1-resp').textContent = resp;
+  if (sendCounts && sendCounts.s1 > 0) {
+    document.getElementById('sh1-send').textContent = sendCounts.s1;
+    document.getElementById('sh1-rate').textContent = Math.round(resp / sendCounts.s1 * 100) + '%';
+  } else {
+    document.getElementById('sh1-send').textContent = '-';
+    document.getElementById('sh1-rate').textContent = '-';
+  }
+
+  // KPI 3열
+  const priceSens = calcAvg(s1, '가격이 결정에');
+  updateKPI('kpi-s1-price', priceSens.avg, '', TARGETS.priceSensitivity, true);
+  addSmallSampleWarning('kpi-s1-price', priceSens.n);
+
+  const reconsider = calcRate45(s1, '앞으로 헤이븐을 다시');
+  updateKPI('kpi-s1-reconsider', reconsider.rate, '%', TARGETS.reconsider, false);
+  addSmallSampleWarning('kpi-s1-reconsider', reconsider.n);
+
+  const salesEff = calcAvg(s1, '매장에서 받으신');
+  updateKPI('kpi-s1-sales', salesEff.avg, '', 4.0, false);
+  addSmallSampleWarning('kpi-s1-sales', salesEff.n);
+
+  // 분포 차트
+  renderBarList('s1-distAwareness', calcDistribution(s1, '일룸 매트리스'), 'var(--s1)');
+  renderBarList('s1-distNonPurchase', calcDistribution(s1, '이번에 헤이븐 구매를 보류'), 'var(--s1)');
+
+  // 복수선택: 강점
+  renderBarList('s1-distStrengths', calcMultiDistribution(s1, '괜찮았던 점'), 'var(--green)');
+
+  // VoC
+  const voices = extractVoices(s1, [], []);
+  renderVoiceList('s1-voiceCompetitor', voices.filter(v => v.label === '경쟁사 대비'));
+  renderVoiceList('s1-voiceFree', voices.filter(v => v.label === '자유 의견'));
+
+  // 인사이트
+  const alerts = [];
+  if (reconsider.rate !== null) {
+    if (reconsider.rate >= TARGETS.reconsider) {
+      alerts.push({ type: 'info', icon: '🎯', title: '재검토 의향 높음', msg: `${reconsider.rate}%의 미구매 고객이 재검토 의향 — 리타겟팅 캠페인 적기` });
+    } else {
+      alerts.push({ type: 'warn', icon: '⚠️', title: '재검토 의향 미달', msg: `현재 ${reconsider.rate}% (목표: ${TARGETS.reconsider}%) — 미구매 원인 분석 후 개선 필요` });
+    }
+  }
+  if (priceSens.avg !== null) {
+    if (priceSens.avg > TARGETS.priceSensitivity) {
+      alerts.push({ type: 'warn', icon: '💰', title: '가격 민감도 높음', msg: `현재 ${priceSens.avg.toFixed(1)}점 (목표: ≤${TARGETS.priceSensitivity}) — 가격 정당성 강화 필요` });
+    } else {
+      alerts.push({ type: 'good', icon: '✅', title: '가격 민감도 양호', msg: `현재 ${priceSens.avg.toFixed(1)}점 — 가격 저항 낮음` });
+    }
+  }
+  if (alerts.length === 0) {
+    alerts.push({ type: 'info', icon: '📊', title: '데이터 수집 중', msg: '응답이 쌓이면 자동 인사이트가 생성됩니다.' });
+  }
+  document.getElementById('s1-insights').innerHTML = alerts.map(a => `
+    <div class="alert-item ${a.type}">
+      <div class="alert-icon">${a.icon}</div>
+      <div class="alert-text"><strong>${a.title}</strong><span>${a.msg}</span></div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// 렌더 함수 — 탭 2: 설문 2 상세
+// ═══════════════════════════════════════════════════
+function renderSurvey2(s2, sendCounts) {
+  const resp = s2.length;
+
+  // 헤더 수치
+  document.getElementById('sh2-resp').textContent = resp;
+  if (sendCounts && sendCounts.s2 > 0) {
+    document.getElementById('sh2-send').textContent = sendCounts.s2;
+    document.getElementById('sh2-rate').textContent = Math.round(resp / sendCounts.s2 * 100) + '%';
+  } else {
+    document.getElementById('sh2-send').textContent = '-';
+    document.getElementById('sh2-rate').textContent = '-';
+  }
+
+  // KPI 3열
+  const purchaseSat = calcAvg(s2, '구매 과정');
+  updateKPI('kpi-s2-purchase-sat', purchaseSat.avg, '', TARGETS.purchaseSat, false);
+  addSmallSampleWarning('kpi-s2-purchase-sat', purchaseSat.n);
+
+  const installSat = calcAvg(s2, '배송이나 설치 과정');
+  updateKPI('kpi-s2-install-sat', installSat.avg, '', TARGETS.installSat, false);
+  addSmallSampleWarning('kpi-s2-install-sat', installSat.n);
+
+  const npsPurchase = calcNPS(s2, '추천');
+  updateKPI('kpi-s2-nps', npsPurchase.nps, '', TARGETS.npsPurchase, false);
+  addSmallSampleWarning('kpi-s2-nps', npsPurchase.n);
+
+  // NPS 게이지 (탭2 전용)
+  document.getElementById('s2-npsGauge').textContent = npsPurchase.nps !== null ? (npsPurchase.nps >= 0 ? '+' : '') + npsPurchase.nps : '-';
+  document.getElementById('s2-npsFill').style.width = npsPurchase.nps !== null ? Math.min(100, Math.max(0, (npsPurchase.nps + 100) / 2)) + '%' : '0%';
+  document.getElementById('s2-npsDistText').textContent = npsPurchase.n > 0
+    ? `추천 ${npsPurchase.promoters}% · 중립 ${npsPurchase.passives}% · 비추천 ${npsPurchase.detractors}%`
+    : '데이터 대기 중';
+
+  // 분포: 배송/시공 불편사항
+  renderBarList('s2-distDelivery', calcDistribution(s2, '배송이나 설치에서 불편'), 'var(--s2)');
+
+  // VoC
+  const voices = extractVoices([], s2, []);
+  renderVoiceList('s2-voicePurchase', voices.filter(v => v.label === '구매 이유'));
+  renderVoiceList('s2-voiceDelivery', voices.filter(v => v.label === '배송/시공'));
+  renderVoiceList('s2-voiceNPS', voices.filter(v => v.label === 'NPS 이유'));
+
+  // 인사이트
+  const alerts = [];
+  if (npsPurchase.nps !== null) {
+    if (npsPurchase.nps >= TARGETS.npsPurchase) {
+      alerts.push({ type: 'good', icon: '✅', title: 'NPS 구매직후 목표 달성', msg: `현재 +${npsPurchase.nps} (목표: +${TARGETS.npsPurchase})` });
+    } else {
+      alerts.push({ type: 'warn', icon: '⚠️', title: 'NPS 구매직후 목표 미달', msg: `현재 +${npsPurchase.nps} (목표: +${TARGETS.npsPurchase})` });
+    }
+  }
+  if (installSat.avg !== null && installSat.avg < TARGETS.installSat) {
+    alerts.push({ type: 'warn', icon: '🔧', title: '시공 만족도 주의', msg: `현재 ${installSat.avg.toFixed(1)}점 (목표: ${TARGETS.installSat}점) — 배송/시공 프로세스 점검 필요` });
+  }
+  if (purchaseSat.avg !== null && purchaseSat.avg >= TARGETS.purchaseSat) {
+    alerts.push({ type: 'good', icon: '🛍️', title: '구매 경험 만족도 양호', msg: `현재 ${purchaseSat.avg.toFixed(1)}점 (목표: ${TARGETS.purchaseSat}점)` });
+  }
+  if (alerts.length === 0) {
+    alerts.push({ type: 'info', icon: '📊', title: '데이터 수집 중', msg: '응답이 쌓이면 자동 인사이트가 생성됩니다.' });
+  }
+  document.getElementById('s2-insights').innerHTML = alerts.map(a => `
+    <div class="alert-item ${a.type}">
+      <div class="alert-icon">${a.icon}</div>
+      <div class="alert-text"><strong>${a.title}</strong><span>${a.msg}</span></div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// 렌더 함수 — 탭 3: 설문 3 상세
+// ═══════════════════════════════════════════════════
+function renderSurvey3(s3, sendCounts) {
+  const resp = s3.length;
+
+  // 헤더 수치
+  document.getElementById('sh3-resp').textContent = resp;
+  if (sendCounts && sendCounts.s3 > 0) {
+    document.getElementById('sh3-send').textContent = sendCounts.s3;
+    document.getElementById('sh3-rate').textContent = Math.round(resp / sendCounts.s3 * 100) + '%';
+  } else {
+    document.getElementById('sh3-send').textContent = '-';
+    document.getElementById('sh3-rate').textContent = '-';
+  }
+
+  // KPI 3열
+  const sat3m = calcAvg(s3, '전반적으로 만족');
+  updateKPI('kpi-s3-sat', sat3m.avg, '', TARGETS.satisfaction3m, false);
+  addSmallSampleWarning('kpi-s3-sat', sat3m.n);
+
+  const vfm = calcAvg(s3, '가격만큼의 가치');
+  updateKPI('kpi-s3-value', vfm.avg, '', TARGETS.valueForMoney, false);
+  addSmallSampleWarning('kpi-s3-value', vfm.n);
+
+  const nps3m = calcNPS(s3, '추천');
+  updateKPI('kpi-s3-nps', nps3m.nps, '', TARGETS.nps3m, false);
+  addSmallSampleWarning('kpi-s3-nps', nps3m.n);
+
+  // NPS 게이지 (탭3 전용)
+  document.getElementById('s3-npsGauge').textContent = nps3m.nps !== null ? (nps3m.nps >= 0 ? '+' : '') + nps3m.nps : '-';
+  document.getElementById('s3-npsFill').style.width = nps3m.nps !== null ? Math.min(100, Math.max(0, (nps3m.nps + 100) / 2)) + '%' : '0%';
+  document.getElementById('s3-npsDistText').textContent = nps3m.n > 0
+    ? `추천 ${nps3m.promoters}% · 중립 ${nps3m.passives}% · 비추천 ${nps3m.detractors}%`
+    : '데이터 대기 중';
+
+  // 복수선택 분포
+  renderBarList('s3-distStrengths', calcMultiDistribution(s3, '마음에 드는 점'), 'var(--green)');
+  renderBarList('s3-distWeakness', calcMultiDistribution(s3, '아쉬운 점'), 'var(--red)');
+
+  // 크로스셀 KPI
+  const crosssell = calcRate45(s3, '다른 가구나 침구');
+  updateKPI('kpi-s3-crosssell', crosssell.rate, '%', TARGETS.crosssell, false);
+  addSmallSampleWarning('kpi-s3-crosssell', crosssell.n);
+
+  // VoC: 자유 의견
+  const voices = extractVoices([], [], s3);
+  renderVoiceList('s3-voiceFree', voices.filter(v => v.label === '자유 의견'));
+
+  // 인사이트
+  const alerts = [];
+  if (nps3m.nps !== null) {
+    if (nps3m.nps >= TARGETS.nps3m) {
+      alerts.push({ type: 'good', icon: '✅', title: 'NPS 3개월 목표 달성', msg: `현재 +${nps3m.nps} (목표: +${TARGETS.nps3m})` });
+    } else {
+      alerts.push({ type: 'warn', icon: '⚠️', title: 'NPS 3개월 목표 미달', msg: `현재 +${nps3m.nps} (목표: +${TARGETS.nps3m})` });
+    }
+  }
+  if (crosssell.rate !== null && crosssell.rate >= TARGETS.crosssell) {
+    alerts.push({ type: 'good', icon: '🛋️', title: '크로스셀 기회', msg: `${crosssell.rate}% 고객이 일룸 다른 제품에 관심 — CRM 캠페인 대상` });
+  }
+  if (sat3m.avg !== null && sat3m.avg >= TARGETS.satisfaction3m) {
+    alerts.push({ type: 'good', icon: '😊', title: '3개월 만족도 양호', msg: `현재 ${sat3m.avg.toFixed(1)}점 (목표: ${TARGETS.satisfaction3m}점)` });
+  }
+  if (vfm.avg !== null && vfm.avg < TARGETS.valueForMoney) {
+    alerts.push({ type: 'warn', icon: '💸', title: '가성비 인식 개선 필요', msg: `현재 ${vfm.avg.toFixed(1)}점 (목표: ≥${TARGETS.valueForMoney}점)` });
+  }
+  if (alerts.length === 0) {
+    alerts.push({ type: 'info', icon: '📊', title: '데이터 수집 중', msg: '응답이 쌓이면 자동 인사이트가 생성됩니다.' });
+  }
+  document.getElementById('s3-insights').innerHTML = alerts.map(a => `
+    <div class="alert-item ${a.type}">
+      <div class="alert-icon">${a.icon}</div>
+      <div class="alert-text"><strong>${a.title}</strong><span>${a.msg}</span></div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// 메인 실행
+// ═══════════════════════════════════════════════════
+async function main() {
+  const data = await fetchData();
+  document.getElementById('loading').classList.add('hidden');
+
+  if (!data) return;
+
+  const s1 = data.survey1 || [];
+  const s2 = data.survey2 || [];
+  const s3 = data.survey3 || [];
+
+  // 구글시트 원본 링크
+  if (data.meta && data.meta.sheetId) {
+    const sheetBtn = document.getElementById('sheetLink');
+    sheetBtn.href = 'https://docs.google.com/spreadsheets/d/' + data.meta.sheetId;
+    sheetBtn.style.display = 'inline-flex';
+  }
+
+  // 업데이트 시각
+  const now = data.meta ? new Date(data.meta.lastUpdated) : new Date();
+  const timeStr = now.toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  document.getElementById('updateTime').textContent = '업데이트: ' + timeStr;
+  document.getElementById('footerTime').textContent = timeStr;
+
+  // 발송 건수 비동기 조회 후 전체 렌더
+  fetchSendCounts().then(sendCounts => {
+    renderOverview(s1, s2, s3, sendCounts);
+    renderSurvey1(s1, sendCounts);
+    renderSurvey2(s2, sendCounts);
+    renderSurvey3(s3, sendCounts);
+  });
+
+  // sendCounts 없이 먼저 렌더 (발송 건수 제외)
+  renderOverview(s1, s2, s3, null);
+  renderSurvey1(s1, null);
+  renderSurvey2(s2, null);
+  renderSurvey3(s3, null);
+}
+
+// ═══════════════════════════════════════════════════
+// 새로고침
+// ═══════════════════════════════════════════════════
+async function refreshAll() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  btn.disabled = true;
+  document.getElementById('loading').classList.remove('hidden');
+
+  await main();
+  await fetchSnapshotDate();
+
+  btn.classList.remove('spinning');
+  btn.disabled = false;
 }
 
 // 시작
