@@ -1,0 +1,1 @@
+import{u as e}from"./types-BmWT9mec.js";function t(t){for(let n of e)if(t>=n.min)return n.title;return`뉴비`}var n={뉴비:`🌱`,"AI 탐험가":`🧭`,"AI 빌더":`🔧`,"AI 마스터":`👑`,"AI 챔피언":`🏆`};export{t as n,n as t};

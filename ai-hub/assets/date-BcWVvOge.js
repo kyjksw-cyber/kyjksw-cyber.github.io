@@ -1,0 +1,1 @@
+function e(e){let t=Date.now()-new Date(e).getTime(),n=Math.floor(t/6e4);if(n<60)return`${n}분 전`;let r=Math.floor(n/60);if(r<24)return`${r}시간 전`;let i=Math.floor(r/24);return i<7?`${i}일 전`:new Date(e).toLocaleDateString(`ko-KR`)}export{e as t};
