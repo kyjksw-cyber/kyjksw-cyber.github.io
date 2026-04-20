@@ -1,5 +1,5 @@
 // Service Worker — cache-first for static assets, network-first for API calls
-const CACHE_NAME = 'planner-v1'
+const CACHE_NAME = 'planner-v2'
 const STATIC_ASSETS = [
   '/',
   '/index.html',
