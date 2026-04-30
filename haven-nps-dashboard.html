@@ -954,9 +954,9 @@ window.addEventListener('scroll', function() {
 // ═══════════════════════════════════════════════════
 const API_URL = 'https://script.google.com/macros/s/AKfycbzB_hdsn3sFNh6J4XKH0Er3tRwyLnNw1ZpCMDX6rn_RwvZ_bjXoBNw2PcZiLB0AtImL/exec';
 
-// Supabase (20.10 CRM 자동화 대시보드와 동일 DB)
-const SB_URL = 'https://sqbzyscqaopcobnawpur.supabase.co';
-const SB_KEY = 'sb_publishable_l35sO5li0HUEyT58blY1mg_vFGQt0A2';
+// Supabase (ai-hub 통합본, crm_ prefix)
+const SB_URL = 'https://fqfdnnoqbrfaxgqxkzxo.supabase.co';
+const SB_KEY = 'sb_publishable_i0Yi1W4mtngSrovwk4C36Q_USNf4dty';
 const NPS_CAMPAIGN_CODES = ['견적24_헤이븐NPS1', '수주24_헤이븐NPS2', '수주25_헤이븐NPS3'];
 
 // KPI 목표 기준
@@ -1336,7 +1336,7 @@ function renderNPSChart(s2, s3) {
 async function fetchSendCounts() {
   try {
     const campRes = await fetch(
-      `${SB_URL}/rest/v1/campaigns?select=id,campaign_code&campaign_code=in.(${NPS_CAMPAIGN_CODES.map(c => '"' + c + '"').join(',')})`,
+      `${SB_URL}/rest/v1/crm_campaigns?select=id,campaign_code&campaign_code=in.(${NPS_CAMPAIGN_CODES.map(c => '"' + c + '"').join(',')})`,
       { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
     );
     const campaigns = await campRes.json();
@@ -1347,7 +1347,7 @@ async function fetchSendCounts() {
 
     const ids = campaigns.map(c => c.id);
     const snapRes = await fetch(
-      `${SB_URL}/rest/v1/daily_snapshots?select=campaign_id,customer_code,customer_name,phone_number&campaign_id=in.(${ids.map(i => '"' + i + '"').join(',')})`,
+      `${SB_URL}/rest/v1/crm_daily_snapshots?select=campaign_id,customer_code,customer_name,phone_number&campaign_id=in.(${ids.map(i => '"' + i + '"').join(',')})`,
       { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
     );
     const snapshots = await snapRes.json();
@@ -1379,7 +1379,7 @@ async function fetchSendCounts() {
 async function fetchSnapshotDate() {
   try {
     const campRes = await fetch(
-      `${SB_URL}/rest/v1/campaigns?select=id&campaign_code=in.(${NPS_CAMPAIGN_CODES.map(c => '"' + c + '"').join(',')})`,
+      `${SB_URL}/rest/v1/crm_campaigns?select=id&campaign_code=in.(${NPS_CAMPAIGN_CODES.map(c => '"' + c + '"').join(',')})`,
       { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
     );
     const camps = await campRes.json();
@@ -1389,7 +1389,7 @@ async function fetchSnapshotDate() {
     }
     const ids = camps.map(c => c.id);
     const snapRes = await fetch(
-      `${SB_URL}/rest/v1/daily_snapshots?select=snapshot_date&campaign_id=in.(${ids.map(i => '"' + i + '"').join(',')})&order=snapshot_date.desc&limit=1`,
+      `${SB_URL}/rest/v1/crm_daily_snapshots?select=snapshot_date&campaign_id=in.(${ids.map(i => '"' + i + '"').join(',')})&order=snapshot_date.desc&limit=1`,
       { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
     );
     const snaps = await snapRes.json();
