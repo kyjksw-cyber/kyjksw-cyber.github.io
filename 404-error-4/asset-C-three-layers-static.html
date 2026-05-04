@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>AI 마켓 — 기능·제도·문화</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root {
+    --bg: #ffffff;
+    --ink: #111111;
+    --ink-2: #444444;
+    --ink-3: #999999;
+    --line: #e5e5e5;
+    --accent: #d63838;
+    --tier-1: #1a1a1a;
+    --tier-2: #555555;
+    --tier-3: #aaaaaa;
+    --font: 'Pretendard', ui-sans-serif, -apple-system, "SF Pro Text", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    padding: 60px 40px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .frame {
+    width: 100%;
+    max-width: 760px;
+    text-align: center;
+  }
+  .eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .head-title {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 64px;
+    letter-spacing: -0.02em;
+  }
+
+  .pyramid {
+    position: relative;
+    width: 600px;
+    height: 480px;
+    margin: 0 auto;
+  }
+  .tier {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    padding: 0 20px;
+  }
+  .tier-3 {
+    bottom: 0;
+    width: 600px;
+    background: var(--tier-3);
+    clip-path: polygon(8% 0, 92% 0, 100% 100%, 0% 100%);
+  }
+  .tier-2 {
+    bottom: 150px;
+    width: 440px;
+    background: var(--tier-2);
+    clip-path: polygon(11% 0, 89% 0, 100% 100%, 0% 100%);
+  }
+  .tier-1 {
+    bottom: 300px;
+    width: 280px;
+    background: var(--tier-1);
+    clip-path: polygon(20% 0, 80% 0, 100% 100%, 0% 100%);
+  }
+
+  .tier-content { text-align: center; line-height: 1.25; }
+  .tier-name {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+  .tier-title {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .tier-keys {
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+  }
+  .tier-1 .tier-title { font-size: 22px; }
+  .tier-1 .tier-keys { font-size: 12px; opacity: 0.75; }
+  .tier-3 .tier-title { font-size: 24px; }
+  .tier-3 .tier-keys { font-size: 13px; }
+
+  .footer {
+    margin-top: 56px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+  <div class="frame">
+    <div class="eyebrow">AI 마켓 — 운영 구조</div>
+    <div class="head-title">기능 · 제도 · 문화</div>
+
+    <div class="pyramid">
+      <div class="tier tier-1">
+        <div class="tier-content">
+          <div class="tier-name">CULTURE</div>
+          <div class="tier-title">문화</div>
+          <div class="tier-keys">서로 구경하고, 자랑하고, 응원받는</div>
+        </div>
+      </div>
+
+      <div class="tier tier-2">
+        <div class="tier-content">
+          <div class="tier-name">SYSTEM</div>
+          <div class="tier-title">제도</div>
+          <div class="tier-keys">내가 한 만큼 보상받는, 서로 돕는 시스템</div>
+        </div>
+      </div>
+
+      <div class="tier tier-3">
+        <div class="tier-content">
+          <div class="tier-name">FEATURE</div>
+          <div class="tier-title">기능</div>
+          <div class="tier-keys">AI 프로덕트 갤러리 · AI 뉴스 · 커뮤니티</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">404 ERROR (4) — AI 마켓 운영 구조</div>
+  </div>
+</body>
+</html>
