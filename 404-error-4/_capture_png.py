@@ -45,6 +45,14 @@ def capture(name, width, height):
 
     size = out.stat().st_size
     print(f"[DONE] {out.name} ({size:,} bytes)")
+
+    # Thinking Guard: 5KB 이하면 빈 화면 의심 (feedback_chrome-headless-viewport)
+    # 콘텐츠가 viewport 밖으로 잘렸을 가능성 → window-size 키울 것
+    if size < 5_000:
+        print(f"  ⚠️  WARN: PNG 사이즈 {size:,} bytes — 빈 화면 의심")
+        print(f"  ⚠️  콘텐츠가 viewport({width}x{height}) 밖으로 잘렸을 수 있음")
+        print(f"  ⚠️  HTML 콘텐츠 실제 높이 추정: padding+heading+main+footer +100px 여유 → window-size 키우기")
+
     return out
 
 if __name__ == "__main__":
